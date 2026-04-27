@@ -92,6 +92,10 @@ AUTHENTICATION_BACKENDS = (
 )
 SITE_ID = 1
 AUTH_USER_MODEL = "accounts.User"
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_ADAPTER = "apps.accounts.adapters.AccountAdapter"
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "apps.common.exception_handler.custom_exception_handler"
 }

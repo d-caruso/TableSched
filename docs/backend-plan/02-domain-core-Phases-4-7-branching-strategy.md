@@ -144,7 +144,7 @@ git push origin feature/backend-mvp-Phase4-auth
 
 ---
 
-### ❌ Task 4.2 — django-allauth Configuration
+### ✅ Task 4.2 — django-allauth Configuration
 
 Configure email-based login. No social providers (YAGNI). Disable public signup — staff users are operator-provisioned only.
 
