@@ -91,6 +91,7 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 SITE_ID = 1
+AUTH_USER_MODEL = "accounts.User"
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "apps.common.exception_handler.custom_exception_handler"
 }

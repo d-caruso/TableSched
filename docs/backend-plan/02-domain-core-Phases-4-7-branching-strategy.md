@@ -79,7 +79,7 @@ git push -u origin feature/backend-mvp-Phase4-auth
 
 ---
 
-### ❌ Task 4.1 — User Model (Public Schema)
+### ✅ Task 4.1 — User Model (Public Schema)
 
 Custom `User` extending `AbstractUser`. Staff users are created by the operator only — no public signup. No user-facing strings.
 
