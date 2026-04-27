@@ -18,9 +18,15 @@ Customer → booking request → staff approval → (optional) deposit → confi
   - Party size
 - Provide:
   - Phone number (required)
+  - Email (optional)
+  - Name (required)
+  - Preferred language / locale (required)
   - Optional notes (free text)
 
 - Booking is always a **request**, not immediate confirmation
+- Customers do not register or authenticate. After submitting a booking
+  request, the customer receives a secure tokenized link (via SMS and/or
+  email) that grants access to view, cancel, or modify that single booking.
 
 ### Staff Side
 - View incoming booking requests
@@ -32,17 +38,32 @@ Customer → booking request → staff approval → (optional) deposit → confi
 
 ---
 
-## 2. Booking Statuses (MVP)
+## 2. Statuses (MVP)
+
+### Booking Statuses
 
 - `pending_review`
-- `approved_pending_payment`
-- `authorized_deposit`
+- `pending_payment`
 - `confirmed`
+- `confirmed_without_deposit`
 - `declined`
 - `cancelled_by_customer`
 - `cancelled_by_staff`
 - `no_show`
 - `expired`
+- `authorization_expired`
+
+### Payment Statuses
+
+Payment lifecycle is tracked separately from booking status.
+
+- `pending`
+- `authorized`
+- `captured`
+- `failed`
+- `refund_pending`
+- `refunded`
+- `refund_failed`
 
 ---
 
@@ -66,8 +87,18 @@ Customer → booking request → staff approval → (optional) deposit → confi
 ### Payment Flows
 
 #### Near-term bookings
-- Deposit pre-authorized during booking request
-- Captured immediately after staff approval
+
+- Booking is created first with status `pending_review`
+- If deposit is required, a Stripe PaymentIntent is created afterwards
+- Authorization is handled via Stripe Payment Element
+- The PaymentIntent uses `capture_method=manual`
+- After successful authorization:
+  - `Payment.status` becomes `authorized`
+  - `Booking.status` remains `pending_review`
+- If staff approves the booking:
+  - the authorization is captured immediately
+  - `Payment.status` becomes `captured`
+  - `Booking.status` becomes `confirmed`
 
 #### Long-term bookings
 - No payment at booking request
@@ -78,6 +109,16 @@ Customer → booking request → staff approval → (optional) deposit → confi
 - Staff can:
   - Confirm booking without deposit
   - Reject booking with reason
+
+### Authorized Deposit Expiration
+
+If a payment pre-authorization expires before staff approval, the booking is not automatically cancelled.
+
+The booking status becomes `authorization_expired`, staff is notified, and staff must choose one of the following actions:
+
+- confirm the booking without deposit
+- request payment again
+- decline the booking with reason
 
 ### Refunds
 - Supported (basic)
@@ -141,11 +182,19 @@ Customer → booking request → staff approval → (optional) deposit → confi
 
 ## 9. Notifications
 
-### Customer Notifications (SMS)
+### Customer Notifications (SMS / Email)
+
+Phone number is mandatory, so SMS is always sent. Email is optional; when
+provided, the same notifications are also sent by email.
+
+Notifications:
 - Booking request received
 - Booking approved
 - Booking declined
 - Payment required
+
+Server-side localization is required: notification text is rendered on the
+backend in the customer's locale (see §1).
 
 ### Staff Notifications
 - New booking request
@@ -177,9 +226,11 @@ Customer → booking request → staff approval → (optional) deposit → confi
 
 ## 12. Customer Model
 
-- Supports:
-  - Guest bookings
-  - Registered users (basic)
+- Only guest bookings in MVP. No customer accounts, no authentication.
+- Customer record fields: phone (required), email (optional), name (required), locale (required).
+- Dedupe by phone: same phone = same customer; different phone = different customer.
+- Email is secondary metadata; it does not merge customers.
+- If the same phone provides a different email later, update the email; previous email may be retained as history.
 
 ---
 

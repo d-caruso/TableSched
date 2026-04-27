@@ -50,16 +50,25 @@
 - PayPal postponed
 - Stripe webhooks required
 - Payment abstraction layer kept minimal but designed to support PayPal later
-- Deposit flow:
-  - pre-authorization for near-term bookings
-  - payment link after approval for long-term bookings
-  - capture immediately after staff approval
+- Near-term flow uses Stripe Payment Element with PaymentIntent
+  `capture_method=manual`
+- Booking is created first; the PaymentIntent is created and confirmed
+  afterwards
+- Long-term flow uses a Stripe-hosted payment link sent after staff approval;
+  payment must complete within 24 hours
+- Capture happens immediately after staff approval (near-term flow)
+- Payment lifecycle is tracked separately from booking status (see business
+  doc §2 for the full payment status set)
 
 ## 7. Notifications
 
 - Twilio SMS
+- Email via Django SMTP (provider e.g. SendGrid or Mailgun via SMTP)
 - In-app notification basics
 - Notification templates stored by code
+- Server-side template localization keyed off `Customer.locale`
+- Supported locales (MVP): `en`, `it`, `de`. Default and fallback: `en`
+- Templates are stored per code per locale
 - Advanced template editor postponed
 
 ## 8. Background Processing
@@ -112,12 +121,11 @@ Important:
 - Frontend: Vercel
 - Backend: Hugging Face for MVP
 - Database: managed PostgreSQL
-- Redis: managed Redis or lightweight hosted Redis
 
 ## 13. Domain
 
-- Web app under subdomain of `domenicocaruso.com`
-- API under separate subdomain if needed
+- Web app hosted under a subdomain of `domenicocaruso.com` (`tablesched.domenicocaruso.com`)
+- API hosted under a separate subdomain (e.g. `api.tablesched.domenicocaruso.com`)
 
 ## 14. Observability
 
@@ -129,6 +137,18 @@ MVP minimum:
 - basic audit log for booking/payment actions
 
 Advanced monitoring postponed.
+
+## 14a. Customer Booking Access (Tokenized Links)
+
+- Customers do not authenticate. Access to a booking is granted by a secure
+  token sent via SMS and/or email after booking request.
+- Token is tied to one booking only.
+- Token is random, long, and unguessable (cryptographic random, ≥ 32 bytes
+  base64url-encoded).
+- Token expires 7 days after the booking datetime.
+- Token grants: view, cancel, modify (subject to the cancellation/modification
+  cutoff in business doc §5 and §11).
+- No OTP / phone verification in MVP.
 
 ## 15. Security
 
@@ -152,3 +172,5 @@ Advanced monitoring postponed.
 - viewer role
 - advanced analytics
 - mobile app release
+- customer registration / accounts
+- OTP / phone verification

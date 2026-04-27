@@ -19,19 +19,27 @@
 
 ## 2. Booking Lifecycle
 
-### Statuses
+### Booking Statuses
 
 - `pending_review`
-- `approved_pending_payment`
-- `authorized_deposit`
+- `pending_payment`
 - `confirmed`
 - `confirmed_without_deposit`
 - `declined`
 - `cancelled_by_customer`
 - `cancelled_by_staff`
 - `no_show`
-- `completed`
 - `expired`
+- `authorization_expired`
+
+### Payment Statuses
+
+Payment lifecycle is tracked separately from booking status.
+
+- `pending`
+- `authorized`
+- `captured`
+- `failed`
 - `refund_pending`
 - `refunded`
 - `refund_failed`
@@ -39,7 +47,7 @@
 ### Expiration Rules
 
 - `pending_review` → expires after configurable time (default: 3 days)
-- `approved_pending_payment` → expires after 24 hours if not paid
+- `pending_payment` → expires after 24 hours if not paid
 - Authorization expiry → based on payment provider
 
 ---
