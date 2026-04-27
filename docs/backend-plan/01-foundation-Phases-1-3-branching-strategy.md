@@ -611,7 +611,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 3 — Common Infrastructure
+## ✅ Phase 3 — Common Infrastructure
 
 Establishes the shared foundation: error/reason codes, the `DomainError` exception (code-only, no localized strings), the `TimeStampedModel` base, and the DRF permission classes + membership middleware.
 
@@ -929,7 +929,7 @@ git push origin feature/backend-mvp-Phase3-common-infra
 
 ---
 
-### ❌ Phase 3 complete — merge into feature branch
+### ✅ Phase 3 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
