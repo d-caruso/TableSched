@@ -66,6 +66,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 PUBLIC_SCHEMA_URLCONF = "config.urls_public"
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = env.bool("SHOW_PUBLIC_IF_NO_TENANT_FOUND", default=True)
 
 TEMPLATES = [
     {

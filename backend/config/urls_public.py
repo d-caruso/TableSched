@@ -1,5 +1,17 @@
 """Public schema URL configuration."""
 
+from django.http import HttpRequest, HttpResponse
+from django.urls import path
 from django.urls.resolvers import URLPattern, URLResolver
 
-urlpatterns: list[URLPattern | URLResolver] = []
+from apps.payments.views import stripe_webhook
+
+
+def healthz(_: HttpRequest) -> HttpResponse:
+    return HttpResponse("ok")
+
+
+urlpatterns: list[URLPattern | URLResolver] = [
+    path("stripe/webhook/", stripe_webhook, name="stripe-webhook"),
+    path("healthz/", healthz, name="healthz"),
+]

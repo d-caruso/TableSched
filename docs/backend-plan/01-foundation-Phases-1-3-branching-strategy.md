@@ -412,7 +412,7 @@ git push origin feature/backend-mvp-Phase2-multi-tenancy
 
 ---
 
-### ❌ Task 2.2 — URLConfs Split
+### ✅ Task 2.2 — URLConfs Split
 
 Separate public schema routes (Stripe webhook, `/healthz`) from tenant-scoped API routes (`/api/v1/...`). Stripe webhook lives on the public URLConf because Stripe doesn't know the tenant subdomain; the handler resolves the tenant from `metadata.tenant_schema`.
 
