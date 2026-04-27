@@ -739,7 +739,7 @@ git push origin feature/backend-mvp-Phase3-common-infra
 
 ---
 
-### ❌ Task 3.2 — Base Model
+### ✅ Task 3.2 — Base Model
 
 Adds `TimeStampedModel` with UUID primary key and auto timestamps. All tenant-schema models inherit from this.
 
