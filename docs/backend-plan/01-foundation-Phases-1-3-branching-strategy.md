@@ -561,7 +561,7 @@ git push origin feature/backend-mvp-Phase2-multi-tenancy
 
 ---
 
-### ❌ Task 2.4 — Migrations Workflow
+### ✅ Task 2.4 — Migrations Workflow
 
 Documents the migration commands. No new code — execution-only.
 
