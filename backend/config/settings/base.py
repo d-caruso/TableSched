@@ -26,8 +26,9 @@ DATABASES = {
 DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 SHARED_APPS = (
-    "django_tenants",
     "apps.tenants",
+    "django_tenants",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
