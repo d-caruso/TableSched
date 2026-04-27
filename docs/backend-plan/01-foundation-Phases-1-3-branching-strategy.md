@@ -201,7 +201,7 @@ git push origin feature/backend-mvp-Phase1-bootstrap
 
 ---
 
-### ❌ Task 1.3 — Settings Split
+### ✅ Task 1.3 — Settings Split
 
 Create `config/settings/{base,dev,prod}.py`. No user-facing strings — all values from environment variables.
 
