@@ -1,0 +1,2 @@
+"""Memberships app test package."""
+

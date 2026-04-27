@@ -813,7 +813,7 @@ git push origin feature/backend-mvp-Phase3-common-infra
 
 ---
 
-### ❌ Task 3.3 — Permissions & Membership Middleware
+### ✅ Task 3.3 — Permissions & Membership Middleware
 
 Implements `IsTenantMember`, `IsManager` DRF permission classes and `MembershipMiddleware` which resolves `request.membership` once per tenant request.
 
