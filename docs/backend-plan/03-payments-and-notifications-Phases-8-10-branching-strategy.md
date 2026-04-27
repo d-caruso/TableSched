@@ -10,7 +10,7 @@ References:
 
 - **No hardcoded user-facing strings.** All text shown to the user must use i18n translation keys. The API returns only `error_code`, `reason_code`, and `status` strings — never localized text (except staff-written `staff_message` fields). SMS/email templates are localized server-side from `Customer.locale`.
 - **Tests are mandatory** for every task that introduces logic. Write unit tests and integration tests in the same task branch, before merging.
-- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → PR → merge into parent.
+- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → merge into parent.
 - **Progress markers:** ❌ not done · ✅ done. Update in place as work completes.
 
 ## Pre-Merge Checks (Django backend — run in this order, one at a time)
@@ -29,7 +29,7 @@ pytest tests/<specific_test_file>.py
 pytest
 ```
 
-All checks must pass (0 errors, 0 failures) before creating a PR.
+All checks must pass (0 errors, 0 failures) before merging.
 
 ---
 
@@ -154,7 +154,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.1-payment-model
-# Open PR: "[TASK 8.1] Add Payment model and status set" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.1-payment-model
 git push origin feature/backend-mvp-Phase8-payments
@@ -220,7 +219,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.2-gateway-abstraction
-# Open PR: "[TASK 8.2] Add PaymentGateway protocol" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.2-gateway-abstraction
 git push origin feature/backend-mvp-Phase8-payments
@@ -317,7 +315,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.3-stripe-preauth
-# Open PR: "[TASK 8.3] Add Stripe pre-authorization" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.3-stripe-preauth
 git push origin feature/backend-mvp-Phase8-payments
@@ -434,7 +431,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.4-capture-refund
-# Open PR: "[TASK 8.4] Add capture, cancel, payment link, refund" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.4-capture-refund
 git push origin feature/backend-mvp-Phase8-payments
@@ -552,7 +548,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.5-webhook-handler
-# Open PR: "[TASK 8.5] Add Stripe webhook handler" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.5-webhook-handler
 git push origin feature/backend-mvp-Phase8-payments
@@ -609,7 +604,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task8.6-refund-endpoint
-# Open PR: "[TASK 8.6] Add manual refund endpoint" → feature/backend-mvp-Phase8-payments
 git checkout feature/backend-mvp-Phase8-payments
 git merge task/backend-mvp-Task8.6-refund-endpoint
 git push origin feature/backend-mvp-Phase8-payments
@@ -620,7 +614,6 @@ git push origin feature/backend-mvp-Phase8-payments
 ### ❌ Phase 8 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 8] Payments (Stripe)" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase8-payments
 git push origin feature/backend-mvp
@@ -706,7 +699,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task9.1-notification-log
-# Open PR: "[TASK 9.1] Add NotificationLog model" → feature/backend-mvp-Phase9-notifications
 git checkout feature/backend-mvp-Phase9-notifications
 git merge task/backend-mvp-Task9.1-notification-log
 git push origin feature/backend-mvp-Phase9-notifications
@@ -826,7 +818,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task9.2-localized-templates
-# Open PR: "[TASK 9.2] Add localized notification templates" → feature/backend-mvp-Phase9-notifications
 git checkout feature/backend-mvp-Phase9-notifications
 git merge task/backend-mvp-Task9.2-localized-templates
 git push origin feature/backend-mvp-Phase9-notifications
@@ -910,7 +901,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task9.3-routing-rules
-# Open PR: "[TASK 9.3] Add notification routing rules" → feature/backend-mvp-Phase9-notifications
 git checkout feature/backend-mvp-Phase9-notifications
 git merge task/backend-mvp-Task9.3-routing-rules
 git push origin feature/backend-mvp-Phase9-notifications
@@ -1020,7 +1010,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task9.4-synchronous-send
-# Open PR: "[TASK 9.4] Add synchronous non-blocking SMS/email send" → feature/backend-mvp-Phase9-notifications
 git checkout feature/backend-mvp-Phase9-notifications
 git merge task/backend-mvp-Task9.4-synchronous-send
 git push origin feature/backend-mvp-Phase9-notifications
@@ -1031,7 +1020,6 @@ git push origin feature/backend-mvp-Phase9-notifications
 ### ❌ Phase 9 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 9] Notifications" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase9-notifications
 git push origin feature/backend-mvp
@@ -1117,7 +1105,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task10.1-walkin-model
-# Open PR: "[TASK 10.1] Add Walkin model and endpoint" → feature/backend-mvp-Phase10-walkins
 git checkout feature/backend-mvp-Phase10-walkins
 git merge task/backend-mvp-Task10.1-walkin-model
 git push origin feature/backend-mvp-Phase10-walkins
@@ -1128,7 +1115,6 @@ git push origin feature/backend-mvp-Phase10-walkins
 ### ❌ Phase 10 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 10] Walk-ins" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase10-walkins
 git push origin feature/backend-mvp

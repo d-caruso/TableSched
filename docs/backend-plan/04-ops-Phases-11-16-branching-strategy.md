@@ -10,7 +10,7 @@ References:
 
 - **No hardcoded user-facing strings.** All text shown to the user must use i18n translation keys. The API returns only `error_code`, `reason_code`, and `status` strings — never localized text.
 - **Tests are mandatory** for every task that introduces logic. Write unit tests and integration tests in the same task branch, before merging.
-- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → PR → merge into parent.
+- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → merge into parent.
 - **Progress markers:** ❌ not done · ✅ done. Update in place as work completes.
 
 ## Pre-Merge Checks (Django backend — run in this order, one at a time)
@@ -29,7 +29,7 @@ pytest tests/<specific_test_file>.py
 pytest
 ```
 
-All checks must pass (0 errors, 0 failures) before creating a PR.
+All checks must pass (0 errors, 0 failures) before merging.
 
 ---
 
@@ -206,7 +206,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task11.1-sweep-service
-# Open PR: "[TASK 11.1] Add dashboard sweep service" → feature/backend-mvp-Phase11-sweeps
 git checkout feature/backend-mvp-Phase11-sweeps
 git merge task/backend-mvp-Task11.1-sweep-service
 git push origin feature/backend-mvp-Phase11-sweeps
@@ -294,7 +293,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task11.2-dashboard-endpoint
-# Open PR: "[TASK 11.2] Add admin dashboard endpoint" → feature/backend-mvp-Phase11-sweeps
 git checkout feature/backend-mvp-Phase11-sweeps
 git merge task/backend-mvp-Task11.2-dashboard-endpoint
 git push origin feature/backend-mvp-Phase11-sweeps
@@ -305,7 +303,6 @@ git push origin feature/backend-mvp-Phase11-sweeps
 ### ❌ Phase 11 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 11] Opportunistic Background Sweeps" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase11-sweeps
 git push origin feature/backend-mvp
@@ -388,7 +385,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task12.1-audit-model
-# Open PR: "[TASK 12.1] Add AuditLog model" → feature/backend-mvp-Phase12-audit
 git checkout feature/backend-mvp-Phase12-audit
 git merge task/backend-mvp-Task12.1-audit-model
 git push origin feature/backend-mvp-Phase12-audit
@@ -460,7 +456,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task12.2-audit-service
-# Open PR: "[TASK 12.2] Add audit record service" → feature/backend-mvp-Phase12-audit
 git checkout feature/backend-mvp-Phase12-audit
 git merge task/backend-mvp-Task12.2-audit-service
 git push origin feature/backend-mvp-Phase12-audit
@@ -471,7 +466,6 @@ git push origin feature/backend-mvp-Phase12-audit
 ### ❌ Phase 12 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 12] Audit Log" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase12-audit
 git push origin feature/backend-mvp
@@ -557,7 +551,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task13.1-tenant-isolation-tests
-# Open PR: "[TASK 13.1] Add tenant isolation security tests" → feature/backend-mvp-Phase13-security
 git checkout feature/backend-mvp-Phase13-security
 git merge task/backend-mvp-Task13.1-tenant-isolation-tests
 git push origin feature/backend-mvp-Phase13-security
@@ -615,7 +608,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task13.2-webhook-regression
-# Open PR: "[TASK 13.2] Add Stripe signature regression tests" → feature/backend-mvp-Phase13-security
 git checkout feature/backend-mvp-Phase13-security
 git merge task/backend-mvp-Task13.2-webhook-regression
 git push origin feature/backend-mvp-Phase13-security
@@ -690,7 +682,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task13.3-credential-hardening
-# Open PR: "[TASK 13.3] Add credential hardening" → feature/backend-mvp-Phase13-security
 git checkout feature/backend-mvp-Phase13-security
 git merge task/backend-mvp-Task13.3-credential-hardening
 git push origin feature/backend-mvp-Phase13-security
@@ -761,7 +752,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task13.4-token-hardening
-# Open PR: "[TASK 13.4] Add token endpoint hardening" → feature/backend-mvp-Phase13-security
 git checkout feature/backend-mvp-Phase13-security
 git merge task/backend-mvp-Task13.4-token-hardening
 git push origin feature/backend-mvp-Phase13-security
@@ -826,7 +816,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task13.5-rate-limiting
-# Open PR: "[TASK 13.5] Add public endpoint rate limiting" → feature/backend-mvp-Phase13-security
 git checkout feature/backend-mvp-Phase13-security
 git merge task/backend-mvp-Task13.5-rate-limiting
 git push origin feature/backend-mvp-Phase13-security
@@ -837,7 +826,6 @@ git push origin feature/backend-mvp-Phase13-security
 ### ❌ Phase 13 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 13] Security Hardening" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase13-security
 git push origin feature/backend-mvp
@@ -908,7 +896,6 @@ pytest tests/
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task14.1-layered-tests
-# Open PR: "[TASK 14.1] Add layered test suite" → feature/backend-mvp-Phase14-tests
 git checkout feature/backend-mvp-Phase14-tests
 git merge task/backend-mvp-Task14.1-layered-tests
 git push origin feature/backend-mvp-Phase14-tests
@@ -972,7 +959,6 @@ pytest tests/
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task14.2-test-tooling
-# Open PR: "[TASK 14.2] Add test tooling and fixtures" → feature/backend-mvp-Phase14-tests
 git checkout feature/backend-mvp-Phase14-tests
 git merge task/backend-mvp-Task14.2-test-tooling
 git push origin feature/backend-mvp-Phase14-tests
@@ -983,7 +969,6 @@ git push origin feature/backend-mvp-Phase14-tests
 ### ❌ Phase 14 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 14] Testing Strategy" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase14-tests
 git push origin feature/backend-mvp
@@ -1081,7 +1066,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task15.1-logging-healthz
-# Open PR: "[TASK 15.1] Add structured logging and healthz" → feature/backend-mvp-Phase15-observability
 git checkout feature/backend-mvp-Phase15-observability
 git merge task/backend-mvp-Task15.1-logging-healthz
 git push origin feature/backend-mvp-Phase15-observability
@@ -1092,7 +1076,6 @@ git push origin feature/backend-mvp-Phase15-observability
 ### ❌ Phase 15 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 15] Observability" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase15-observability
 git push origin feature/backend-mvp
@@ -1149,7 +1132,6 @@ git commit -m "[TASK] 16.1 add Dockerfile for HuggingFace deployment"
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task16.1-dockerfile
-# Open PR: "[TASK 16.1] Add Dockerfile" → feature/backend-mvp-Phase16-deploy
 git checkout feature/backend-mvp-Phase16-deploy
 git merge task/backend-mvp-Task16.1-dockerfile
 git push origin feature/backend-mvp-Phase16-deploy
@@ -1222,7 +1204,6 @@ git commit -m "[TASK] 16.2 document required environment variables"
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task16.2-env-vars
-# Open PR: "[TASK 16.2] Document environment variables" → feature/backend-mvp-Phase16-deploy
 git checkout feature/backend-mvp-Phase16-deploy
 git merge task/backend-mvp-Task16.2-env-vars
 git push origin feature/backend-mvp-Phase16-deploy
@@ -1267,7 +1248,6 @@ git commit -m "[TASK] 16.3 configure domain and subdomain routing for production
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task16.3-domain-subdomains
-# Open PR: "[TASK 16.3] Configure domain and subdomains" → feature/backend-mvp-Phase16-deploy
 git checkout feature/backend-mvp-Phase16-deploy
 git merge task/backend-mvp-Task16.3-domain-subdomains
 git push origin feature/backend-mvp-Phase16-deploy
@@ -1278,7 +1258,6 @@ git push origin feature/backend-mvp-Phase16-deploy
 ### ❌ Phase 16 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 16] Deployment Prep" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase16-deploy
 git push origin feature/backend-mvp
@@ -1289,7 +1268,6 @@ git push origin feature/backend-mvp
 ### ❌ Feature complete — merge into develop
 
 ```bash
-# Open PR: "[FEATURE] MVP Backend" → develop
 # Requires explicit confirmation before merging.
 git checkout develop
 git merge feature/backend-mvp

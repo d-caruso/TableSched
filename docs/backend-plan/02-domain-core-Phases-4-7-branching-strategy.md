@@ -10,7 +10,7 @@ References:
 
 - **No hardcoded user-facing strings.** All text shown to the user must use i18n translation keys. The API returns only `error_code`, `reason_code`, and `status` strings — never localized text (except staff-written `staff_message` fields).
 - **Tests are mandatory** for every task that introduces logic. Write unit tests and integration tests in the same task branch, before merging.
-- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → PR → merge into parent.
+- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → merge into parent.
 - **Progress markers:** ❌ not done · ✅ done. Update in place as work completes.
 
 ## Pre-Merge Checks (Django backend — run in this order, one at a time)
@@ -29,7 +29,7 @@ pytest tests/<specific_test_file>.py
 pytest
 ```
 
-All checks must pass (0 errors, 0 failures) before creating a PR.
+All checks must pass (0 errors, 0 failures) before merging.
 
 ---
 
@@ -137,7 +137,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task4.1-user-model
-# Open PR: "[TASK 4.1] Add custom User model" → feature/backend-mvp-Phase4-auth
 git checkout feature/backend-mvp-Phase4-auth
 git merge task/backend-mvp-Task4.1-user-model
 git push origin feature/backend-mvp-Phase4-auth
@@ -202,7 +201,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task4.2-allauth
-# Open PR: "[TASK 4.2] Configure allauth email login" → feature/backend-mvp-Phase4-auth
 git checkout feature/backend-mvp-Phase4-auth
 git merge task/backend-mvp-Task4.2-allauth
 git push origin feature/backend-mvp-Phase4-auth
@@ -284,7 +282,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task4.3-staff-membership
-# Open PR: "[TASK 4.3] Add StaffMembership model and admin" → feature/backend-mvp-Phase4-auth
 git checkout feature/backend-mvp-Phase4-auth
 git merge task/backend-mvp-Task4.3-staff-membership
 git push origin feature/backend-mvp-Phase4-auth
@@ -295,7 +292,6 @@ git push origin feature/backend-mvp-Phase4-auth
 ### ❌ Phase 4 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 4] Authentication & Authorization" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase4-auth
 git push origin feature/backend-mvp
@@ -412,7 +408,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task5.1-customer-model
-# Open PR: "[TASK 5.1] Add Customer model and upsert service" → feature/backend-mvp-Phase5-customers-tokens
 git checkout feature/backend-mvp-Phase5-customers-tokens
 git merge task/backend-mvp-Task5.1-customer-model
 git push origin feature/backend-mvp-Phase5-customers-tokens
@@ -501,7 +496,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task5.2-booking-access-token
-# Open PR: "[TASK 5.2] Add BookingAccessToken" → feature/backend-mvp-Phase5-customers-tokens
 git checkout feature/backend-mvp-Phase5-customers-tokens
 git merge task/backend-mvp-Task5.2-booking-access-token
 git push origin feature/backend-mvp-Phase5-customers-tokens
@@ -622,7 +616,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task5.3-customer-endpoints
-# Open PR: "[TASK 5.3] Add customer-facing token-authenticated endpoints" → feature/backend-mvp-Phase5-customers-tokens
 git checkout feature/backend-mvp-Phase5-customers-tokens
 git merge task/backend-mvp-Task5.3-customer-endpoints
 git push origin feature/backend-mvp-Phase5-customers-tokens
@@ -633,7 +626,6 @@ git push origin feature/backend-mvp-Phase5-customers-tokens
 ### ❌ Phase 5 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 5] Customers & Booking Access Tokens" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase5-customers-tokens
 git push origin feature/backend-mvp
@@ -730,7 +722,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task6.1-restaurant-settings
-# Open PR: "[TASK 6.1] Add RestaurantSettings model" → feature/backend-mvp-Phase6-restaurant-config
 git checkout feature/backend-mvp-Phase6-restaurant-config
 git merge task/backend-mvp-Task6.1-restaurant-settings
 git push origin feature/backend-mvp-Phase6-restaurant-config
@@ -833,7 +824,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task6.2-opening-hours
-# Open PR: "[TASK 6.2] Add opening hours and closed days" → feature/backend-mvp-Phase6-restaurant-config
 git checkout feature/backend-mvp-Phase6-restaurant-config
 git merge task/backend-mvp-Task6.2-opening-hours
 git push origin feature/backend-mvp-Phase6-restaurant-config
@@ -909,7 +899,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task6.3-rooms-tables
-# Open PR: "[TASK 6.3] Add Room and Table models" → feature/backend-mvp-Phase6-restaurant-config
 git checkout feature/backend-mvp-Phase6-restaurant-config
 git merge task/backend-mvp-Task6.3-rooms-tables
 git push origin feature/backend-mvp-Phase6-restaurant-config
@@ -963,7 +952,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task6.4-public-endpoint
-# Open PR: "[TASK 6.4] Add public restaurant page endpoint" → feature/backend-mvp-Phase6-restaurant-config
 git checkout feature/backend-mvp-Phase6-restaurant-config
 git merge task/backend-mvp-Task6.4-public-endpoint
 git push origin feature/backend-mvp-Phase6-restaurant-config
@@ -974,7 +962,6 @@ git push origin feature/backend-mvp-Phase6-restaurant-config
 ### ❌ Phase 6 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 6] Restaurant Configuration" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase6-restaurant-config
 git push origin feature/backend-mvp
@@ -1085,7 +1072,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.1-booking-model
-# Open PR: "[TASK 7.1] Add Booking model and status set" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.1-booking-model
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1187,7 +1173,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.2-state-machine
-# Open PR: "[TASK 7.2] Add booking status machine" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.2-state-machine
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1315,7 +1300,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.3-booking-creation
-# Open PR: "[TASK 7.3] Add booking creation service" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.3-booking-creation
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1407,7 +1391,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.4-staff-actions
-# Open PR: "[TASK 7.4] Add staff action services" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.4-staff-actions
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1503,7 +1486,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.5-customer-cancel-modify
-# Open PR: "[TASK 7.5] Add customer cancel/modify services" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.5-customer-cancel-modify
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1598,7 +1580,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task7.6-drf-views
-# Open PR: "[TASK 7.6] Add booking DRF views" → feature/backend-mvp-Phase7-bookings
 git checkout feature/backend-mvp-Phase7-bookings
 git merge task/backend-mvp-Task7.6-drf-views
 git push origin feature/backend-mvp-Phase7-bookings
@@ -1609,7 +1590,6 @@ git push origin feature/backend-mvp-Phase7-bookings
 ### ❌ Phase 7 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 7] Booking Lifecycle" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase7-bookings
 git push origin feature/backend-mvp
