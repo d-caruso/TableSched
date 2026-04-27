@@ -208,7 +208,7 @@ git push origin feature/backend-mvp-Phase4-auth
 
 ---
 
-### ❌ Task 4.3 — StaffMembership (Tenant Schema)
+### ✅ Task 4.3 — StaffMembership (Tenant Schema)
 
 Defines the per-tenant staff role. A user can have one membership per tenant (enforced by the model living in the tenant schema). Staff are added by the operator via Django Admin.
 
