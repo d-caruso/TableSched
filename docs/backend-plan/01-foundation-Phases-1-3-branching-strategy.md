@@ -338,7 +338,7 @@ git push -u origin feature/backend-mvp-Phase2-multi-tenancy
 
 ---
 
-### ❌ Task 2.1 — Tenant & Domain Models
+### ✅ Task 2.1 — Tenant & Domain Models
 
 Define `Restaurant` (TenantMixin) and `Domain` (DomainMixin) in the public schema. No user-facing strings.
 
