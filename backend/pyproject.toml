@@ -2,5 +2,16 @@
 name = "tablesched-backend"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+  "Django>=5.0,<6.0",
+  "djangorestframework",
+  "django-tenants",
+  "django-allauth",
+  "psycopg[binary]",
+  "stripe",
+  "twilio",
+  "django-environ",
+]
 
+[project.optional-dependencies]
+dev = ["pytest", "pytest-django", "factory-boy", "responses", "ruff", "mypy"]

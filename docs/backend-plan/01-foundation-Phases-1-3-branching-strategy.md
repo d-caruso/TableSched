@@ -144,7 +144,7 @@ git push origin feature/backend-mvp-Phase1-bootstrap
 
 ---
 
-### ❌ Task 1.2 — Dependencies
+### ✅ Task 1.2 — Dependencies
 
 Define all project dependencies in `pyproject.toml`. No logic, no user-facing strings.
 
