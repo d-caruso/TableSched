@@ -91,6 +91,9 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 SITE_ID = 1
+REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "apps.common.exception_handler.custom_exception_handler"
+}
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"

@@ -628,7 +628,7 @@ git push -u origin feature/backend-mvp-Phase3-common-infra
 
 ---
 
-### ❌ Task 3.1 — Error & Reason Codes
+### ✅ Task 3.1 — Error & Reason Codes
 
 Defines the complete set of error and reason codes and the `DomainError` exception. **No localized strings anywhere** — the API returns `error_code` + `params` only. The frontend maps codes to localized text.
 
