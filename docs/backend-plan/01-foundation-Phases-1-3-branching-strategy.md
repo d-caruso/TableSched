@@ -321,7 +321,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 2 — Multi-Tenancy Foundation
+## ✅ Phase 2 — Multi-Tenancy Foundation
 
 Establishes the django-tenants schema-per-tenant setup: the public-schema models (Restaurant, Domain), URL routing split, the operator provisioning command, and the migrations workflow.
 
@@ -601,7 +601,7 @@ git push origin feature/backend-mvp-Phase2-multi-tenancy
 
 ---
 
-### ❌ Phase 2 complete — merge into feature branch
+### ✅ Phase 2 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
