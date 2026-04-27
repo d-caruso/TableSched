@@ -35,7 +35,7 @@ For simple features, task branches merge directly into the feature branch — no
 
 **Rules:**
 - `main` and `develop` are protected — never commit directly
-- Only merge to `develop` or `main` via explicit PR after confirmation
+- Only merge to `develop` or `main` after explicit confirmation
 - Phase branches must be created from the feature branch **after** the previous phase is merged, unless explicitly parallel
 
 ---
@@ -122,20 +122,15 @@ cd <package> && npm test
 
 **Never run checks on the whole codebase or a whole folder at once.**
 **Always wait for a run to finish before starting the next one.**
-**All checks must pass (0 errors, 0 failures) before creating a PR.**
+**All checks must pass (0 errors, 0 failures) before merging.**
 
-### 4. Create PR and Merge
+### 4. Push and Merge
 
 ```bash
 # Push branch
 git push origin task/<name>-Task<N.N>-<label>
 
-# PR title format:
-# "[TASK N.N] Short description"
-# "[PHASE N] Short description"
-# "[FEATURE] Short description"
-
-# After approval, merge to parent branch
+# Merge to parent branch
 git checkout <parent-branch>
 git merge task/<name>-Task<N.N>-<label>
 git push origin <parent-branch>

@@ -10,7 +10,7 @@ References:
 
 - **No hardcoded user-facing strings.** All text shown to the user must use i18n translation keys. The API returns only `error_code`, `reason_code`, and `status` strings — never localized text (except staff-written `staff_message` fields).
 - **Tests are mandatory** for every task that introduces logic. Write unit tests and integration tests in the same task branch, before merging.
-- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → PR → merge into parent.
+- **Each task branch lifecycle:** create from parent → implement → commit → pre-merge checks → push → merge into parent.
 - **Progress markers:** ❌ not done · ✅ done. Update in place as work completes.
 
 ## Pre-Merge Checks (Django backend — run in this order, one at a time)
@@ -29,7 +29,7 @@ pytest tests/<specific_test_file>.py
 pytest
 ```
 
-All checks must pass (0 errors, 0 failures) before creating a PR.
+All checks must pass (0 errors, 0 failures) before merging.
 
 ---
 
@@ -137,7 +137,6 @@ mypy backend/
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task1.1-project-layout
-# Open PR: "[TASK 1.1] Create backend project layout" → feature/backend-mvp-Phase1-bootstrap
 git checkout feature/backend-mvp-Phase1-bootstrap
 git merge task/backend-mvp-Task1.1-project-layout
 git push origin feature/backend-mvp-Phase1-bootstrap
@@ -195,7 +194,6 @@ mypy backend/
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task1.2-dependencies
-# Open PR: "[TASK 1.2] Define project dependencies" → feature/backend-mvp-Phase1-bootstrap
 git checkout feature/backend-mvp-Phase1-bootstrap
 git merge task/backend-mvp-Task1.2-dependencies
 git push origin feature/backend-mvp-Phase1-bootstrap
@@ -306,7 +304,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task1.3-settings
-# Open PR: "[TASK 1.3] Split settings into base/dev/prod" → feature/backend-mvp-Phase1-bootstrap
 git checkout feature/backend-mvp-Phase1-bootstrap
 git merge task/backend-mvp-Task1.3-settings
 git push origin feature/backend-mvp-Phase1-bootstrap
@@ -317,7 +314,6 @@ git push origin feature/backend-mvp-Phase1-bootstrap
 ### ❌ Phase 1 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 1] Repository & Project Bootstrap" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase1-bootstrap
 git push origin feature/backend-mvp
@@ -409,7 +405,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task2.1-tenant-domain
-# Open PR: "[TASK 2.1] Add Restaurant and Domain models" → feature/backend-mvp-Phase2-multi-tenancy
 git checkout feature/backend-mvp-Phase2-multi-tenancy
 git merge task/backend-mvp-Task2.1-tenant-domain
 git push origin feature/backend-mvp-Phase2-multi-tenancy
@@ -487,7 +482,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task2.2-urlconfs
-# Open PR: "[TASK 2.2] Split public and tenant URLConfs" → feature/backend-mvp-Phase2-multi-tenancy
 git checkout feature/backend-mvp-Phase2-multi-tenancy
 git merge task/backend-mvp-Task2.2-urlconfs
 git push origin feature/backend-mvp-Phase2-multi-tenancy
@@ -560,7 +554,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task2.3-tenant-provisioning
-# Open PR: "[TASK 2.3] Add tenant provisioning command and admin" → feature/backend-mvp-Phase2-multi-tenancy
 git checkout feature/backend-mvp-Phase2-multi-tenancy
 git merge task/backend-mvp-Task2.3-tenant-provisioning
 git push origin feature/backend-mvp-Phase2-multi-tenancy
@@ -601,7 +594,6 @@ git commit -m "[TASK] 2.4 run initial shared and tenant migrations"
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task2.4-migrations
-# Open PR: "[TASK 2.4] Run initial migrations" → feature/backend-mvp-Phase2-multi-tenancy
 git checkout feature/backend-mvp-Phase2-multi-tenancy
 git merge task/backend-mvp-Task2.4-migrations
 git push origin feature/backend-mvp-Phase2-multi-tenancy
@@ -612,7 +604,6 @@ git push origin feature/backend-mvp-Phase2-multi-tenancy
 ### ❌ Phase 2 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 2] Multi-Tenancy Foundation" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase2-multi-tenancy
 git push origin feature/backend-mvp
@@ -741,7 +732,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task3.1-codes
-# Open PR: "[TASK 3.1] Add error codes and DomainError" → feature/backend-mvp-Phase3-common-infra
 git checkout feature/backend-mvp-Phase3-common-infra
 git merge task/backend-mvp-Task3.1-codes
 git push origin feature/backend-mvp-Phase3-common-infra
@@ -816,7 +806,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task3.2-base-model
-# Open PR: "[TASK 3.2] Add TimeStampedModel base class" → feature/backend-mvp-Phase3-common-infra
 git checkout feature/backend-mvp-Phase3-common-infra
 git merge task/backend-mvp-Task3.2-base-model
 git push origin feature/backend-mvp-Phase3-common-infra
@@ -933,7 +922,6 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task3.3-permissions
-# Open PR: "[TASK 3.3] Add permission classes and membership middleware" → feature/backend-mvp-Phase3-common-infra
 git checkout feature/backend-mvp-Phase3-common-infra
 git merge task/backend-mvp-Task3.3-permissions
 git push origin feature/backend-mvp-Phase3-common-infra
@@ -944,7 +932,6 @@ git push origin feature/backend-mvp-Phase3-common-infra
 ### ❌ Phase 3 complete — merge into feature branch
 
 ```bash
-# Open PR: "[PHASE 3] Common Infrastructure" → feature/backend-mvp
 git checkout feature/backend-mvp
 git merge feature/backend-mvp-Phase3-common-infra
 git push origin feature/backend-mvp
