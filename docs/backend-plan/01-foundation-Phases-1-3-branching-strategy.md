@@ -81,7 +81,7 @@ git push -u origin feature/backend-mvp-Phase1-bootstrap
 
 ---
 
-### ❌ Task 1.1 — Project Layout
+### ✅ Task 1.1 — Project Layout
 
 Create the directory structure for the entire backend. No logic, no user-facing strings.
 

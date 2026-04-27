@@ -1,0 +1,2 @@
+"""Customers app."""
+
