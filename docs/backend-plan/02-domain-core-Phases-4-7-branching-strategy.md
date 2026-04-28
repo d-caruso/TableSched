@@ -1319,7 +1319,7 @@ git push origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.4 — Staff Actions
+### ✅ Task 7.4 — Staff Actions
 
 Approve, decline, modify, assign table, mark no-show, confirm without deposit, request payment again. All via `IsTenantMember` permission. No user-facing strings.
 
