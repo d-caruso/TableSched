@@ -929,7 +929,7 @@ git push origin feature/backend-mvp-Phase6-restaurant-config
 
 ---
 
-### ❌ Task 6.4 — Public Restaurant Page Endpoint
+### ✅ Task 6.4 — Public Restaurant Page Endpoint
 
 Unauthenticated endpoint returning name, opening hours, and basic policies as codes.
 
