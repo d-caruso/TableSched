@@ -73,7 +73,7 @@ git push -u origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.1 — Payment Model & Statuses
+### ✅ Task 8.1 — Payment Model & Statuses
 
 Canonical payment statuses tracked separately from booking status. No user-facing strings.
 
