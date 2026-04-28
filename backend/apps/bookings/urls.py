@@ -6,10 +6,12 @@ from rest_framework.routers import DefaultRouter  # type: ignore[import-untyped]
 
 from apps.bookings.views import BookingViewSet
 from apps.bookings.views_customer import CustomerBookingView
+from apps.bookings.views_walkins import WalkinViewSet
 
 app_name = "bookings"
 router = DefaultRouter()
 router.register("bookings", BookingViewSet, basename="bookings")
+router.register("walkins", WalkinViewSet, basename="walkins")
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("", include(router.urls)),

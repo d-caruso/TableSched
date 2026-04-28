@@ -48,3 +48,17 @@ class Booking(TimeStampedModel):
 
     class Meta:
         indexes = [models.Index(fields=["status", "starts_at"])]
+
+
+class Walkin(TimeStampedModel):
+    """Staff-only in-person reservation record."""
+
+    starts_at: models.DateTimeField = models.DateTimeField()
+    party_size: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField()
+    table: models.ForeignKey = models.ForeignKey(
+        "restaurants.Table",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    notes: models.TextField = models.TextField(blank=True)

@@ -1044,7 +1044,7 @@ git push -u origin feature/backend-mvp-Phase10-walkins
 
 ---
 
-### ❌ Task 10.1 — Walk-in Model & Endpoint
+### ✅ Task 10.1 — Walk-in Model & Endpoint
 
 **Branch:** `task/backend-mvp-Task10.1-walkin-model` — created from `feature/backend-mvp-Phase10-walkins`
 
