@@ -638,7 +638,7 @@ git push -u origin feature/backend-mvp-Phase9-notifications
 
 ---
 
-### ❌ Task 9.1 — NotificationLog
+### ✅ Task 9.1 — NotificationLog
 
 Audit trail for every sent/failed notification. No user-facing strings.
 
