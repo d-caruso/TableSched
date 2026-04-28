@@ -1,5 +1,7 @@
 """Customer token-authenticated booking endpoints."""
 
+import logging
+
 from django.utils import timezone
 from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
@@ -9,8 +11,11 @@ from apps.bookings.serializers import BookingPublicSerializer
 from apps.bookings.services import cancel_by_customer, modify_by_customer
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
-from apps.customers.models import BookingAccessToken, hash_token
+from apps.customers.models import BookingAccessToken, hash_token, verify_token
+from apps.customers.throttles import BookingTokenThrottle
 from apps.restaurants.models import RestaurantSettings
+
+logger = logging.getLogger(__name__)
 
 
 class CustomerBookingView(APIView):
@@ -18,15 +23,22 @@ class CustomerBookingView(APIView):
 
     authentication_classes: list = []
     permission_classes: list = []
+    throttle_classes = [BookingTokenThrottle]
 
     def _resolve(self, raw_token: str):
         hashed = hash_token(raw_token)
         try:
             token = BookingAccessToken.objects.select_related("booking").get(token_hash=hashed)
         except BookingAccessToken.DoesNotExist as exc:
+            logger.warning("customer_booking_token_invalid")
             raise DomainError(ErrorCode.TOKEN_INVALID, status=404) from exc
 
+        if not verify_token(raw_token, token.token_hash):
+            logger.warning("customer_booking_token_invalid")
+            raise DomainError(ErrorCode.TOKEN_INVALID, status=404)
+
         if token.revoked_at or token.expires_at < timezone.now():
+            logger.warning("customer_booking_token_expired")
             raise DomainError(ErrorCode.TOKEN_EXPIRED, status=410)
         return token.booking
 

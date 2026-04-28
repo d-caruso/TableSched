@@ -1,6 +1,7 @@
 """Tenant-schema customer models."""
 
 import hashlib
+import hmac
 import secrets
 from datetime import datetime, timedelta
 from typing import Protocol
@@ -54,6 +55,12 @@ class BookingAccessToken(TimeStampedModel):
 
 def hash_token(raw: str) -> str:
     return hashlib.sha256(raw.encode()).hexdigest()
+
+
+def verify_token(raw: str, stored_hash: str) -> bool:
+    """Verify a booking token without leaking timing differences."""
+
+    return hmac.compare_digest(hash_token(raw), stored_hash)
 
 
 class BookingWithStart(Protocol):
