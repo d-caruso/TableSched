@@ -1091,7 +1091,7 @@ git push origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.2 — Status Machine
+### ✅ Task 7.2 — Status Machine
 
 Enforces valid status transitions. Raises `DomainError` (code-only) on invalid attempts.
 
