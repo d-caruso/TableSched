@@ -226,7 +226,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.3 — Stripe Pre-Authorization (Payment Element Flow)
+### ✅ Task 8.3 — Stripe Pre-Authorization (Payment Element Flow)
 
 Booking is created first; PaymentIntent created afterwards with `capture_method=manual`. Returns `client_secret` to frontend for the Payment Element. `Payment.status` becomes `authorized` on Stripe webhook — booking remains `pending_review`.
 

@@ -3,13 +3,9 @@
 
 def create_preauth(*, booking, settings):
     """Create a near-term authorization intent placeholder."""
+    from apps.payments.gateways.stripe import create_preauth as stripe_create_preauth
 
-    return {
-        "provider": "stripe",
-        "type": "preauth",
-        "booking_id": str(booking.id),
-        "amount_cents": settings.deposit_amount_cents,
-    }
+    return stripe_create_preauth(booking=booking, settings=settings)
 
 
 def get_authorized_payment(*, booking):
