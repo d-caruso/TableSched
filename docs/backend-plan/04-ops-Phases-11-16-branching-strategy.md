@@ -903,7 +903,7 @@ git push origin feature/backend-mvp-Phase14-tests
 
 ---
 
-### ❌ Task 14.2 — Test Tooling & Fixtures
+### ✅ Task 14.2 — Test Tooling & Fixtures
 
 Shared `conftest.py` fixtures: `tenant_db`, `staff_client`, `manager_client`, `booking`, `customer`, `payment`, etc. Ensures no test duplicates fixture setup.
 
