@@ -526,7 +526,7 @@ git push origin feature/backend-mvp-Phase5-customers-tokens
 
 ---
 
-### ❌ Task 5.3 — Customer-Facing Endpoints (Token-Authenticated)
+### ✅ Task 5.3 — Customer-Facing Endpoints (Token-Authenticated)
 
 Public endpoints for customers to view/cancel/modify their booking via the tokenized link. No session auth. All responses are code-form only — no localized strings.
 

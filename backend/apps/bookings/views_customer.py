@@ -1,0 +1,45 @@
+"""Customer token-authenticated booking endpoints."""
+
+from django.utils import timezone
+from rest_framework.request import Request  # type: ignore[import-untyped]
+from rest_framework.response import Response  # type: ignore[import-untyped]
+from rest_framework.views import APIView  # type: ignore[import-untyped]
+
+from apps.bookings.serializers import BookingPublicSerializer
+from apps.bookings.services import cancel_by_customer, modify_by_customer
+from apps.common.codes import ErrorCode
+from apps.common.errors import DomainError
+from apps.customers.models import BookingAccessToken, hash_token
+
+
+class CustomerBookingView(APIView):
+    """Public endpoint secured by booking access token."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+
+    def _resolve(self, raw_token: str):
+        hashed = hash_token(raw_token)
+        try:
+            token = BookingAccessToken.objects.select_related("booking").get(token_hash=hashed)
+        except BookingAccessToken.DoesNotExist as exc:
+            raise DomainError(ErrorCode.TOKEN_INVALID, status=404) from exc
+
+        if token.revoked_at or token.expires_at < timezone.now():
+            raise DomainError(ErrorCode.TOKEN_EXPIRED, status=410)
+        return token.booking
+
+    def get(self, request: Request, raw_token: str) -> Response:
+        booking = self._resolve(raw_token)
+        return Response(BookingPublicSerializer(booking).data)
+
+    def post(self, request: Request, raw_token: str) -> Response:
+        booking = self._resolve(raw_token)
+        action = request.data.get("action")
+        if action == "cancel":
+            booking = cancel_by_customer(booking)
+        elif action == "modify":
+            booking = modify_by_customer(booking, request.data)
+        else:
+            raise DomainError(ErrorCode.VALIDATION_FAILED)
+        return Response(BookingPublicSerializer(booking).data)

@@ -15,6 +15,7 @@ def healthz(_: HttpRequest) -> HttpResponse:
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
     path("auth/", include("allauth.urls")),
+    path("api/v1/", include("apps.bookings.urls")),
     path("stripe/webhook/", stripe_webhook, name="stripe-webhook"),
     path("healthz/", healthz, name="healthz"),
 ]
