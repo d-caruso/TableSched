@@ -52,7 +52,7 @@ develop
     │   ├── task/backend-mvp-Task6.3-rooms-tables
     │   └── task/backend-mvp-Task6.4-public-endpoint
     └── feature/backend-mvp-Phase7-bookings          ← created from feature/backend-mvp AFTER Phase 6 merged
-        ├── task/backend-mvp-Task7.1-booking-model
+        ├── task/backend-mvp-Task7.1-booking-status-set
         ├── task/backend-mvp-Task7.2-state-machine
         ├── task/backend-mvp-Task7.3-booking-creation
         ├── task/backend-mvp-Task7.4-staff-actions
@@ -415,9 +415,10 @@ git push origin feature/backend-mvp-Phase5-customers-tokens
 
 ---
 
-### ❌ Task 5.2 — BookingAccessToken
+### ✅ Task 5.2 — Booking Model + BookingAccessToken
 
-One token per booking. Stored as SHA-256 hash; raw token sent to customer once and never persisted. Expires 7 days after booking datetime.
+Move `Booking` model implementation into this task to support token issuance and public-token flows.
+Keep canonical status enum and `table` FK for Task 7.1.
 
 **Branch:** `task/backend-mvp-Task5.2-booking-access-token` — created from `feature/backend-mvp-Phase5-customers-tokens`
 
@@ -425,6 +426,28 @@ One token per booking. Stored as SHA-256 hash; raw token sent to customer once a
 git checkout feature/backend-mvp-Phase5-customers-tokens
 git pull origin feature/backend-mvp-Phase5-customers-tokens
 git checkout -b task/backend-mvp-Task5.2-booking-access-token
+```
+
+**`apps/bookings/models.py`:**
+
+```python
+from django.db import models
+from apps.common.models import TimeStampedModel
+
+class Booking(TimeStampedModel):
+    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT)
+    starts_at = models.DateTimeField()
+    party_size = models.PositiveSmallIntegerField()
+    status = models.CharField(max_length=32, default="pending_review")
+    notes = models.TextField(blank=True)
+    staff_message = models.TextField(blank=True)
+    payment_due_at = models.DateTimeField(null=True, blank=True)
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decided_by = models.ForeignKey("memberships.StaffMembership", null=True,
+                                   blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        indexes = [models.Index(fields=["status", "starts_at"])]
 ```
 
 **`apps/customers/models.py` (continued):**
@@ -481,8 +504,8 @@ def test_token_hash_uses_constant_time_compare(tenant_db, booking):
 
 **Commit:**
 ```bash
-git add apps/customers/models.py
-git commit -m "[TASK] 5.2 add BookingAccessToken with hashed storage"
+git add apps/bookings/ apps/customers/
+git commit -m "[TASK] 5.2 add Booking model and BookingAccessToken"
 ```
 
 **Pre-merge checks:**
@@ -971,7 +994,7 @@ git push origin feature/backend-mvp
 
 ## ❌ Phase 7 — Booking Lifecycle
 
-The core domain. Implements the `Booking` model, status machine, creation service with all business-rule validators, staff actions, and customer cancel/modify. All API responses use codes only.
+The core domain. Implements canonical booking status rules, the status machine, creation service with all business-rule validators, staff actions, and customer cancel/modify. All API responses use codes only.
 
 **⚠️ Create this branch only after Phase 6 is merged into `feature/backend-mvp`.**
 
@@ -986,16 +1009,16 @@ git push -u origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.1 — Booking Model & Status Set
+### ❌ Task 7.1 — Booking Status Set
 
-All ten canonical booking statuses. No user-facing strings.
+Canonical booking statuses and status constraints. Add `table` FK here. No user-facing strings.
 
-**Branch:** `task/backend-mvp-Task7.1-booking-model` — created from `feature/backend-mvp-Phase7-bookings`
+**Branch:** `task/backend-mvp-Task7.1-booking-status-set` — created from `feature/backend-mvp-Phase7-bookings`
 
 ```bash
 git checkout feature/backend-mvp-Phase7-bookings
 git pull origin feature/backend-mvp-Phase7-bookings
-git checkout -b task/backend-mvp-Task7.1-booking-model
+git checkout -b task/backend-mvp-Task7.1-booking-status-set
 ```
 
 **`apps/bookings/models.py`:**
@@ -1016,23 +1039,12 @@ class BookingStatus(models.TextChoices):
     EXPIRED = "expired"
     AUTHORIZATION_EXPIRED = "authorization_expired"
 
-class Booking(TimeStampedModel):
-    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT)
-    starts_at = models.DateTimeField()
-    party_size = models.PositiveSmallIntegerField()
-    status = models.CharField(max_length=32, choices=BookingStatus.choices,
-                              default=BookingStatus.PENDING_REVIEW)
-    notes = models.TextField(blank=True)
-    table = models.ForeignKey("restaurants.Table", null=True, blank=True,
-                              on_delete=models.SET_NULL)
-    staff_message = models.TextField(blank=True)   # only field that bypasses i18n codes
-    payment_due_at = models.DateTimeField(null=True, blank=True)
-    decided_at = models.DateTimeField(null=True, blank=True)
-    decided_by = models.ForeignKey("memberships.StaffMembership", null=True,
-                                   blank=True, on_delete=models.SET_NULL)
+```
 
-    class Meta:
-        indexes = [models.Index(fields=["status", "starts_at"])]
+In this task update `Booking.status` to use `BookingStatus.choices` and add:
+
+```python
+table = models.ForeignKey("restaurants.Table", null=True, blank=True, on_delete=models.SET_NULL)
 ```
 
 **Tests:**
@@ -1058,7 +1070,7 @@ def test_all_statuses_are_defined():
 **Commit:**
 ```bash
 git add apps/bookings/models.py
-git commit -m "[TASK] 7.1 add Booking model and status set"
+git commit -m "[TASK] 7.1 add Booking status set and table FK"
 ```
 
 **Pre-merge checks:**
@@ -1071,9 +1083,9 @@ pytest
 
 **Push & merge:**
 ```bash
-git push origin task/backend-mvp-Task7.1-booking-model
+git push origin task/backend-mvp-Task7.1-booking-status-set
 git checkout feature/backend-mvp-Phase7-bookings
-git merge task/backend-mvp-Task7.1-booking-model
+git merge task/backend-mvp-Task7.1-booking-status-set
 git push origin feature/backend-mvp-Phase7-bookings
 ```
 

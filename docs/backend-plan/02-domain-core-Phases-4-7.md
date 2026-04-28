@@ -106,7 +106,32 @@ def upsert_customer(*, phone, email, name, locale):
     return customer
 ```
 
-### Task 5.2 — BookingAccessToken (tenant schema)
+### Task 5.2 — Booking model + BookingAccessToken (tenant schema)
+
+Move `Booking` model creation earlier to unblock token issuance and customer token endpoints.
+Canonical status enum and `table` FK remain in Task 7.1.
+
+`apps/bookings/models.py`:
+
+```python
+from django.db import models
+from apps.common.models import TimeStampedModel
+
+class Booking(TimeStampedModel):
+    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT)
+    starts_at = models.DateTimeField()
+    party_size = models.PositiveSmallIntegerField()
+    status = models.CharField(max_length=32, default="pending_review")
+    notes = models.TextField(blank=True)
+    staff_message = models.TextField(blank=True)
+    payment_due_at = models.DateTimeField(null=True, blank=True)
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decided_by = models.ForeignKey("memberships.StaffMembership", null=True,
+                                   blank=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        indexes = [models.Index(fields=["status", "starts_at"])]
+```
 
 `apps/customers/models.py` (continued):
 
@@ -271,7 +296,7 @@ Table combinations explicitly excluded.
 
 Branch: `feature/bookings`
 
-### Task 7.1 — Booking model & status set
+### Task 7.1 — Booking status set (and `table` FK)
 
 Canonical Booking statuses (business doc §2):
 
@@ -290,23 +315,17 @@ class BookingStatus(models.TextChoices):
     EXPIRED = "expired"
     AUTHORIZATION_EXPIRED = "authorization_expired"
 
-class Booking(TimeStampedModel):
-    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT)
-    starts_at = models.DateTimeField()
-    party_size = models.PositiveSmallIntegerField()
-    status = models.CharField(max_length=32, choices=BookingStatus.choices,
-                              default=BookingStatus.PENDING_REVIEW)
-    notes = models.TextField(blank=True)
-    table = models.ForeignKey("restaurants.Table", null=True, blank=True,
-                              on_delete=models.SET_NULL)
-    staff_message = models.TextField(blank=True)   # only field that bypasses i18n codes
-    payment_due_at = models.DateTimeField(null=True, blank=True)
-    decided_at = models.DateTimeField(null=True, blank=True)
-    decided_by = models.ForeignKey("memberships.StaffMembership", null=True,
-                                   blank=True, on_delete=models.SET_NULL)
+```
 
-    class Meta:
-        indexes = [models.Index(fields=["status", "starts_at"])]
+In this task, update `Booking.status` to use `BookingStatus.choices` and add:
+
+```python
+table = models.ForeignKey(
+    "restaurants.Table",
+    null=True,
+    blank=True,
+    on_delete=models.SET_NULL,
+)
 ```
 
 ### Task 7.2 — Status machine

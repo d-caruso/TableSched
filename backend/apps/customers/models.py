@@ -1,5 +1,10 @@
 """Tenant-schema customer models."""
 
+import hashlib
+import secrets
+from datetime import datetime, timedelta
+from typing import Protocol
+
 from django.db import models
 
 from apps.common.models import TimeStampedModel
@@ -25,3 +30,31 @@ class Customer(TimeStampedModel):
         choices=LOCALE_CHOICES,
         default=LOCALE_EN,
     )
+
+
+class BookingAccessToken(TimeStampedModel):
+    """One-time issued customer access token for a booking."""
+
+    booking: models.OneToOneField = models.OneToOneField(
+        "bookings.Booking",
+        on_delete=models.CASCADE,
+    )
+    token_hash: models.CharField = models.CharField(max_length=128, unique=True, db_index=True)
+    expires_at: models.DateTimeField = models.DateTimeField()
+    revoked_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
+
+    @classmethod
+    def issue(cls, booking: "BookingWithStart") -> tuple["BookingAccessToken", str]:
+        raw = secrets.token_urlsafe(48)
+        hashed = hash_token(raw)
+        expires = booking.starts_at + timedelta(days=7)
+        token = cls.objects.create(booking=booking, token_hash=hashed, expires_at=expires)
+        return token, raw
+
+
+def hash_token(raw: str) -> str:
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+class BookingWithStart(Protocol):
+    starts_at: datetime
