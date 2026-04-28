@@ -438,7 +438,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.5 — Stripe Webhook Handler (Public URL)
+### ✅ Task 8.5 — Stripe Webhook Handler (Public URL)
 
 Receives Stripe events, verifies signature, resolves tenant from metadata, dispatches to idempotent handlers. Lives on the public URLConf.
 

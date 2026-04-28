@@ -48,3 +48,11 @@ class Payment(TimeStampedModel):
         default=PaymentStatus.PENDING,
     )
     expires_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
+
+
+class StripeEvent(TimeStampedModel):
+    """Idempotency record for processed Stripe webhook events."""
+
+    event_id: models.CharField = models.CharField(max_length=128, unique=True)
+    event_type: models.CharField = models.CharField(max_length=128)
+    processed_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
