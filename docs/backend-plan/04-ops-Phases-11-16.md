@@ -1,18 +1,18 @@
 # Phases 11–16 — Ops
 
-Covers opportunistic background sweeps, the audit log, security hardening, the test strategy, observability, and deployment preparation.
+Covers opportunistic background maintenance, the audit log, security hardening, the test strategy, observability, and deployment preparation.
 
 ---
 
-## Phase 11 — Opportunistic Background Sweeps
+## Phase 11 — Opportunistic Background Maintenance
 
-Branch: `feature/dashboard-sweeps`
+Branch: `feature/backend-mvp-Phase11-opportunistic-maintenance`
 
-No Celery/Redis (technical doc §8). Sweeps run lazily when staff loads the dashboard.
+No Celery/Redis (technical doc §8). Opportunistic maintenance runs lazily when staff loads the dashboard.
 
-### Task 11.1 — Sweep service
+### Task 11.1 — Opportunistic maintenance service
 
-`apps/bookings/services/sweeps.py`:
+`apps/bookings/services/opportunistic_maintenance.py`:
 
 ```python
 from datetime import timedelta
@@ -22,7 +22,7 @@ from apps.bookings.services.state_machine import transition
 from apps.payments.models import Payment, PaymentStatus
 from apps.notifications import services as notifications
 
-def run_dashboard_sweeps():
+def run_opportunistic_maintenance():
     _expire_pending_payments()
     _expire_authorized_deposits()
     _reconcile_payments()
@@ -61,18 +61,18 @@ def _reconcile_payments():
     ...
 ```
 
-Each helper is bounded (`[:200]`) so dashboard load can never time out on a backlog. Idempotent — safe to call concurrently.
+Each helper is bounded (`[:200]`) so dashboard load can never time out on a backlog. Idempotent - safe to call concurrently.
 
 ### Task 11.2 — Dashboard endpoint
 
-`GET /api/v1/admin/dashboard` runs sweeps then returns counts + recent bookings. Manager + staff allowed.
+`GET /api/v1/admin/dashboard` runs opportunistic maintenance then returns counts + recent bookings. Manager + staff allowed.
 
 ```python
 class AdminDashboardView(APIView):
     permission_classes = [IsTenantMember]
 
     def get(self, request):
-        sweeps.run_dashboard_sweeps()
+        opportunistic_maintenance.run_opportunistic_maintenance()
         data = {
             "counts_by_status": _counts_by_status(),
             "recent": list(
@@ -170,7 +170,7 @@ Per CLAUDE.md "Test your code — no feature is complete without tests".
 
 ### Task 14.1 — Layered tests
 
-- **Unit**: services (state machine, opening-hours, validators, sweeps, gateway adapters with mocked Stripe/Twilio/SMTP).
+- **Unit**: services (state machine, opening-hours, validators, opportunistic maintenance, gateway adapters with mocked Stripe/Twilio/SMTP).
 - **API**: DRF `APIClient` against a tenant subdomain, full happy paths and code-form error responses.
 - **Webhook**: Stripe event fixtures (`payment_intent.amount_capturable_updated`, `succeeded`, `canceled`, `checkout.session.completed`, etc.) → assert booking + payment transitions.
 - **Tenant isolation**: cross-tenant access denied.

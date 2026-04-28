@@ -38,8 +38,8 @@ All checks must pass (0 errors, 0 failures) before merging.
 ```
 develop
 └── feature/backend-mvp
-    ├── feature/backend-mvp-Phase11-sweeps         ← created from feature/backend-mvp AFTER Phase 10 merged
-    │   ├── task/backend-mvp-Task11.1-sweep-service
+    ├── feature/backend-mvp-Phase11-opportunistic-maintenance         ← created from feature/backend-mvp AFTER Phase 10 merged
+    │   ├── task/backend-mvp-Task11.1-opportunistic-maintenance-service
     │   └── task/backend-mvp-Task11.2-dashboard-endpoint
     ├── feature/backend-mvp-Phase12-audit           ← created from feature/backend-mvp AFTER Phase 11 merged
     │   ├── task/backend-mvp-Task12.1-audit-model
@@ -63,36 +63,36 @@ develop
 
 ---
 
-## ❌ Phase 11 — Opportunistic Background Sweeps
+## ❌ Phase 11 — Opportunistic Maintenance
 
-No Celery/Redis. Sweeps run lazily on each admin dashboard load. Each sweep is bounded (`[:200]`) and idempotent. Handles: expired pending payments, expired pre-authorizations (→ `authorization_expired`), and payment reconciliation.
+No Celery/Redis. Opportunistic maintenance runs lazily on each admin dashboard load. Each opportunistic maintenance is bounded (`[:200]`) and idempotent. Handles: expired pending payments, expired pre-authorizations (→ `authorization_expired`), and payment reconciliation.
 
 **⚠️ Create this branch only after Phase 10 is merged into `feature/backend-mvp`.**
 
-**Branch:** `feature/backend-mvp-Phase11-sweeps` — created from `feature/backend-mvp`
+**Branch:** `feature/backend-mvp-Phase11-opportunistic-maintenance` — created from `feature/backend-mvp`
 
 ```bash
 git checkout feature/backend-mvp
 git pull origin feature/backend-mvp
-git checkout -b feature/backend-mvp-Phase11-sweeps
-git push -u origin feature/backend-mvp-Phase11-sweeps
+git checkout -b feature/backend-mvp-Phase11-opportunistic-maintenance
+git push -u origin feature/backend-mvp-Phase11-opportunistic-maintenance
 ```
 
 ---
 
-### ❌ Task 11.1 — Sweep Service
+### ❌ Task 11.1 — Opportunistic Maintenance Service
 
 Expires `pending_payment` bookings past their `payment_due_at`. Transitions pre-authorized payments older than 6 days to `authorization_expired` (Stripe auth expires ~7 days). Notifies staff on authorization expiry — does NOT auto-cancel the booking.
 
-**Branch:** `task/backend-mvp-Task11.1-sweep-service` — created from `feature/backend-mvp-Phase11-sweeps`
+**Branch:** `task/backend-mvp-Task11.1-opportunistic-maintenance-service` — created from `feature/backend-mvp-Phase11-opportunistic-maintenance`
 
 ```bash
-git checkout feature/backend-mvp-Phase11-sweeps
-git pull origin feature/backend-mvp-Phase11-sweeps
-git checkout -b task/backend-mvp-Task11.1-sweep-service
+git checkout feature/backend-mvp-Phase11-opportunistic-maintenance
+git pull origin feature/backend-mvp-Phase11-opportunistic-maintenance
+git checkout -b task/backend-mvp-Task11.1-opportunistic-maintenance-service
 ```
 
-**`apps/bookings/services/sweeps.py`:**
+**`apps/bookings/services/opportunistic_maintenance.py`:**
 
 ```python
 from datetime import timedelta
@@ -102,7 +102,7 @@ from apps.bookings.services.state_machine import transition
 from apps.payments.models import Payment, PaymentStatus
 from apps.notifications import services as notifications
 
-def run_dashboard_sweeps():
+def run_opportunistic_maintenance():
     _expire_pending_payments()
     _expire_authorized_deposits()
     _reconcile_payments()
@@ -147,24 +147,24 @@ def _reconcile_payments():
 **Tests:**
 
 ```python
-# tests/bookings/test_sweeps.py
+# tests/bookings/test_opportunistic_maintenance.py
 
 def test_expire_pending_payment_past_due(tenant_db, pending_payment_booking):
-    from apps.bookings.services.sweeps import _expire_pending_payments
+    from apps.bookings.services.opportunistic_maintenance import _expire_pending_payments
     from apps.bookings.models import BookingStatus
     _expire_pending_payments()
     pending_payment_booking.refresh_from_db()
     assert pending_payment_booking.status == BookingStatus.EXPIRED
 
 def test_expire_pending_payment_not_yet_due(tenant_db, pending_payment_booking_future):
-    from apps.bookings.services.sweeps import _expire_pending_payments
+    from apps.bookings.services.opportunistic_maintenance import _expire_pending_payments
     from apps.bookings.models import BookingStatus
     _expire_pending_payments()
     pending_payment_booking_future.refresh_from_db()
     assert pending_payment_booking_future.status == BookingStatus.PENDING_PAYMENT
 
 def test_expire_authorized_deposit_old(tenant_db, old_authorized_payment):
-    from apps.bookings.services.sweeps import _expire_authorized_deposits
+    from apps.bookings.services.opportunistic_maintenance import _expire_authorized_deposits
     from apps.bookings.models import BookingStatus
     from apps.payments.models import PaymentStatus
     _expire_authorized_deposits()
@@ -173,16 +173,16 @@ def test_expire_authorized_deposit_old(tenant_db, old_authorized_payment):
     assert old_authorized_payment.booking.status == BookingStatus.AUTHORIZATION_EXPIRED
     assert old_authorized_payment.status == PaymentStatus.FAILED
 
-def test_sweep_is_idempotent(tenant_db, pending_payment_booking):
-    from apps.bookings.services.sweeps import _expire_pending_payments
+def test_opportunistic_maintenance_is_idempotent(tenant_db, pending_payment_booking):
+    from apps.bookings.services.opportunistic_maintenance import _expire_pending_payments
     _expire_pending_payments()
     _expire_pending_payments()  # second call must not error or double-process
     pending_payment_booking.refresh_from_db()
     assert pending_payment_booking.status == "expired"
 
-def test_sweep_bounded_at_200(tenant_db, many_expired_bookings):
-    """Sweep must process at most 200 items per run."""
-    from apps.bookings.services.sweeps import _expire_pending_payments
+def test_opportunistic_maintenance_bounded_at_200(tenant_db, many_expired_bookings):
+    """Opportunistic maintenance must process at most 200 items per run."""
+    from apps.bookings.services.opportunistic_maintenance import _expire_pending_payments
     from apps.bookings.models import Booking, BookingStatus
     _expire_pending_payments()
     expired_count = Booking.objects.filter(status=BookingStatus.EXPIRED).count()
@@ -191,37 +191,37 @@ def test_sweep_bounded_at_200(tenant_db, many_expired_bookings):
 
 **Commit:**
 ```bash
-git add apps/bookings/services/sweeps.py
-git commit -m "[TASK] 11.1 add dashboard sweep service"
+git add apps/bookings/services/opportunistic_maintenance.py
+git commit -m "[TASK] 11.1 add dashboard opportunistic maintenance service"
 ```
 
 **Pre-merge checks:**
 ```bash
 ruff check backend/
 mypy backend/
-pytest tests/bookings/test_sweeps.py
+pytest tests/bookings/test_opportunistic_maintenance.py
 pytest
 ```
 
 **Push & merge:**
 ```bash
-git push origin task/backend-mvp-Task11.1-sweep-service
-git checkout feature/backend-mvp-Phase11-sweeps
-git merge task/backend-mvp-Task11.1-sweep-service
-git push origin feature/backend-mvp-Phase11-sweeps
+git push origin task/backend-mvp-Task11.1-opportunistic-maintenance-service
+git checkout feature/backend-mvp-Phase11-opportunistic_maintenance
+git merge task/backend-mvp-Task11.1-opportunistic-maintenance-service
+git push origin feature/backend-mvp-Phase11-opportunistic-maintenance
 ```
 
 ---
 
 ### ❌ Task 11.2 — Dashboard Endpoint
 
-Runs sweeps then returns counts by status and the 50 most recent bookings. Manager + staff allowed. Response is code-form only — no localized strings.
+Runs opportunistic maintenance then returns counts by status and the 50 most recent bookings. Manager + staff allowed. Response is code-form only — no localized strings.
 
-**Branch:** `task/backend-mvp-Task11.2-dashboard-endpoint` — created from `feature/backend-mvp-Phase11-sweeps`
+**Branch:** `task/backend-mvp-Task11.2-dashboard-endpoint` — created from `feature/backend-mvp-Phase11-opportunistic-maintenance`
 
 ```bash
-git checkout feature/backend-mvp-Phase11-sweeps
-git pull origin feature/backend-mvp-Phase11-sweeps
+git checkout feature/backend-mvp-Phase11-opportunistic-maintenance
+git pull origin feature/backend-mvp-Phase11-opportunistic-maintenance
 git checkout -b task/backend-mvp-Task11.2-dashboard-endpoint
 ```
 
@@ -232,13 +232,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from apps.common.permissions import IsTenantMember
 from apps.bookings.models import Booking
-from apps.bookings.services import sweeps
+from apps.bookings.services import OpportunisticMaintenance
 
 class AdminDashboardView(APIView):
     permission_classes = [IsTenantMember]
 
     def get(self, request):
-        sweeps.run_dashboard_sweeps()
+        opportunisticMaintenance.run_opportunistic_maintenance()
         data = {
             "counts_by_status": _counts_by_status(),
             "recent": list(
@@ -271,15 +271,15 @@ def test_dashboard_returns_counts_and_recent(staff_client, tenant, bookings):
     assert "counts_by_status" in response.data
     assert "recent" in response.data
 
-def test_dashboard_triggers_sweeps(staff_client, tenant, expired_booking, mock_sweeps):
+def test_dashboard_triggers_opportunistic_maintenance(staff_client, tenant, expired_booking, mock_opportunistic_maintenance):
     staff_client.get("/api/v1/admin/dashboard/", HTTP_HOST=tenant.domain)
-    assert mock_sweeps.run_dashboard_sweeps.called
+    assert mock_opportunistic_maintenance.run_opportunistic_maintenance.called
 ```
 
 **Commit:**
 ```bash
 git add apps/bookings/views.py apps/bookings/urls.py
-git commit -m "[TASK] 11.2 add admin dashboard endpoint with sweep trigger"
+git commit -m "[TASK] 11.2 add admin dashboard endpoint with opportunistic maintenance trigger"
 ```
 
 **Pre-merge checks:**
@@ -293,9 +293,9 @@ pytest
 **Push & merge:**
 ```bash
 git push origin task/backend-mvp-Task11.2-dashboard-endpoint
-git checkout feature/backend-mvp-Phase11-sweeps
+git checkout feature/backend-mvp-Phase11-opportunistic-maintenance
 git merge task/backend-mvp-Task11.2-dashboard-endpoint
-git push origin feature/backend-mvp-Phase11-sweeps
+git push origin feature/backend-mvp-Phase11-opportunistic-maintenance
 ```
 
 ---
@@ -304,7 +304,7 @@ git push origin feature/backend-mvp-Phase11-sweeps
 
 ```bash
 git checkout feature/backend-mvp
-git merge feature/backend-mvp-Phase11-sweeps
+git merge feature/backend-mvp-Phase11-opportunistic-maintenance
 git push origin feature/backend-mvp
 ```
 
