@@ -63,7 +63,7 @@ def _send_sms(booking, code: str, locale: str, phone: str, ctx: dict[str, object
 
         message = twilio_client.messages.create(
             to=phone,
-            from_=getattr(settings, "TWILIO_FROM", ""),
+            from_=settings.TWILIO_FROM,
             body=text,
         )
         log.status = "sent"

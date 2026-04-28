@@ -615,7 +615,7 @@ git push origin feature/backend-mvp-Phase13-security
 
 ---
 
-### ❌ Task 13.3 — Credential Hardening (Twilio + SMTP)
+### ✅ Task 13.3 — Credential Hardening (Twilio + SMTP)
 
 Credentials loaded from env only. Never echoed in API responses. Redacted from logs via a log filter.
 
