@@ -5,6 +5,7 @@ from django.urls.resolvers import URLPattern, URLResolver
 from rest_framework.routers import DefaultRouter  # type: ignore[import-untyped]
 
 from apps.bookings.views import BookingViewSet
+from apps.bookings.views import AdminDashboardView
 from apps.bookings.views_customer import CustomerBookingView
 from apps.bookings.views_walkins import WalkinViewSet
 
@@ -15,6 +16,7 @@ router.register("walkins", WalkinViewSet, basename="walkins")
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("", include(router.urls)),
+    path("admin/dashboard/", AdminDashboardView.as_view(), name="admin-dashboard"),
     path(
         "public/bookings/<str:raw_token>/",
         CustomerBookingView.as_view(),

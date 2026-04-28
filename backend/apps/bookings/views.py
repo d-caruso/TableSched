@@ -3,14 +3,17 @@
 from typing import cast
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 from rest_framework import viewsets  # type: ignore[import-untyped]
 from rest_framework.decorators import action  # type: ignore[import-untyped]
+from rest_framework.views import APIView  # type: ignore[import-untyped]
 from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 
 from apps.bookings import services
 from apps.bookings.models import Booking
 from apps.bookings.serializers import BookingSerializer
+from apps.bookings.services import opportunistic_maintenance
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
 from apps.common.permissions import IsTenantMember
@@ -100,3 +103,32 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def _membership(self, request: Request) -> StaffMembership:
         return cast(StaffMembership, getattr(request, "membership", None))
+
+
+class AdminDashboardView(APIView):
+    """Tenant dashboard endpoint that runs opportunistic maintenance."""
+
+    permission_classes = [IsTenantMember]
+
+    def get(self, request: Request) -> Response:
+        opportunistic_maintenance.run_opportunistic_maintenance()
+        return Response(
+            {
+                "counts_by_status": _counts_by_status(),
+                "recent": list(
+                    Booking.objects.order_by("-created_at")[:50].values(
+                        "id",
+                        "status",
+                        "starts_at",
+                        "party_size",
+                    )
+                ),
+            }
+        )
+
+
+def _counts_by_status() -> dict[str, int]:
+    return {
+        row["status"]: row["count"]
+        for row in Booking.objects.values("status").annotate(count=Count("id"))
+    }
