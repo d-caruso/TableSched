@@ -825,7 +825,7 @@ git push origin feature/backend-mvp-Phase9-notifications
 
 ---
 
-### ❌ Task 9.3 — Routing Rules
+### ✅ Task 9.3 — Routing Rules
 
 Phone is mandatory → SMS always sent. Email optional → sent only when `Customer.email` is set. Staff notifications are in-app only in MVP.
 
