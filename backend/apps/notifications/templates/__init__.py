@@ -1,0 +1,2 @@
+"""Localized notification templates."""
+

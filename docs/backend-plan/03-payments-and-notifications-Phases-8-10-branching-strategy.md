@@ -706,7 +706,7 @@ git push origin feature/backend-mvp-Phase9-notifications
 
 ---
 
-### ❌ Task 9.2 — Localized Templates
+### ✅ Task 9.2 — Localized Templates
 
 Per-code, per-locale template modules. Fallback to `en`. No hardcoded user-facing strings elsewhere in the codebase — all SMS/email text lives here.
 
