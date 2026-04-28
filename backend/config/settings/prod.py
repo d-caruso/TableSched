@@ -7,3 +7,5 @@ for setting_name in dir(base_settings):
         globals()[setting_name] = getattr(base_settings, setting_name)
 
 DEBUG = False
+ALLOWED_HOSTS = base_settings.env.list("ALLOWED_HOSTS")
+PUBLIC_DOMAIN = base_settings.env("PUBLIC_DOMAIN", default="")

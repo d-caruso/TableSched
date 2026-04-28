@@ -1211,7 +1211,7 @@ git push origin feature/backend-mvp-Phase16-deploy
 
 ---
 
-### ❌ Task 16.3 — Domain & Subdomains
+### ✅ Task 16.3 — Domain & Subdomains
 
 Configure `ALLOWED_HOSTS` and tenant domain mapping. Verify wildcard subdomain support on Hugging Face. If unsupported, flag to switch host before deploying.
 
