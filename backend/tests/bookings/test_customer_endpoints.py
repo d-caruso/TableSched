@@ -87,6 +87,28 @@ def test_cancel_booking_via_token():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_token_flow_issue_use_expire_reject():
+    with tenant_schema("customer_endpoints"):
+        booking = _create_booking(timezone.now() + timedelta(days=2))
+        token, raw_token = BookingAccessToken.issue(booking)
+
+        request = APIRequestFactory().get(f"/api/v1/public/bookings/{raw_token}/")
+        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+        assert response.status_code == 200
+
+        BookingAccessToken.objects.filter(pk=token.pk).update(
+            expires_at=timezone.now() - timedelta(seconds=1)
+        )
+
+        expired_request = APIRequestFactory().get(f"/api/v1/public/bookings/{raw_token}/")
+        expired_response = CustomerBookingView.as_view()(expired_request, raw_token=raw_token)
+
+    assert expired_response.status_code == 410
+    assert expired_response.data["error_code"] == "token_expired"
+    assert response.data["id"] == str(booking.id)
+
+
+@pytest.mark.django_db(transaction=True)
 def test_response_contains_code_strings():
     with tenant_schema("customer_endpoints"):
         _booking = _create_booking(timezone.now() + timedelta(days=2))

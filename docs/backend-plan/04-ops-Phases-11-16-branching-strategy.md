@@ -850,7 +850,7 @@ git push -u origin feature/backend-mvp-Phase14-tests
 
 ---
 
-### ❌ Task 14.1 — Layered Test Suite
+### ✅ Task 14.1 — Layered Test Suite
 
 Adds missing coverage tests not already written per-task:
 - API happy paths + code-form error response verification

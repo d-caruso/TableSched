@@ -108,6 +108,90 @@ def test_payment_intent_capturable_sets_authorized(client, monkeypatch):
 
 
 @pytest.mark.django_db
+def test_payment_intent_succeeded_sets_captured(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_2b",
+            event_type="payment_intent.succeeded",
+            object_data={
+                "id": payment.stripe_payment_intent_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.CAPTURED
+
+
+@pytest.mark.django_db
+def test_payment_intent_failed_sets_failed(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_2c",
+            event_type="payment_intent.payment_failed",
+            object_data={
+                "id": payment.stripe_payment_intent_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.FAILED
+
+
+@pytest.mark.django_db
+def test_payment_intent_canceled_sets_failed(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_2d",
+            event_type="payment_intent.canceled",
+            object_data={
+                "id": payment.stripe_payment_intent_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.FAILED
+
+
+@pytest.mark.django_db
 def test_checkout_session_completed_confirms_booking(client, monkeypatch):
     with payment_tenant() as (_tenant, schema_name, _domain_name):
         booking = _booking()
@@ -135,6 +219,92 @@ def test_checkout_session_completed_confirms_booking(client, monkeypatch):
     assert response.status_code == 200
     assert payment.status == PaymentStatus.CAPTURED
     assert booking.status == BookingStatus.CONFIRMED
+
+
+@pytest.mark.django_db
+def test_checkout_session_expired_sets_failed(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_4b",
+            event_type="checkout.session.expired",
+            object_data={
+                "id": payment.stripe_checkout_session_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.FAILED
+
+
+@pytest.mark.django_db
+def test_charge_refunded_sets_refunded(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_4c",
+            event_type="charge.refunded",
+            object_data={
+                "id": "ch_123",
+                "payment_intent": payment.stripe_payment_intent_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.REFUNDED
+
+
+@pytest.mark.django_db
+def test_charge_refund_failed_sets_refund_failed(client, monkeypatch):
+    with payment_tenant() as (_tenant, schema_name, _domain_name):
+        booking = _booking()
+        payment = _payment(booking)
+        event = _event(
+            event_id="evt_4d",
+            event_type="charge.refund.failed",
+            object_data={
+                "id": "ch_456",
+                "payment_intent": payment.stripe_payment_intent_id,
+                "metadata": {"tenant_schema": connection.schema_name},
+            },
+        )
+        monkeypatch.setattr(stripe_sdk.Webhook, "construct_event", lambda payload, sig, secret: event)
+
+    response = client.post(
+        "/stripe/webhook/",
+        data=b"{}",
+        content_type="application/json",
+        HTTP_STRIPE_SIGNATURE="sig",
+    )
+    with schema_context(schema_name):
+        payment.refresh_from_db()
+
+    assert response.status_code == 200
+    assert payment.status == PaymentStatus.REFUND_FAILED
 
 
 @pytest.mark.django_db

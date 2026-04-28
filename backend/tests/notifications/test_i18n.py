@@ -1,3 +1,5 @@
+import pytest
+
 from apps.notifications.templates import de, en, it
 
 
@@ -40,6 +42,28 @@ def test_render_email_returns_subject_and_body():
 
     assert isinstance(subject, str)
     assert isinstance(body, str)
+
+
+@pytest.mark.parametrize(
+    "locale, expected",
+    [
+        ("en", "received"),
+        ("it", "ricevuta"),
+        ("de", "empfangen"),
+    ],
+)
+def test_render_booking_request_received_across_locales(locale, expected):
+    from apps.notifications.i18n import render
+
+    text = render(
+        "booking_request_received",
+        locale,
+        "sms",
+        {"restaurant": "Ristorante X", "when": "Mon 20:00", "party": 2, "url": "/token"},
+    )
+
+    assert isinstance(text, str)
+    assert expected in text
 
 
 def test_all_codes_present_in_all_locales():
