@@ -1098,7 +1098,7 @@ git push -u origin feature/backend-mvp-Phase16-deploy
 
 ---
 
-### ❌ Task 16.1 — Dockerfile
+### ✅ Task 16.1 — Dockerfile
 
 Single container, no Redis, no worker. Migrations run on startup before gunicorn.
 

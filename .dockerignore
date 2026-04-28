@@ -1,0 +1,12 @@
+.git
+.venv
+**/__pycache__
+**/*.pyc
+backend/.pytest_cache
+backend/tests
+docs
+README.md
+LICENSE.txt
+AGENTS.md
+CLAUDE.md
+BRANCHING_STRATEGY.md

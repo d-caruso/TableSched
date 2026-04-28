@@ -8,6 +8,7 @@ dependencies = [
   "django-tenants",
   "django-allauth",
   "psycopg[binary]",
+  "gunicorn",
   "stripe",
   "twilio",
   "django-environ",
