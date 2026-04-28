@@ -908,7 +908,7 @@ git push origin feature/backend-mvp-Phase9-notifications
 
 ---
 
-### ❌ Task 9.4 — Synchronous Send + Non-Blocking Failure
+### ✅ Task 9.4 — Synchronous Send + Non-Blocking Failure
 
 SMS and email sent synchronously. Failures are logged to `NotificationLog` and never raised to the caller — the booking flow must never be blocked by a notification failure.
 
