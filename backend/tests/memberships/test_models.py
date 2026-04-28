@@ -1,31 +1,19 @@
 """Tests for memberships models."""
 
 import uuid
-from collections.abc import Iterator
-from contextlib import contextmanager
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.db import connection
 from django.db import IntegrityError
 from django.db import transaction
 
 from apps.memberships.models import StaffMembership
-
-
-@contextmanager
-def staff_membership_table() -> Iterator[None]:
-    table_name = StaffMembership._meta.db_table
-    table_exists = table_name in connection.introspection.table_names()
-    if not table_exists:
-        with connection.schema_editor() as editor:
-            editor.create_model(StaffMembership)
-    yield
+from tests.tenant_helpers import tenant_schema
 
 
 @pytest.mark.django_db
 def test_staff_membership_unique_per_tenant():
-    with staff_membership_table():
+    with tenant_schema("membership_models"):
         user_model = get_user_model()
         user = user_model.objects.create_user(
             username=f"user_{uuid.uuid4().hex[:8]}",

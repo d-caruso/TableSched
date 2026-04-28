@@ -1,28 +1,14 @@
 """Tests for customer model and service behavior."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
-
 import pytest
-from django.db import connection
 
-from apps.customers.models import Customer
 from apps.customers.services import upsert_customer
-
-
-@contextmanager
-def customer_table() -> Iterator[None]:
-    table_name = Customer._meta.db_table
-    table_exists = table_name in connection.introspection.table_names()
-    if not table_exists:
-        with connection.schema_editor() as editor:
-            editor.create_model(Customer)
-    yield
+from tests.tenant_helpers import tenant_schema
 
 
 @pytest.mark.django_db
 def test_upsert_creates_new_customer():
-    with customer_table():
+    with tenant_schema("customer_models"):
         customer = upsert_customer(
             phone="+39123",
             email="a@b.com",
@@ -37,7 +23,7 @@ def test_upsert_creates_new_customer():
 
 @pytest.mark.django_db
 def test_upsert_dedupes_by_phone():
-    with customer_table():
+    with tenant_schema("customer_models"):
         customer_1 = upsert_customer(
             phone="+39123",
             email="a@b.com",
@@ -58,7 +44,7 @@ def test_upsert_dedupes_by_phone():
 
 @pytest.mark.django_db
 def test_different_phones_are_different_customers():
-    with customer_table():
+    with tenant_schema("customer_models"):
         customer_1 = upsert_customer(
             phone="+39111",
             email="",

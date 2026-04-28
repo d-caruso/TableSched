@@ -1,31 +1,14 @@
 """Tests for customer booking access tokens."""
 
 import hmac
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 
 from apps.bookings.models import Booking
 from apps.customers.models import BookingAccessToken, Customer, hash_token
-from apps.memberships.models import StaffMembership
-from apps.restaurants.models import Room, Table
-
-
-@contextmanager
-def token_related_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (Customer, StaffMembership, Room, Table, Booking, BookingAccessToken)
-
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from tests.tenant_helpers import tenant_schema
 
 
 def _build_booking() -> Booking:
@@ -44,7 +27,7 @@ def _build_booking() -> Booking:
 
 @pytest.mark.django_db
 def test_token_is_hashed():
-    with token_related_tables():
+    with tenant_schema("customer_tokens"):
         booking = _build_booking()
         token, raw = BookingAccessToken.issue(booking)
 
@@ -54,7 +37,7 @@ def test_token_is_hashed():
 
 @pytest.mark.django_db
 def test_token_expires_7_days_after_booking():
-    with token_related_tables():
+    with tenant_schema("customer_tokens"):
         booking = _build_booking()
         token, _ = BookingAccessToken.issue(booking)
 
@@ -63,7 +46,7 @@ def test_token_expires_7_days_after_booking():
 
 @pytest.mark.django_db
 def test_token_hash_uses_constant_time_compare():
-    with token_related_tables():
+    with tenant_schema("customer_tokens"):
         booking = _build_booking()
         token, raw = BookingAccessToken.issue(booking)
 

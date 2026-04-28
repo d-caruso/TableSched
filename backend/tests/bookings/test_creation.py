@@ -1,41 +1,15 @@
 """Tests for booking creation service and validators."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 
-from apps.bookings.models import Booking
 from apps.bookings.services.creation import create_booking_request
 from apps.common.errors import DomainError
 from apps.customers.models import BookingAccessToken, Customer
-from apps.memberships.models import StaffMembership
-from apps.restaurants.models import ClosedDay, OpeningHours, RestaurantSettings, Room, Table
-
-
-@contextmanager
-def creation_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        OpeningHours,
-        ClosedDay,
-        Booking,
-        BookingAccessToken,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import OpeningHours, RestaurantSettings
+from tests.tenant_helpers import tenant_schema
 
 
 def _aligned_future_slot(*, days: int = 1, minutes: int = 0):
@@ -81,7 +55,7 @@ def _customer():
 
 @pytest.mark.django_db
 def test_create_booking_success():
-    with creation_tables():
+    with tenant_schema("booking_creation"):
         starts_at = _aligned_future_slot(days=2)
         _seed_opening_for(starts_at)
         settings = _base_settings()
@@ -102,7 +76,7 @@ def test_create_booking_success():
 
 @pytest.mark.django_db
 def test_slot_must_be_15_min_aligned():
-    with creation_tables():
+    with tenant_schema("booking_creation"):
         starts_at = _aligned_future_slot(days=2).replace(minute=7)
         _seed_opening_for(starts_at)
         settings = _base_settings()
@@ -121,7 +95,7 @@ def test_slot_must_be_15_min_aligned():
 
 @pytest.mark.django_db
 def test_booking_beyond_advance_limit():
-    with creation_tables():
+    with tenant_schema("booking_creation"):
         starts_at = _aligned_future_slot(days=4)
         _seed_opening_for(starts_at)
         settings = _base_settings(advance_booking_days=1)
@@ -140,7 +114,7 @@ def test_booking_beyond_advance_limit():
 
 @pytest.mark.django_db
 def test_booking_past_cutoff():
-    with creation_tables():
+    with tenant_schema("booking_creation"):
         starts_at = _aligned_future_slot(days=0, minutes=15)
         _seed_opening_for(starts_at)
         settings = _base_settings(booking_cutoff_minutes=120)
@@ -159,7 +133,7 @@ def test_booking_past_cutoff():
 
 @pytest.mark.django_db
 def test_booking_outside_opening_hours():
-    with creation_tables():
+    with tenant_schema("booking_creation"):
         starts_at = _aligned_future_slot(days=2)
         settings = _base_settings()
         customer = _customer()

@@ -1,31 +1,17 @@
 """Tests for opening-hours service."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import date, datetime, time
 
 import pytest
-from django.db import connection
 
 from apps.restaurants.models import ClosedDay, OpeningHours
 from apps.restaurants.services.opening_hours import is_open
-
-
-@contextmanager
-def opening_hours_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (OpeningHours, ClosedDay)
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from tests.tenant_helpers import tenant_schema
 
 
 @pytest.mark.django_db
 def test_is_open_during_hours():
-    with opening_hours_tables():
+    with tenant_schema("opening_hours"):
         OpeningHours.objects.create(
             weekday=0,
             opens_at=time(12, 0),
@@ -37,7 +23,7 @@ def test_is_open_during_hours():
 
 @pytest.mark.django_db
 def test_is_closed_on_closed_day():
-    with opening_hours_tables():
+    with tenant_schema("opening_hours"):
         OpeningHours.objects.create(
             weekday=0,
             opens_at=time(12, 0),
@@ -50,7 +36,7 @@ def test_is_closed_on_closed_day():
 
 @pytest.mark.django_db
 def test_is_closed_outside_hours():
-    with opening_hours_tables():
+    with tenant_schema("opening_hours"):
         OpeningHours.objects.create(
             weekday=0,
             opens_at=time(12, 0),

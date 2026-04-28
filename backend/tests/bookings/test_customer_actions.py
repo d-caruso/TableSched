@@ -1,40 +1,16 @@
 """Tests for customer cancel/modify booking services."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 
 from apps.bookings.models import Booking, BookingStatus
 from apps.bookings.services.customer_actions import cancel_by_customer, modify_by_customer
 from apps.common.errors import DomainError
 from apps.customers.models import Customer
-from apps.memberships.models import StaffMembership
-from apps.restaurants.models import ClosedDay, OpeningHours, RestaurantSettings, Room, Table
-
-
-@contextmanager
-def customer_action_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        OpeningHours,
-        ClosedDay,
-        Booking,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import OpeningHours, RestaurantSettings
+from tests.tenant_helpers import tenant_schema
 
 
 def _settings(**overrides) -> RestaurantSettings:
@@ -78,7 +54,7 @@ def _seed_opening_for(starts_at) -> None:
 
 @pytest.mark.django_db
 def test_cancel_within_cutoff_succeeds():
-    with customer_action_tables():
+    with tenant_schema("customer_actions"):
         settings = _settings(cancellation_cutoff_hours=24)
         booking = _booking(starts_at=timezone.now() + timedelta(days=3))
 
@@ -90,7 +66,7 @@ def test_cancel_within_cutoff_succeeds():
 
 @pytest.mark.django_db
 def test_cancel_past_cutoff_raises():
-    with customer_action_tables():
+    with tenant_schema("customer_actions"):
         settings = _settings(cancellation_cutoff_hours=24)
         booking = _booking(starts_at=timezone.now() + timedelta(hours=2))
 
@@ -102,7 +78,7 @@ def test_cancel_past_cutoff_raises():
 
 @pytest.mark.django_db
 def test_modify_confirmed_booking_re_enters_review():
-    with customer_action_tables():
+    with tenant_schema("customer_actions"):
         settings = _settings(cancellation_cutoff_hours=24)
         current_start = timezone.now() + timedelta(days=4)
         new_start = timezone.now() + timedelta(days=5)

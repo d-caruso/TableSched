@@ -1,38 +1,18 @@
 """Tests for staff booking DRF views."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import connection
 from django.utils import timezone
+from rest_framework.test import APIRequestFactory  # type: ignore[import-untyped]
 
 from apps.accounts.models import User
 from apps.bookings.models import Booking
+from apps.bookings.views import BookingViewSet
 from apps.customers.models import Customer
 from apps.memberships.models import StaffMembership
-from apps.restaurants.models import RestaurantSettings, Room, Table
-
-
-@contextmanager
-def booking_view_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        User,
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        Booking,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import RestaurantSettings
+from tests.tenant_helpers import tenant_schema
 
 
 def _seed_booking():
@@ -63,43 +43,39 @@ def _seed_staff():
     return user
 
 
-@pytest.mark.django_db
-def test_approve_endpoint_requires_auth(client):
-    with booking_view_tables():
+@pytest.mark.django_db(transaction=True)
+def test_approve_endpoint_requires_auth():
+    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
         RestaurantSettings.objects.create()
         booking = _seed_booking()
-        response = client.post(
-            f"/api/v1/bookings/{booking.id}/approve/",
-            HTTP_HOST="localhost",
-        )
+        request = APIRequestFactory().post(f"/api/v1/bookings/{booking.id}/approve/")
+        response = BookingViewSet.as_view({"post": "approve"})(request, pk=str(booking.id))
     assert response.status_code == 403
 
 
-@pytest.mark.django_db
-def test_approve_endpoint_returns_updated_status(client):
-    with booking_view_tables():
+@pytest.mark.django_db(transaction=True)
+def test_approve_endpoint_returns_updated_status():
+    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
         RestaurantSettings.objects.create(deposit_policy=RestaurantSettings.DEPOSIT_NEVER)
         booking = _seed_booking()
         user = _seed_staff()
-        client.force_login(user)
-        response = client.post(
-            f"/api/v1/bookings/{booking.id}/approve/",
-            HTTP_HOST="localhost",
-        )
+        request = APIRequestFactory().post(f"/api/v1/bookings/{booking.id}/approve/")
+        request.membership = StaffMembership.objects.get(user=user, is_active=True)
+        request.user = user
+        response = BookingViewSet.as_view({"post": "approve"})(request, pk=str(booking.id))
     assert response.status_code == 200
-    assert response.json()["status"] == "confirmed_without_deposit"
+    assert response.data["status"] == "confirmed_without_deposit"
 
 
-@pytest.mark.django_db
-def test_response_contains_no_localized_strings(client):
-    with booking_view_tables():
+@pytest.mark.django_db(transaction=True)
+def test_response_contains_no_localized_strings():
+    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
         RestaurantSettings.objects.create()
         booking = _seed_booking()
         user = _seed_staff()
-        client.force_login(user)
-        response = client.get(
-            f"/api/v1/bookings/{booking.id}/",
-            HTTP_HOST="localhost",
-        )
+        request = APIRequestFactory().get(f"/api/v1/bookings/{booking.id}/")
+        request.membership = StaffMembership.objects.get(user=user, is_active=True)
+        request.user = user
+        response = BookingViewSet.as_view({"get": "retrieve"})(request, pk=str(booking.id))
     assert response.status_code == 200
-    assert " " not in response.json()["status"]
+    assert " " not in response.data["status"]

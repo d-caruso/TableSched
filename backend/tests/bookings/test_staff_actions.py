@@ -1,11 +1,8 @@
 """Tests for staff booking actions service."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 
 from apps.accounts.models import User
@@ -13,27 +10,8 @@ from apps.bookings.models import Booking
 from apps.bookings.services.staff import approve, decline
 from apps.customers.models import Customer
 from apps.memberships.models import StaffMembership
-from apps.restaurants.models import RestaurantSettings, Room, Table
-
-
-@contextmanager
-def staff_action_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        User,
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        Booking,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import RestaurantSettings
+from tests.tenant_helpers import tenant_schema
 
 
 def _membership() -> StaffMembership:
@@ -72,7 +50,7 @@ def _settings(**overrides) -> RestaurantSettings:
 
 @pytest.mark.django_db
 def test_approve_no_deposit_confirms_without_deposit():
-    with staff_action_tables():
+    with tenant_schema("staff_actions"):
         booking = _booking()
         membership = _membership()
         settings = _settings(deposit_policy=RestaurantSettings.DEPOSIT_NEVER)
@@ -85,7 +63,7 @@ def test_approve_no_deposit_confirms_without_deposit():
 
 @pytest.mark.django_db
 def test_approve_with_authorized_payment_captures_and_confirms(monkeypatch):
-    with staff_action_tables():
+    with tenant_schema("staff_actions"):
         booking = _booking()
         membership = _membership()
         settings = _settings(deposit_policy=RestaurantSettings.DEPOSIT_ALWAYS)
@@ -115,7 +93,7 @@ def test_approve_with_authorized_payment_captures_and_confirms(monkeypatch):
 
 @pytest.mark.django_db
 def test_decline_cancels_authorization(monkeypatch):
-    with staff_action_tables():
+    with tenant_schema("staff_actions"):
         booking = _booking()
         membership = _membership()
 
@@ -144,7 +122,7 @@ def test_decline_cancels_authorization(monkeypatch):
 
 @pytest.mark.django_db
 def test_decline_staff_message_is_passthrough():
-    with staff_action_tables():
+    with tenant_schema("staff_actions"):
         booking = _booking()
         membership = _membership()
 
