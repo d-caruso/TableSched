@@ -60,3 +60,26 @@ class ClosedDay(TimeStampedModel):
 
     date: models.DateField = models.DateField(unique=True)
     reason_code: models.CharField = models.CharField(max_length=64, blank=True)
+
+
+class Room(TimeStampedModel):
+    """Dining room in the restaurant floor layout."""
+
+    name: models.CharField = models.CharField(max_length=100)
+
+
+class Table(TimeStampedModel):
+    """Bookable table with basic capacity and position data."""
+
+    room: models.ForeignKey = models.ForeignKey(
+        Room,
+        on_delete=models.CASCADE,
+        related_name="tables",
+    )
+    label: models.CharField = models.CharField(max_length=50)
+    seats: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField()
+    pos_x: models.IntegerField = models.IntegerField(default=0)
+    pos_y: models.IntegerField = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = [("room", "label")]

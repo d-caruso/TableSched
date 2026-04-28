@@ -854,7 +854,7 @@ git push origin feature/backend-mvp-Phase6-restaurant-config
 
 ---
 
-### ❌ Task 6.3 — Rooms & Tables
+### ✅ Task 6.3 — Rooms & Tables
 
 Basic floor layout. Tables have visual coordinates. No table combinations.
 
