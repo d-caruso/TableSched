@@ -161,7 +161,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.2 — Gateway Abstraction
+### ✅ Task 8.2 — Gateway Abstraction
 
 Protocol-based interface designed to support PayPal later. Only `StripeGateway` is implemented. No PayPal stub.
 
