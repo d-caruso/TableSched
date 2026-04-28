@@ -555,7 +555,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.6 — Manual Refund Endpoint
+### ✅ Task 8.6 — Manual Refund Endpoint
 
 Manager-only. No partial refunds. No automation.
 
