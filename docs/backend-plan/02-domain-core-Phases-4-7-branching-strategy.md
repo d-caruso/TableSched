@@ -1009,7 +1009,7 @@ git push -u origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.1 — Booking Status Set
+### ✅ Task 7.1 — Booking Status Set
 
 Canonical booking statuses and status constraints. Add `table` FK here. No user-facing strings.
 

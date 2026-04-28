@@ -11,12 +11,13 @@ from django.utils import timezone
 from apps.bookings.models import Booking
 from apps.customers.models import BookingAccessToken, Customer
 from apps.memberships.models import StaffMembership
+from apps.restaurants.models import Room, Table
 
 
 @contextmanager
 def endpoint_tables() -> Iterator[None]:
     existing_tables = set(connection.introspection.table_names())
-    models_in_order = (Customer, StaffMembership, Booking, BookingAccessToken)
+    models_in_order = (Customer, StaffMembership, Room, Table, Booking, BookingAccessToken)
 
     for model in models_in_order:
         if model._meta.db_table not in existing_tables:
