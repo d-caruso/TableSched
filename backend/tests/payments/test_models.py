@@ -1,30 +1,15 @@
 """Tests for payment models."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 
 import pytest
-from django.db import IntegrityError, connection
+from django.db import IntegrityError
 from django.utils import timezone
 
 from apps.bookings.models import Booking
 from apps.customers.models import Customer
-from apps.memberships.models import StaffMembership
 from apps.payments.models import Payment, PaymentStatus
-from apps.restaurants.models import Room, Table
-
-
-@contextmanager
-def payment_model_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (Customer, StaffMembership, Room, Table, Booking, Payment)
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from tests.payments.helpers import payment_tenant
 
 
 def _booking() -> Booking:
@@ -57,7 +42,7 @@ def test_all_payment_statuses_defined():
 
 @pytest.mark.django_db
 def test_payment_is_one_to_one_with_booking():
-    with payment_model_tables():
+    with payment_tenant():
         booking = _booking()
         Payment.objects.create(
             booking=booking,

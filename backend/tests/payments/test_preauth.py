@@ -1,42 +1,18 @@
 """Tests for Stripe pre-authorization flow."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 from unittest.mock import Mock
+from django.db import connection
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 import stripe as stripe_sdk
 
-from apps.accounts.models import User
 from apps.bookings.models import Booking, BookingStatus
 from apps.customers.models import Customer
-from apps.memberships.models import StaffMembership
 from apps.payments.models import Payment, PaymentStatus
-from apps.restaurants.models import RestaurantSettings, Room, Table
-
-
-@contextmanager
-def preauth_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        User,
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        Booking,
-        Payment,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import RestaurantSettings
+from tests.payments.helpers import payment_tenant
 
 
 def _booking() -> Booking:
@@ -68,7 +44,7 @@ def _settings() -> RestaurantSettings:
 
 @pytest.mark.django_db
 def test_create_preauth_creates_payment_record(monkeypatch):
-    with preauth_tables():
+    with payment_tenant():
         booking = _booking()
         settings = _settings()
         intent = Mock(id="pi_123", client_secret="secret_123")
@@ -92,7 +68,7 @@ def test_create_preauth_creates_payment_record(monkeypatch):
 
 @pytest.mark.django_db
 def test_preauth_metadata_contains_tenant_schema(monkeypatch):
-    with preauth_tables():
+    with payment_tenant():
         booking = _booking()
         settings = _settings()
         intent = Mock(id="pi_456", client_secret="secret_456")
@@ -112,7 +88,7 @@ def test_preauth_metadata_contains_tenant_schema(monkeypatch):
 
 @pytest.mark.django_db
 def test_booking_stays_pending_review_after_preauth(monkeypatch):
-    with preauth_tables():
+    with payment_tenant():
         booking = _booking()
         settings = _settings()
         intent = Mock(id="pi_789", client_secret="secret_789")

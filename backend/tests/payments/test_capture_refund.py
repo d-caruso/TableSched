@@ -1,42 +1,17 @@
 """Tests for Stripe capture, payment links, and refunds."""
 
-from collections.abc import Iterator
-from contextlib import contextmanager
 from datetime import timedelta
 from unittest.mock import Mock
 
 import pytest
-from django.db import connection
 from django.utils import timezone
 import stripe as stripe_sdk
 
-from apps.accounts.models import User
 from apps.bookings.models import Booking
 from apps.customers.models import Customer
-from apps.memberships.models import StaffMembership
 from apps.payments.models import Payment, PaymentStatus
-from apps.restaurants.models import RestaurantSettings, Room, Table
-
-
-@contextmanager
-def capture_refund_tables() -> Iterator[None]:
-    existing_tables = set(connection.introspection.table_names())
-    models_in_order = (
-        User,
-        Customer,
-        StaffMembership,
-        Room,
-        Table,
-        RestaurantSettings,
-        Booking,
-        Payment,
-    )
-    for model in models_in_order:
-        if model._meta.db_table not in existing_tables:
-            with connection.schema_editor() as editor:
-                editor.create_model(model)
-            existing_tables.add(model._meta.db_table)
-    yield
+from apps.restaurants.models import RestaurantSettings
+from tests.payments.helpers import payment_tenant
 
 
 def _booking() -> Booking:
@@ -78,7 +53,7 @@ def _settings() -> RestaurantSettings:
 
 @pytest.mark.django_db
 def test_capture_sets_status_captured(monkeypatch):
-    with capture_refund_tables():
+    with payment_tenant():
         booking = _booking()
         payment = _payment(booking=booking, status=PaymentStatus.AUTHORIZED)
 
@@ -97,7 +72,7 @@ def test_capture_sets_status_captured(monkeypatch):
 
 @pytest.mark.django_db
 def test_create_payment_link_creates_payment_record(monkeypatch):
-    with capture_refund_tables():
+    with payment_tenant():
         booking = _booking()
         settings = _settings()
         session = Mock(id="cs_123")
@@ -121,7 +96,7 @@ def test_create_payment_link_creates_payment_record(monkeypatch):
 
 @pytest.mark.django_db
 def test_refund_sets_status_refunded(monkeypatch):
-    with capture_refund_tables():
+    with payment_tenant():
         booking = _booking()
         payment = _payment(booking=booking, status=PaymentStatus.CAPTURED)
 
@@ -140,7 +115,7 @@ def test_refund_sets_status_refunded(monkeypatch):
 
 @pytest.mark.django_db
 def test_refund_on_stripe_error_sets_refund_failed(monkeypatch):
-    with capture_refund_tables():
+    with payment_tenant():
         booking = _booking()
         payment = _payment(booking=booking, status=PaymentStatus.CAPTURED)
 
