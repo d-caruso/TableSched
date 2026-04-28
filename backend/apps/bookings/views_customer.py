@@ -15,7 +15,7 @@ from apps.customers.models import BookingAccessToken, hash_token, verify_token
 from apps.customers.throttles import BookingTokenThrottle
 from apps.restaurants.models import RestaurantSettings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("bookings")
 
 
 class CustomerBookingView(APIView):

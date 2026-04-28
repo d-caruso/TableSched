@@ -135,19 +135,38 @@ LOGGING = {
         }
     },
     "formatters": {
-        "standard": {
-            "format": "%(levelname)s %(name)s %(message)s",
+        "json": {
+            "()": "pythonjsonlogger.json.JsonFormatter",
+            "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
         }
     },
     "handlers": {
-        "console": {
+        "stdout": {
             "class": "logging.StreamHandler",
             "filters": ["sensitive_data"],
-            "formatter": "standard",
+            "formatter": "json",
         }
     },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
+    "loggers": {
+        "bookings": {
+            "handlers": ["stdout"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "payments.webhook": {
+            "handlers": ["stdout"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "notifications": {
+            "handlers": ["stdout"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "audit": {
+            "handlers": ["stdout"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }

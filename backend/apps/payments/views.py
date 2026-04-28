@@ -1,5 +1,7 @@
 """Payment views."""
 
+import logging
+
 from django.shortcuts import get_object_or_404
 from django.conf import settings as django_settings
 from django.http import HttpRequest, HttpResponse
@@ -16,6 +18,8 @@ from apps.common.permissions import IsManager
 from apps.payments.models import Payment
 from apps.payments import services
 
+logger = logging.getLogger("payments.webhook")
+
 
 @csrf_exempt
 @require_POST
@@ -29,15 +33,19 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
             getattr(django_settings, "STRIPE_WEBHOOK_SECRET", ""),
         )
     except (ValueError, stripe.error.SignatureVerificationError):
+        logger.warning("stripe_webhook_invalid_signature")
         return HttpResponse(status=400)
 
     obj = event["data"]["object"]
     tenant_schema = (obj.get("metadata") or {}).get("tenant_schema")
     if not tenant_schema:
+        logger.warning("stripe_webhook_missing_tenant")
         return HttpResponse(status=400)
 
     with schema_context(tenant_schema):
         handlers.dispatch(event)
+
+    logger.info("stripe_webhook_processed", extra={"event_type": event["type"]})
 
     return HttpResponse(status=200)
 

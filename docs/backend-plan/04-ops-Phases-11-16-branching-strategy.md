@@ -993,7 +993,7 @@ git push -u origin feature/backend-mvp-Phase15-observability
 
 ---
 
-### ❌ Task 15.1 — Structured Logging & Health Endpoint
+### ✅ Task 15.1 — Structured Logging & Health Endpoint
 
 **Branch:** `task/backend-mvp-Task15.1-logging-healthz` — created from `feature/backend-mvp-Phase15-observability`
 
