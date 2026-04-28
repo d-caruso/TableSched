@@ -759,7 +759,7 @@ git push origin feature/backend-mvp-Phase13-security
 
 ---
 
-### ❌ Task 13.5 — Rate Limiting (Public Endpoints)
+### ✅ Task 13.5 — Rate Limiting (Public Endpoints)
 
 `AnonRateThrottle` on public booking-request and token endpoints. Uses local-memory cache (no Redis, per technical doc §8).
 

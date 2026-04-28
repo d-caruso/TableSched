@@ -97,7 +97,14 @@ ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_ADAPTER = "apps.accounts.adapters.AccountAdapter"
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "apps.common.exception_handler.custom_exception_handler"
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.AnonRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"anon": "30/min"},
+    "EXCEPTION_HANDLER": "apps.common.exception_handler.custom_exception_handler",
+}
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
 }
 
 LANGUAGE_CODE = "en-us"
