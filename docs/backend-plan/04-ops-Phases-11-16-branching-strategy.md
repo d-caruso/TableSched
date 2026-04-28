@@ -1139,7 +1139,7 @@ git push origin feature/backend-mvp-Phase16-deploy
 
 ---
 
-### ❌ Task 16.2 — Environment Variables
+### ✅ Task 16.2 — Environment Variables
 
 Document and validate all required env vars. No secrets in source.
 
