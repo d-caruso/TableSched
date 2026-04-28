@@ -16,6 +16,11 @@ TEMPLATES = {
         "email_subject": "Booking declined",
         "email_body": "Your booking at {restaurant} on {when} was declined.",
     },
+    "booking_expired": {
+        "sms": "Your booking at {restaurant} on {when} expired.",
+        "email_subject": "Booking expired",
+        "email_body": "Your booking at {restaurant} on {when} expired.",
+    },
     "payment_required": {
         "sms": "Please complete payment for your booking: {url}",
         "email_subject": "Payment required",
@@ -27,4 +32,3 @@ TEMPLATES = {
         "email_body": "Pre-authorization expired for booking {booking_id}. Please review.",
     },
 }
-

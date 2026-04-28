@@ -16,6 +16,11 @@ TEMPLATES = {
         "email_subject": "Buchung abgelehnt",
         "email_body": "Ihre Buchung bei {restaurant} am {when} wurde abgelehnt.",
     },
+    "booking_expired": {
+        "sms": "Ihre Buchung bei {restaurant} am {when} ist abgelaufen.",
+        "email_subject": "Buchung abgelaufen",
+        "email_body": "Ihre Buchung bei {restaurant} am {when} ist abgelaufen.",
+    },
     "payment_required": {
         "sms": "Bitte schließen Sie die Zahlung für Ihre Buchung ab: {url}",
         "email_subject": "Zahlung erforderlich",
@@ -27,4 +32,3 @@ TEMPLATES = {
         "email_body": "Vorautorisierung für Buchung {booking_id} abgelaufen. Bitte prüfen.",
     },
 }
-

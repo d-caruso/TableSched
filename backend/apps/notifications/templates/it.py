@@ -16,6 +16,11 @@ TEMPLATES = {
         "email_subject": "Prenotazione rifiutata",
         "email_body": "La tua prenotazione da {restaurant} per {when} è stata rifiutata.",
     },
+    "booking_expired": {
+        "sms": "La tua prenotazione da {restaurant} per {when} è scaduta.",
+        "email_subject": "Prenotazione scaduta",
+        "email_body": "La tua prenotazione da {restaurant} per {when} è scaduta.",
+    },
     "payment_required": {
         "sms": "Completa il pagamento della tua prenotazione: {url}",
         "email_subject": "Pagamento richiesto",
@@ -27,4 +32,3 @@ TEMPLATES = {
         "email_body": "La pre-autorizzazione per la prenotazione {booking_id} è scaduta. Controlla.",
     },
 }
-
