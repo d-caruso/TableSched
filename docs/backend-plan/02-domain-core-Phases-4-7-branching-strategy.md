@@ -316,7 +316,7 @@ git push -u origin feature/backend-mvp-Phase5-customers-tokens
 
 ---
 
-### ❌ Task 5.1 — Customer Model (Tenant Schema)
+### ✅ Task 5.1 — Customer Model (Tenant Schema)
 
 Guest-only customer record. Deduped by phone. Email optional, name and locale required. No user-facing strings in the model or service layer.
 
