@@ -673,7 +673,7 @@ git push -u origin feature/backend-mvp-Phase6-restaurant-config
 
 ---
 
-### ❌ Task 6.1 — Restaurant Settings (Singleton)
+### ✅ Task 6.1 — Restaurant Settings (Singleton)
 
 Configurable deposit policy, cutoff rules, and advance-booking limits. One row per tenant. No user-facing strings.
 
