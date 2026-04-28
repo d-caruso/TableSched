@@ -8,10 +8,15 @@ Customers submit booking requests. Staff review, approve/reject, optionally coll
 
 ---
 
+## Product Type
+
+TableSched is a **multi-tenant restaurant reservation system** designed to support multiple independent restaurants with isolated data and configurable settings.
+
+---
+
 ## Core Flow
 
 Customer → Booking Request → Staff Review → (Optional Payment) → Confirmation
-
 
 ---
 
