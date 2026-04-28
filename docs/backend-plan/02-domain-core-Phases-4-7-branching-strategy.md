@@ -1410,7 +1410,7 @@ git push origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.5 — Customer Cancel / Modify (Token-Authenticated)
+### ✅ Task 7.5 — Customer Cancel / Modify (Token-Authenticated)
 
 Enforces cancellation cutoff. Modification re-enters `pending_review` only if date/time/party_size changed.
 

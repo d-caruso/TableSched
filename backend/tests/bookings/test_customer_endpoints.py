@@ -11,13 +11,21 @@ from django.utils import timezone
 from apps.bookings.models import Booking
 from apps.customers.models import BookingAccessToken, Customer
 from apps.memberships.models import StaffMembership
-from apps.restaurants.models import Room, Table
+from apps.restaurants.models import RestaurantSettings, Room, Table
 
 
 @contextmanager
 def endpoint_tables() -> Iterator[None]:
     existing_tables = set(connection.introspection.table_names())
-    models_in_order = (Customer, StaffMembership, Room, Table, Booking, BookingAccessToken)
+    models_in_order = (
+        Customer,
+        StaffMembership,
+        Room,
+        Table,
+        RestaurantSettings,
+        Booking,
+        BookingAccessToken,
+    )
 
     for model in models_in_order:
         if model._meta.db_table not in existing_tables:
@@ -82,6 +90,7 @@ def test_expired_token_returns_410(client):
 @pytest.mark.django_db
 def test_cancel_booking_via_token(client):
     with endpoint_tables():
+        RestaurantSettings.objects.create()
         booking = _create_booking(timezone.now() + timedelta(days=2))
         _, raw_token = BookingAccessToken.issue(booking)
         response = client.post(

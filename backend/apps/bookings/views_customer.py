@@ -10,6 +10,7 @@ from apps.bookings.services import cancel_by_customer, modify_by_customer
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
 from apps.customers.models import BookingAccessToken, hash_token
+from apps.restaurants.models import RestaurantSettings
 
 
 class CustomerBookingView(APIView):
@@ -35,11 +36,12 @@ class CustomerBookingView(APIView):
 
     def post(self, request: Request, raw_token: str) -> Response:
         booking = self._resolve(raw_token)
+        settings = RestaurantSettings.objects.get()
         action = request.data.get("action")
         if action == "cancel":
-            booking = cancel_by_customer(booking)
+            booking = cancel_by_customer(booking, settings=settings)
         elif action == "modify":
-            booking = modify_by_customer(booking, request.data)
+            booking = modify_by_customer(booking, request.data, settings=settings)
         else:
             raise DomainError(ErrorCode.VALIDATION_FAILED)
         return Response(BookingPublicSerializer(booking).data)

@@ -57,7 +57,7 @@ def test_invalid_transition_raises_domain_error():
     with booking_state_tables():
         booking = _build_booking(status=BookingStatus.CONFIRMED)
         with pytest.raises(DomainError) as exc:
-            transition(booking, BookingStatus.PENDING_REVIEW)
+            transition(booking, BookingStatus.EXPIRED)
         assert exc.value.detail["error_code"] == "booking_transition_invalid"
 
 
