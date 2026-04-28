@@ -322,7 +322,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Task 8.4 — Capture, Cancel Authorization, Payment Link, Refund
+### ✅ Task 8.4 — Capture, Cancel Authorization, Payment Link, Refund
 
 Manual refunds only — no automation, no partial refunds.
 

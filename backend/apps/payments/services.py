@@ -1,5 +1,7 @@
 """Payment service stubs for booking workflows."""
 
+from apps.payments.models import Payment
+
 
 def create_preauth(*, booking, settings):
     """Create a near-term authorization intent placeholder."""
@@ -15,24 +17,33 @@ def get_authorized_payment(*, booking):
     return None
 
 
-def capture(payment) -> None:
+def capture(payment) -> Payment:
     """Capture an already authorized payment placeholder."""
 
-    _ = payment
+    from apps.payments.gateways.stripe import capture as stripe_capture
+
+    return stripe_capture(payment)
 
 
-def cancel_authorization(payment) -> None:
+def cancel_authorization(payment) -> Payment:
     """Cancel an existing authorization placeholder."""
 
-    _ = payment
+    from apps.payments.gateways.stripe import cancel_authorization as stripe_cancel_authorization
+
+    return stripe_cancel_authorization(payment)
 
 
 def create_payment_link(*, booking, settings):
     """Create payment link placeholder for long-term payment flow."""
 
-    return {
-        "provider": "stripe",
-        "type": "payment_link",
-        "booking_id": str(booking.id),
-        "amount_cents": settings.deposit_amount_cents,
-    }
+    from apps.payments.gateways.stripe import create_payment_link as stripe_create_payment_link
+
+    return stripe_create_payment_link(booking=booking, settings=settings)
+
+
+def refund(payment) -> Payment:
+    """Refund a captured payment placeholder."""
+
+    from apps.payments.gateways.stripe import refund as stripe_refund
+
+    return stripe_refund(payment)
