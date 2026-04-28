@@ -1192,7 +1192,7 @@ git push origin feature/backend-mvp-Phase7-bookings
 
 ---
 
-### ❌ Task 7.3 — Booking Creation Service
+### ✅ Task 7.3 — Booking Creation Service
 
 Validates slot alignment, advance limit, cutoff, opening hours. Creates booking first, then optionally creates a Stripe PaymentIntent for near-term deposits. Issues the access token. Sends notifications (non-blocking).
 
