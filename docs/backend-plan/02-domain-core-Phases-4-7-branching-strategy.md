@@ -752,7 +752,7 @@ git push origin feature/backend-mvp-Phase6-restaurant-config
 
 ---
 
-### ❌ Task 6.2 — Opening Hours & Closed Days
+### ✅ Task 6.2 — Opening Hours & Closed Days
 
 Weekly schedule and one-off closed days. Pure `is_open(dt)` helper — no user-facing strings.
 

@@ -42,3 +42,21 @@ class RestaurantSettings(TimeStampedModel):
     advance_booking_days: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField(
         default=90
     )
+
+
+class OpeningHours(TimeStampedModel):
+    """Weekly opening schedule for a tenant restaurant."""
+
+    weekday: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField()
+    opens_at: models.TimeField = models.TimeField()
+    closes_at: models.TimeField = models.TimeField()
+
+    class Meta:
+        unique_together = [("weekday", "opens_at", "closes_at")]
+
+
+class ClosedDay(TimeStampedModel):
+    """One-off closed day override."""
+
+    date: models.DateField = models.DateField(unique=True)
+    reason_code: models.CharField = models.CharField(max_length=64, blank=True)
