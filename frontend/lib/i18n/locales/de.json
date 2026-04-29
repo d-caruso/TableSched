@@ -1,0 +1,87 @@
+{
+  "common": {
+    "loading": "Laden",
+    "error": "Etwas ist schiefgelaufen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "back": "Zurück",
+    "confirm": "Bestätigen",
+    "submit": "Senden",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "booking": {
+    "status": {
+      "pending_review": "In Prüfung",
+      "pending_payment": "Zahlung ausstehend",
+      "confirmed": "Bestätigt",
+      "confirmed_without_deposit": "Ohne Anzahlung bestätigt",
+      "declined": "Abgelehnt",
+      "cancelled_by_customer": "Vom Kunden storniert",
+      "authorization_expired": "Autorisierung abgelaufen"
+    },
+    "payment_status": {
+      "pending": "Ausstehend",
+      "authorized": "Autorisiert",
+      "captured": "Eingezogen",
+      "failed": "Fehlgeschlagen",
+      "requires_action": "Aktion erforderlich"
+    },
+    "form": {
+      "title": "Tisch reservieren",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "name": "Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "notes": "Notizen",
+      "partySize": "Personenzahl",
+      "submit": "Anfrage senden"
+    },
+    "actions": {
+      "pay": "Anzahlung zahlen",
+      "modify": "Reservierung ändern",
+      "cancel": "Reservierung stornieren"
+    },
+    "success": {
+      "requested": "Anfrage gesendet",
+      "requestedBody": "Wir melden uns bald{email}."
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Mitarbeiter-Login",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "submit": "Anmelden",
+      "error": "Anmeldung fehlgeschlagen"
+    },
+    "dashboard": {
+      "empty": "Keine Buchungen gefunden",
+      "filters": {
+        "pending_review": "In Prüfung",
+        "pending_payment": "Zahlung ausstehend",
+        "confirmed": "Bestätigt",
+        "declined": "Abgelehnt",
+        "all": "Alle",
+        "walkins": "Spontanbesuche"
+      }
+    },
+    "booking": {
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "assignTable": "Tisch zuweisen",
+      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Etwas ist schiefgelaufen",
+    "BOOKING_NOT_FOUND": "Buchung nicht gefunden",
+    "TOKEN_EXPIRED": "Dieser Link ist abgelaufen",
+    "INVALID_CREDENTIALS": "Ungültige E-Mail oder Passwort",
+    "SESSION_EXPIRED": "Ihre Sitzung ist abgelaufen",
+    "VALIDATION_ERROR": "Bitte prüfen Sie das Formular",
+    "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "common": {
+    "loading": "Caricamento",
+    "error": "Si è verificato un errore",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "back": "Indietro",
+    "confirm": "Conferma",
+    "submit": "Invia",
+    "close": "Chiudi",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "booking": {
+    "status": {
+      "pending_review": "In attesa di revisione",
+      "pending_payment": "In attesa di pagamento",
+      "confirmed": "Confermata",
+      "confirmed_without_deposit": "Confermata senza acconto",
+      "declined": "Rifiutata",
+      "cancelled_by_customer": "Annullata dal cliente",
+      "authorization_expired": "Autorizzazione scaduta"
+    },
+    "payment_status": {
+      "pending": "In attesa",
+      "authorized": "Autorizzato",
+      "captured": "Incassato",
+      "failed": "Fallito",
+      "requires_action": "Azione richiesta"
+    },
+    "form": {
+      "title": "Prenota un tavolo",
+      "date": "Data",
+      "time": "Ora",
+      "name": "Nome",
+      "phone": "Telefono",
+      "email": "Email",
+      "notes": "Note",
+      "partySize": "Numero di ospiti",
+      "submit": "Invia richiesta"
+    },
+    "actions": {
+      "pay": "Paga acconto",
+      "modify": "Modifica prenotazione",
+      "cancel": "Annulla prenotazione"
+    },
+    "success": {
+      "requested": "Richiesta inviata",
+      "requestedBody": "Ti contatteremo presto{email}."
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Accesso staff",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Accedi",
+      "error": "Impossibile accedere"
+    },
+    "dashboard": {
+      "empty": "Nessuna prenotazione trovata",
+      "filters": {
+        "pending_review": "In revisione",
+        "pending_payment": "In attesa di pagamento",
+        "confirmed": "Confermate",
+        "declined": "Rifiutate",
+        "all": "Tutte",
+        "walkins": "Ingressi"
+      }
+    },
+    "booking": {
+      "approve": "Approva",
+      "reject": "Rifiuta",
+      "assignTable": "Assegna tavolo",
+      "confirmWithoutDeposit": "Conferma senza acconto"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Si è verificato un errore",
+    "BOOKING_NOT_FOUND": "Prenotazione non trovata",
+    "TOKEN_EXPIRED": "Questo link è scaduto",
+    "INVALID_CREDENTIALS": "Email o password non validi",
+    "SESSION_EXPIRED": "La sessione è scaduta",
+    "VALIDATION_ERROR": "Controlla il modulo",
+    "PAYMENT_FAILED": "Il pagamento non è andato a buon fine"
+  }
+}

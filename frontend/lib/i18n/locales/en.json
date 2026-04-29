@@ -1,0 +1,87 @@
+{
+  "common": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "booking": {
+    "status": {
+      "pending_review": "Pending review",
+      "pending_payment": "Pending payment",
+      "confirmed": "Confirmed",
+      "confirmed_without_deposit": "Confirmed without deposit",
+      "declined": "Declined",
+      "cancelled_by_customer": "Cancelled by customer",
+      "authorization_expired": "Authorization expired"
+    },
+    "payment_status": {
+      "pending": "Pending",
+      "authorized": "Authorized",
+      "captured": "Captured",
+      "failed": "Failed",
+      "requires_action": "Requires action"
+    },
+    "form": {
+      "title": "Book a table",
+      "date": "Date",
+      "time": "Time",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "notes": "Notes",
+      "partySize": "Party size",
+      "submit": "Submit request"
+    },
+    "actions": {
+      "pay": "Pay deposit",
+      "modify": "Modify booking",
+      "cancel": "Cancel booking"
+    },
+    "success": {
+      "requested": "Request submitted",
+      "requestedBody": "We will contact you soon{email}."
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Staff login",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "error": "Unable to sign in"
+    },
+    "dashboard": {
+      "empty": "No bookings found",
+      "filters": {
+        "pending_review": "Pending review",
+        "pending_payment": "Pending payment",
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "all": "All",
+        "walkins": "Walk-ins"
+      }
+    },
+    "booking": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "assignTable": "Assign table",
+      "confirmWithoutDeposit": "Confirm without deposit"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Something went wrong",
+    "BOOKING_NOT_FOUND": "Booking not found",
+    "TOKEN_EXPIRED": "This link has expired",
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "SESSION_EXPIRED": "Your session has expired",
+    "VALIDATION_ERROR": "Please check the form",
+    "PAYMENT_FAILED": "Payment could not be completed"
+  }
+}
