@@ -480,7 +480,7 @@ git push origin feature/frontend-mvp-Phase2-shared-infra
 
 ---
 
-### ❌ Task 2.2 — API Client
+### ✅ Task 2.2 — API Client
 
 Implement `lib/api/client.ts` (typed `apiRequest`, `ApiError`), `lib/api/types.ts` (shared model types mirroring backend), and `lib/api/endpoints.ts` (`publicApi`, `staffApi`). **No localized error strings** — `ApiError` exposes `code` only; the frontend maps codes to i18n keys.
 
