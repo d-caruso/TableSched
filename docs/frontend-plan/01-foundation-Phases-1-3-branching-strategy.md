@@ -561,7 +561,7 @@ git push origin feature/frontend-mvp-Phase2-shared-infra
 
 ---
 
-### ❌ Task 2.3 — Auth Context
+### ✅ Task 2.3 — Auth Context
 
 Implement `lib/auth/AuthContext.tsx` with JWT storage (`sessionStorage` on web, `SecureStore` on native), login, and logout. Customers never authenticate — this is staff-only (technical doc §5, business doc §12).
 
