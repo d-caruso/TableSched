@@ -12,7 +12,7 @@ from rest_framework.response import Response  # type: ignore[import-untyped]
 
 from apps.bookings import services
 from apps.bookings.models import Booking, BookingStatus
-from apps.bookings.serializers import BookingSerializer
+from apps.bookings.serializers import BookingDecisionSerializer, BookingSerializer
 from apps.bookings.services import opportunistic_maintenance
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
@@ -76,6 +76,34 @@ class BookingViewSet(viewsets.ModelViewSet):
         )
         return Response(self.get_serializer(booking).data)
 
+    @action(detail=True, methods=["get", "post"], url_path="decisions")
+    def decisions(self, request: Request, pk: str | None = None) -> Response:
+        booking = self.get_object()
+        if request.method == "GET":
+            return Response(self._decision_payload(booking))
+
+        serializer = BookingDecisionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        outcome = serializer.validated_data["outcome"]
+
+        if outcome == BookingDecisionSerializer.OUTCOME_APPROVED:
+            services.approve(
+                booking,
+                by_membership=self._membership(request),
+                settings=RestaurantSettings.objects.get(),
+            )
+        elif outcome == BookingDecisionSerializer.OUTCOME_DECLINED:
+            services.decline(
+                booking,
+                by_membership=self._membership(request),
+                reason_code=serializer.validated_data.get("reason_code", ""),
+                staff_message=serializer.validated_data.get("staff_message", ""),
+            )
+        elif outcome == BookingDecisionSerializer.OUTCOME_CONFIRMED_WITHOUT_DEPOSIT:
+            services.confirm_without_deposit(booking, by_membership=self._membership(request))
+        booking.refresh_from_db()
+        return Response(self._decision_payload(booking), status=201)
+
     @action(detail=True, methods=["post"], url_path="modify")
     def modify(self, request: Request, pk: str | None = None) -> Response:
         booking = self.get_object()
@@ -128,6 +156,15 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def _membership(self, request: Request) -> StaffMembership:
         return cast(StaffMembership, getattr(request, "membership", None))
+
+    def _decision_payload(self, booking: Booking) -> dict:
+        return {
+            "booking": str(booking.id),
+            "status": booking.status,
+            "decided_at": booking.decided_at,
+            "decided_by": str(booking.decided_by.id) if booking.decided_by else None,
+            "staff_message": booking.staff_message,
+        }
 
 
 class AdminDashboardView(APIView):

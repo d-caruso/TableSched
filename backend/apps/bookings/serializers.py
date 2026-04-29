@@ -5,6 +5,23 @@ from rest_framework import serializers  # type: ignore[import-untyped]
 from apps.bookings.models import Booking
 
 
+class BookingDecisionSerializer(serializers.Serializer):
+    """Validate staff review decision requests."""
+
+    OUTCOME_APPROVED = "approved"
+    OUTCOME_DECLINED = "declined"
+    OUTCOME_CONFIRMED_WITHOUT_DEPOSIT = "confirmed_without_deposit"
+    OUTCOME_CHOICES = (
+        OUTCOME_APPROVED,
+        OUTCOME_DECLINED,
+        OUTCOME_CONFIRMED_WITHOUT_DEPOSIT,
+    )
+
+    outcome = serializers.ChoiceField(choices=OUTCOME_CHOICES)
+    reason_code = serializers.CharField(required=False, allow_blank=True)
+    staff_message = serializers.CharField(required=False, allow_blank=True)
+
+
 class BookingSerializer(serializers.ModelSerializer[Booking]):
     """Staff-facing serializer for booking CRUD and action responses."""
 

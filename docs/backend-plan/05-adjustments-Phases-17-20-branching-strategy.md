@@ -188,7 +188,7 @@ git checkout -b task/backend-mvp-Task18.1-booking-patch-behavior
 git commit -m "[TASK] 18.1 normalize booking PATCH behavior"
 ```
 
-### ❌ Task 18.2 — Booking Decisions Endpoint
+### ✅ Task 18.2 — Booking Decisions Endpoint
 
 **Branch:** `task/backend-mvp-Task18.2-booking-decisions-endpoint`
 
