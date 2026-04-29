@@ -12,6 +12,8 @@ Customers do not authenticate. After booking submission they receive a secure to
 
 ### Task 4.1 — Booking detail screen
 
+Completed in the frontend implementation branch.
+
 `app/(public)/[tenant]/booking/[token]/index.tsx`:
 
 ```tsx
@@ -144,6 +146,8 @@ export function CustomerBookingActions({ booking, token, onCancel, cancelling, o
 ```
 
 ### Task 4.3 — Modify booking form
+
+Completed in the frontend implementation branch.
 
 `components/booking/ModifyBookingForm.tsx`:
 

@@ -66,7 +66,7 @@ git push -u origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.1 — Booking Detail View
+### ✅ Task 4.1 — Booking Detail View
 
 Implement `app/(public)/[tenant]/booking/[token]/index.tsx` and `BookingInfoCard`. Fetches booking via `publicApi.getBookingByToken(token)`. Displays status badge, booking details, and payment info (if any).
 
@@ -133,7 +133,7 @@ git push origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.2 — Customer Action Controls
+### ✅ Task 4.2 — Customer Action Controls
 
 Implement `CustomerBookingActions`. Derives available actions from booking status: cancel, modify, pay. Actions are shown only for statuses where they are valid (e.g., cannot cancel a `declined` booking). Cutoff enforcement is server-side; the frontend reflects the result via `ApiError`.
 
@@ -207,7 +207,7 @@ git push origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.3 — Modify Booking Form
+### ✅ Task 4.3 — Modify Booking Form
 
 Implement `ModifyBookingForm`. Calls `publicApi.modifyBooking(token, payload)` on submit. Modification may trigger re-approval (the API handles status transition); the frontend only reflects the updated status after invalidating the query.
 
@@ -269,7 +269,7 @@ git push origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Phase 4 complete — merge into feature branch
+### ✅ Phase 4 complete — merge into feature branch
 
 ```bash
 git checkout feature/frontend-mvp

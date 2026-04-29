@@ -411,7 +411,7 @@ git push -u origin feature/frontend-mvp-Phase2-shared-infra
 
 ---
 
-### ❌ Task 2.1 — i18n Setup
+### ✅ Task 2.1 — i18n Setup
 
 Wire i18next with `en`, `it`, `de` locale files. All MVP translation keys must be present in all three files. **No raw strings in any component** — every user-visible label uses a translation key.
 
