@@ -6,6 +6,9 @@
     "cancel": "Cancel",
     "back": "Back",
     "confirm": "Confirm",
+    "continue": "Continue",
+    "selected": "Selected",
+    "warning": "Warning",
     "submit": "Submit",
     "close": "Close",
     "yes": "Yes",
@@ -63,6 +66,9 @@
       "pay": "Pay deposit",
       "modify": "Modify booking",
       "cancel": "Cancel booking"
+    },
+    "timeSlots": {
+      "busyWarning": "!"
     },
     "detail": {
       "title": "Booking details",
@@ -123,6 +129,7 @@
       "assignTable": "Assign table",
       "confirmWithoutDeposit": "Confirm without deposit"
     },
+    "tableId": "Table ID",
     "walkins": {
       "title": "Walk-ins",
       "submit": "Add walk-in",

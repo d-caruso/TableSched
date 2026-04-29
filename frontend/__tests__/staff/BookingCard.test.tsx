@@ -15,6 +15,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
+
 jest.mock('@/components/ui/StatusBadge', () => ({
   StatusBadge: ({ status }: { status: string }) => null,
 }));

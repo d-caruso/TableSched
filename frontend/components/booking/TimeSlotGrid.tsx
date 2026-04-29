@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
+import '@/lib/i18n';
 
 export type TimeSlotItem = {
   time: string;
@@ -14,10 +16,12 @@ type TimeSlotGridProps = {
 };
 
 export function TimeSlotGrid({ slots, loading, selected, onSelect }: TimeSlotGridProps) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <View>
-        <Text>Loading</Text>
+        <Text>{t('common.loading')}</Text>
       </View>
     );
   }
@@ -28,17 +32,16 @@ export function TimeSlotGrid({ slots, loading, selected, onSelect }: TimeSlotGri
         slot.available ? (
           <Pressable key={slot.time} accessibilityRole="button" onPress={() => onSelect(slot.time)}>
             <Text>{slot.time}</Text>
-            {slot.busy_warning ? <Text>!</Text> : null}
-            {selected === slot.time ? <Text>Selected</Text> : null}
+            {slot.busy_warning ? <Text>{t('booking.timeSlots.busyWarning')}</Text> : null}
+            {selected === slot.time ? <Text>{t('common.selected')}</Text> : null}
           </Pressable>
         ) : (
           <View key={slot.time}>
             <Text>{slot.time}</Text>
-            {slot.busy_warning ? <Text>!</Text> : null}
+            {slot.busy_warning ? <Text>{t('booking.timeSlots.busyWarning')}</Text> : null}
           </View>
         ),
       )}
     </View>
   );
 }
-

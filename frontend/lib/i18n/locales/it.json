@@ -6,6 +6,9 @@
     "cancel": "Annulla",
     "back": "Indietro",
     "confirm": "Conferma",
+    "continue": "Continua",
+    "selected": "Selezionato",
+    "warning": "Avviso",
     "submit": "Invia",
     "close": "Chiudi",
     "yes": "Sì",
@@ -63,6 +66,9 @@
       "pay": "Paga acconto",
       "modify": "Modifica prenotazione",
       "cancel": "Annulla prenotazione"
+    },
+    "timeSlots": {
+      "busyWarning": "!"
     },
     "detail": {
       "title": "Dettagli prenotazione",
@@ -123,6 +129,7 @@
       "assignTable": "Assegna tavolo",
       "confirmWithoutDeposit": "Conferma senza acconto"
     },
+    "tableId": "ID tavolo",
     "walkins": {
       "title": "Ingressi",
       "submit": "Aggiungi ingresso",

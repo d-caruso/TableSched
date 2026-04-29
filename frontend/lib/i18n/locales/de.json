@@ -6,6 +6,9 @@
     "cancel": "Abbrechen",
     "back": "Zurück",
     "confirm": "Bestätigen",
+    "continue": "Weiter",
+    "selected": "Ausgewählt",
+    "warning": "Warnung",
     "submit": "Senden",
     "close": "Schließen",
     "yes": "Ja",
@@ -63,6 +66,9 @@
       "pay": "Anzahlung zahlen",
       "modify": "Reservierung ändern",
       "cancel": "Reservierung stornieren"
+    },
+    "timeSlots": {
+      "busyWarning": "!"
     },
     "detail": {
       "title": "Reservierungsdetails",
@@ -123,6 +129,7 @@
       "assignTable": "Tisch zuweisen",
       "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
     },
+    "tableId": "Tisch-ID",
     "walkins": {
       "title": "Spontanbesuche",
       "submit": "Spontanbesuch hinzufügen",
