@@ -288,15 +288,15 @@ interface Props { room: Room; tenant: string; token: string; }
 export function FloorCanvas({ room, tenant, token }: Props) {
   const qc = useQueryClient();
 
-  const updatePosition = useMutation({
+  const { mutate: updatePositionMutate } = useMutation({
     mutationFn: ({ tableId, x, y }: { tableId: string; x: number; y: number }) =>
       staffApi.updateTablePosition(tenant, token, tableId, x, y),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['rooms', tenant] }),
   });
 
   const handleDrop = useCallback(
-    (tableId: string, x: number, y: number) => updatePosition.mutate({ tableId, x, y }),
-    [tenant, token],
+    (tableId: string, x: number, y: number) => updatePositionMutate({ tableId, x, y }),
+    [updatePositionMutate],
   );
 
   return (
