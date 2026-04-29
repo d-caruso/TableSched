@@ -514,7 +514,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const KEY_ACCESS = 'ts_access', KEY_REFRESH = 'ts_refresh', KEY_TENANT = 'ts_tenant';
 
-const get = (k: string) => Platform.OS === 'web' ? sessionStorage.getItem(k) : SecureStore.getItemAsync(k);
+const get = (k: string): Promise<string | null> =>
+  Platform.OS === 'web' ? Promise.resolve(sessionStorage.getItem(k)) : SecureStore.getItemAsync(k);
 const set = (k: string, v: string) => Platform.OS === 'web' ? (sessionStorage.setItem(k, v), Promise.resolve()) : SecureStore.setItemAsync(k, v);
 const del = (k: string) => Platform.OS === 'web' ? (sessionStorage.removeItem(k), Promise.resolve()) : SecureStore.deleteItemAsync(k);
 
