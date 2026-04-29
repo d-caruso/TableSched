@@ -11,8 +11,8 @@
     "yes": "Yes",
     "no": "No"
   },
-  "booking": {
-    "status": {
+    "booking": {
+      "status": {
       "pending_review": "Pending review",
       "pending_payment": "Pending payment",
       "confirmed": "Confirmed",
@@ -79,6 +79,15 @@
     "success": {
       "requested": "Request submitted",
       "requestedBody": "We will contact you soon{email}."
+    },
+    "weekdays": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
     }
   },
   "staff": {
@@ -120,7 +129,10 @@
       "success": "Walk-in added"
     },
     "settings": {
-      "title": "Settings"
+      "title": "Settings",
+      "openingHours": "Opening hours",
+      "open": "Open",
+      "close": "Close"
     }
   },
   "error": {

@@ -79,6 +79,15 @@
     "success": {
       "requested": "Richiesta inviata",
       "requestedBody": "Ti contatteremo presto{email}."
+    },
+    "weekdays": {
+      "0": "Domenica",
+      "1": "Lunedì",
+      "2": "Martedì",
+      "3": "Mercoledì",
+      "4": "Giovedì",
+      "5": "Venerdì",
+      "6": "Sabato"
     }
   },
   "staff": {
@@ -120,7 +129,10 @@
       "success": "Ingresso aggiunto"
     },
     "settings": {
-      "title": "Impostazioni"
+      "title": "Impostazioni",
+      "openingHours": "Orari di apertura",
+      "open": "Aperto",
+      "close": "Chiuso"
     }
   },
   "error": {

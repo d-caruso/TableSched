@@ -135,7 +135,7 @@ git push origin feature/frontend-mvp-Phase8-staff-settings
 
 ---
 
-### ❌ Task 8.2 — Opening Hours Editor
+### ✅ Task 8.2 — Opening Hours Editor
 
 Implement `OpeningHoursEditor`. Each day can be toggled open/closed and given an open/close time. Closed days are omitted from the `opening_hours` array — not sent as `null`. No user-facing strings in component markup — day labels use i18n keys.
 
