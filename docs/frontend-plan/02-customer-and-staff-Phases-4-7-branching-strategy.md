@@ -358,7 +358,7 @@ git push origin feature/frontend-mvp-Phase5-stripe-payment
 
 ---
 
-### ❌ Task 5.2 — Payment Screen & Form
+### ✅ Task 5.2 — Payment Screen & Form
 
 Implement `app/(public)/[tenant]/booking/[token]/pay.tsx` (fetches client secret from `publicApi.getPaymentIntent`) and `components/payment/PaymentForm.tsx` (wraps Stripe `PaymentElement`). On success Stripe redirects to the booking detail page; on failure the error is shown inline. No card data is ever stored locally (technical doc §15).
 
