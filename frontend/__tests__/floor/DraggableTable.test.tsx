@@ -46,6 +46,10 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (_key: string, options?: { count?: number }) => `${options?.count ?? ''} seats` }),
+}));
+
 import { render, screen } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import { DraggableTable } from '@/components/floor/DraggableTable';
@@ -55,5 +59,5 @@ const table = { id: 't1', name: 'T1', capacity: 4, x: 100, y: 50 };
 test('displays table name and capacity', () => {
   render(<DraggableTable table={table} onDrop={jest.fn()} />);
   expect(screen.getByText('T1')).toBeTruthy();
-  expect(screen.getByText('4p')).toBeTruthy();
+  expect(screen.getByText('4 seats')).toBeTruthy();
 });

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -17,6 +18,7 @@ const TABLE_WIDTH = 96;
 const TABLE_HEIGHT = 64;
 
 export function DraggableTable({ table, onDrop }: Props) {
+  const { t } = useTranslation();
   const initialX = table.x ?? 0;
   const initialY = table.y ?? 0;
   const x = useSharedValue(initialX);
@@ -61,7 +63,7 @@ export function DraggableTable({ table, onDrop }: Props) {
       >
         <View style={{ flex: 1, borderRadius: 12, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: 'white', fontWeight: '600' }}>{table.name}</Text>
-          <Text style={{ color: 'white' }}>{`${table.capacity}p`}</Text>
+          <Text style={{ color: 'white' }}>{t('floor.tableCapacity', { count: table.capacity })}</Text>
         </View>
       </Animated.View>
     </GestureDetector>

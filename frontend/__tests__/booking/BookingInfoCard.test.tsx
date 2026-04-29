@@ -9,6 +9,10 @@ jest.mock('tamagui', () => {
   };
 });
 
+jest.mock('@/lib/i18n/useLocale', () => ({
+  useLocale: () => ({ locale: 'en-US', setLocale: jest.fn() }),
+}));
+
 import { render, screen } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import { BookingInfoCard } from '@/components/booking/BookingInfoCard';
