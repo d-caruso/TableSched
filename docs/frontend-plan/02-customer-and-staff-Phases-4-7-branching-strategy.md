@@ -296,7 +296,7 @@ git push -u origin feature/frontend-mvp-Phase5-stripe-payment
 
 ---
 
-### ❌ Task 5.1 — Stripe Bootstrap
+### ✅ Task 5.1 — Stripe Bootstrap
 
 Create `lib/stripe.ts` with the lazily-loaded `stripePromise`. The publishable key is read from `ENV.STRIPE_KEY` (set via `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY`) — never hardcoded.
 

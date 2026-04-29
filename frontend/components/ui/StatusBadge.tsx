@@ -1,5 +1,6 @@
 import { Text, XStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import type { BookingStatus } from '@/lib/api/types';
 
 const COLORS: Record<BookingStatus, string> = {

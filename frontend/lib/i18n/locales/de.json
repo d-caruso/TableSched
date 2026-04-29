@@ -39,6 +39,25 @@
       "partySize": "Personenzahl",
       "submit": "Anfrage senden"
     },
+    "page": {
+      "opening_hours": "Öffnungszeiten",
+      "booking_flow": "Buchungsformular",
+      "back": "Zurück",
+      "request_booking": "Reservierung anfragen",
+      "booking_confirmed": "Reservierung bestätigt"
+    },
+    "contact": {
+      "full_name": "Vollständiger Name",
+      "phone_number": "Telefonnummer",
+      "email": "E-Mail",
+      "locale": "Sprache",
+      "notes": "Notizen"
+    },
+    "locales": {
+      "en": "Englisch",
+      "it": "Italienisch",
+      "de": "Deutsch"
+    },
     "actions": {
       "pay": "Anzahlung zahlen",
       "modify": "Reservierung ändern",
@@ -89,6 +108,7 @@
   },
   "error": {
     "UNKNOWN_ERROR": "Etwas ist schiefgelaufen",
+    "booking_not_found": "Buchung nicht gefunden",
     "BOOKING_NOT_FOUND": "Buchung nicht gefunden",
     "TOKEN_EXPIRED": "Dieser Link ist abgelaufen",
     "INVALID_CREDENTIALS": "Ungültige E-Mail oder Passwort",

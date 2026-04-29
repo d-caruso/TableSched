@@ -1,16 +1,51 @@
-import { Input, Text, YStack } from 'tamagui';
+import { useMemo } from 'react';
+import { Text, TextInput, View } from 'react-native';
 
 type DatePickerProps = {
-  label: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
+  minDate?: string;
+  maxDays?: number;
 };
 
-export function DatePicker({ label, value, onChange }: DatePickerProps) {
+function toIsoDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+export function DatePicker({ label = 'Date', value, onChange, minDate, maxDays = 90 }: DatePickerProps) {
+  const bounds = useMemo(() => {
+    const today = new Date();
+    return {
+      min: minDate ?? toIsoDate(today),
+      max: toIsoDate(addDays(today, maxDays)),
+    };
+  }, [maxDays, minDate]);
+
   return (
-    <YStack gap="$2">
+    <View>
       <Text>{label}</Text>
-      <Input value={value} onChangeText={onChange} accessibilityLabel={label} />
-    </YStack>
+      <TextInput
+        accessibilityLabel={label}
+        value={value}
+        onChangeText={(next) => {
+          if (!next) {
+            onChange(next);
+            return;
+          }
+
+          if (next >= bounds.min && next <= bounds.max) {
+            onChange(next);
+          }
+        }}
+        placeholder={`${bounds.min} - ${bounds.max}`}
+      />
+    </View>
   );
 }

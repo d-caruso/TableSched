@@ -1,5 +1,6 @@
 import { Text, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
+import '@/lib/i18n';
 import { ApiError } from '@/lib/api/client';
 
 function toTranslationKey(code: string) {

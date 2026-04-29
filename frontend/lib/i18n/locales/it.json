@@ -39,6 +39,25 @@
       "partySize": "Numero di ospiti",
       "submit": "Invia richiesta"
     },
+    "page": {
+      "opening_hours": "Orari di apertura",
+      "booking_flow": "Modulo di prenotazione",
+      "back": "Indietro",
+      "request_booking": "Richiedi prenotazione",
+      "booking_confirmed": "Prenotazione confermata"
+    },
+    "contact": {
+      "full_name": "Nome completo",
+      "phone_number": "Numero di telefono",
+      "email": "Email",
+      "locale": "Lingua",
+      "notes": "Note"
+    },
+    "locales": {
+      "en": "Inglese",
+      "it": "Italiano",
+      "de": "Tedesco"
+    },
     "actions": {
       "pay": "Paga acconto",
       "modify": "Modifica prenotazione",
@@ -89,6 +108,7 @@
   },
   "error": {
     "UNKNOWN_ERROR": "Si è verificato un errore",
+    "booking_not_found": "Prenotazione non trovata",
     "BOOKING_NOT_FOUND": "Prenotazione non trovata",
     "TOKEN_EXPIRED": "Questo link è scaduto",
     "INVALID_CREDENTIALS": "Email o password non validi",

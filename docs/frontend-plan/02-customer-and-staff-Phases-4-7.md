@@ -205,6 +205,8 @@ Near-term flow: customer authorizes a PaymentIntent with `capture_method=manual`
 
 ### Task 5.1 — Stripe bootstrap
 
+Completed in the frontend implementation branch.
+
 `lib/stripe.ts`:
 
 ```ts

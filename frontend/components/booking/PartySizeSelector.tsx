@@ -1,34 +1,31 @@
-import { Button, Input, Text, XStack, YStack } from 'tamagui';
+import { Pressable, Text, View } from 'react-native';
 
 type PartySizeSelectorProps = {
-  label: string;
+  label?: string;
   value: number;
   onChange: (value: number) => void;
 };
 
-export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorProps) {
+export function PartySizeSelector({ label = 'Party size', value, onChange }: PartySizeSelectorProps) {
   return (
-    <YStack gap="$2">
+    <View accessibilityLabel={label}>
       <Text>{label}</Text>
-      <XStack gap="$2" alignItems="center">
-        <Button onPress={() => onChange(Math.max(1, value - 1))}>
-          <Text>-</Text>
-        </Button>
-        <Input
-          value={String(value)}
-          onChangeText={(next) => {
-            const parsed = Number.parseInt(next, 10);
-            if (!Number.isNaN(parsed)) onChange(parsed);
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            if (value > 1) {
+              onChange(value - 1);
+            }
           }}
-          keyboardType="number-pad"
-          accessibilityLabel={label}
-          width="$10"
-          textAlign="center"
-        />
-        <Button onPress={() => onChange(value + 1)}>
+        >
+          <Text>−</Text>
+        </Pressable>
+        <Text>{value}</Text>
+        <Pressable accessibilityRole="button" onPress={() => onChange(value + 1)}>
           <Text>+</Text>
-        </Button>
-      </XStack>
-    </YStack>
+        </Pressable>
+      </View>
+    </View>
   );
 }

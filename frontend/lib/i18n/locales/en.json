@@ -39,6 +39,25 @@
       "partySize": "Party size",
       "submit": "Submit request"
     },
+    "page": {
+      "opening_hours": "Opening hours",
+      "booking_flow": "Booking form",
+      "back": "Back",
+      "request_booking": "Request booking",
+      "booking_confirmed": "Booking confirmed"
+    },
+    "contact": {
+      "full_name": "Full name",
+      "phone_number": "Phone number",
+      "email": "Email",
+      "locale": "Language",
+      "notes": "Notes"
+    },
+    "locales": {
+      "en": "English",
+      "it": "Italian",
+      "de": "German"
+    },
     "actions": {
       "pay": "Pay deposit",
       "modify": "Modify booking",
@@ -89,6 +108,7 @@
   },
   "error": {
     "UNKNOWN_ERROR": "Something went wrong",
+    "booking_not_found": "Booking not found",
     "BOOKING_NOT_FOUND": "Booking not found",
     "TOKEN_EXPIRED": "This link has expired",
     "INVALID_CREDENTIALS": "Invalid email or password",
