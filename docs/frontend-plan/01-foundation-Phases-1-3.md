@@ -537,8 +537,14 @@ const KEY_ACCESS = 'ts_access', KEY_REFRESH = 'ts_refresh', KEY_TENANT = 'ts_ten
 
 const get = (k: string): Promise<string | null> =>
   Platform.OS === 'web' ? Promise.resolve(sessionStorage.getItem(k)) : SecureStore.getItemAsync(k);
-const set = (k: string, v: string) => Platform.OS === 'web' ? (sessionStorage.setItem(k, v), Promise.resolve()) : SecureStore.setItemAsync(k, v);
-const del = (k: string) => Platform.OS === 'web' ? (sessionStorage.removeItem(k), Promise.resolve()) : SecureStore.deleteItemAsync(k);
+const set = (k: string, v: string): Promise<void> => {
+  if (Platform.OS === 'web') { sessionStorage.setItem(k, v); return Promise.resolve(); }
+  return SecureStore.setItemAsync(k, v);
+};
+const del = (k: string): Promise<void> => {
+  if (Platform.OS === 'web') { sessionStorage.removeItem(k); return Promise.resolve(); }
+  return SecureStore.deleteItemAsync(k);
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ accessToken: null, tenant: null, isLoading: true });
