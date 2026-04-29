@@ -66,7 +66,7 @@ git push -u origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.1 — Booking Detail View
+### ✅ Task 4.1 — Booking Detail View
 
 Implement `app/(public)/[tenant]/booking/[token]/index.tsx` and `BookingInfoCard`. Fetches booking via `publicApi.getBookingByToken(token)`. Displays status badge, booking details, and payment info (if any).
 

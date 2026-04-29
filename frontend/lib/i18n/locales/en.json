@@ -44,6 +44,18 @@
       "modify": "Modify booking",
       "cancel": "Cancel booking"
     },
+    "detail": {
+      "title": "Booking details",
+      "date": "Date",
+      "time": "Time",
+      "guests": "guests",
+      "table": "Table",
+      "payment": "Payment",
+      "notes": "Notes",
+      "no_table": "No table assigned",
+      "no_notes": "No notes",
+      "amount": "Amount"
+    },
     "success": {
       "requested": "Request submitted",
       "requestedBody": "We will contact you soon{email}."

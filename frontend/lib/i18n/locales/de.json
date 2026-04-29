@@ -44,6 +44,18 @@
       "modify": "Reservierung ändern",
       "cancel": "Reservierung stornieren"
     },
+    "detail": {
+      "title": "Reservierungsdetails",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "guests": "Gäste",
+      "table": "Tisch",
+      "payment": "Zahlung",
+      "notes": "Notizen",
+      "no_table": "Kein Tisch zugewiesen",
+      "no_notes": "Keine Notizen",
+      "amount": "Betrag"
+    },
     "success": {
       "requested": "Anfrage gesendet",
       "requestedBody": "Wir melden uns bald{email}."

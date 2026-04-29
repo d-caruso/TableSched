@@ -44,6 +44,18 @@
       "modify": "Modifica prenotazione",
       "cancel": "Annulla prenotazione"
     },
+    "detail": {
+      "title": "Dettagli prenotazione",
+      "date": "Data",
+      "time": "Ora",
+      "guests": "ospiti",
+      "table": "Tavolo",
+      "payment": "Pagamento",
+      "notes": "Note",
+      "no_table": "Nessun tavolo assegnato",
+      "no_notes": "Nessuna nota",
+      "amount": "Importo"
+    },
     "success": {
       "requested": "Richiesta inviata",
       "requestedBody": "Ti contatteremo presto{email}."
