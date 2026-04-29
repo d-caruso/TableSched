@@ -207,7 +207,7 @@ git push origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.3 — Modify Booking Form
+### ✅ Task 4.3 — Modify Booking Form
 
 Implement `ModifyBookingForm`. Calls `publicApi.modifyBooking(token, payload)` on submit. Modification may trigger re-approval (the API handles status transition); the frontend only reflects the updated status after invalidating the query.
 

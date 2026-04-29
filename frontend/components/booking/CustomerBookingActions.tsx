@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Text, YStack } from 'tamagui';
 import '@/lib/i18n';
 import type { Booking, BookingStatus } from '@/lib/api/types';
+import { ModifyBookingForm } from '@/components/booking/ModifyBookingForm';
 
 type CustomerBookingActionsProps = {
   booking: Booking;
@@ -36,6 +38,11 @@ export function CustomerBookingActions({
   onPay,
 }: CustomerBookingActionsProps) {
   const { t } = useTranslation();
+  const [modifying, setModifying] = useState(false);
+
+  if (modifying) {
+    return <ModifyBookingForm booking={booking} token={token} onDone={() => setModifying(false)} />;
+  }
 
   return (
     <YStack gap="$3">
@@ -46,7 +53,10 @@ export function CustomerBookingActions({
       ) : null}
 
       {MODIFIABLE_STATUSES.includes(booking.status) ? (
-        <Button onPress={() => onModify?.(token)}>
+        <Button onPress={() => {
+          onModify?.(token);
+          setModifying(true);
+        }}>
           <Text>{t('booking.actions.modify')}</Text>
         </Button>
       ) : null}

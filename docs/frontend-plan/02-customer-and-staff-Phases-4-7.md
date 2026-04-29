@@ -147,6 +147,8 @@ export function CustomerBookingActions({ booking, token, onCancel, cancelling, o
 
 ### Task 4.3 — Modify booking form
 
+Completed in the frontend implementation branch.
+
 `components/booking/ModifyBookingForm.tsx`:
 
 ```tsx
