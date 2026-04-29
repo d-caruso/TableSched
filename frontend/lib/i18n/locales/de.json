@@ -7,7 +7,10 @@
     "back": "Zurück",
     "confirm": "Bestätigen",
     "continue": "Weiter",
+    "decrement": "−",
+    "increment": "+",
     "selected": "Ausgewählt",
+    "selectedIndicator": "✓",
     "warning": "Warnung",
     "submit": "Senden",
     "close": "Schließen",
@@ -99,6 +102,7 @@
   "staff": {
     "login": {
       "title": "Mitarbeiter-Login",
+      "tenant": "Restaurant",
       "email": "E-Mail",
       "password": "Passwort",
       "submit": "Anmelden",
@@ -126,6 +130,7 @@
     "booking": {
       "approve": "Genehmigen",
       "reject": "Ablehnen",
+      "rejectReason": "Ablehnungsgrund",
       "assignTable": "Tisch zuweisen",
       "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
     },

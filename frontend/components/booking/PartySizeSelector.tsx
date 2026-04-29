@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 type PartySizeSelectorProps = {
@@ -6,10 +7,13 @@ type PartySizeSelectorProps = {
   onChange: (value: number) => void;
 };
 
-export function PartySizeSelector({ label = 'Party size', value, onChange }: PartySizeSelectorProps) {
+export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorProps) {
+  const { t } = useTranslation();
+  const resolvedLabel = label ?? t('booking.form.partySize');
+
   return (
-    <View accessibilityLabel={label}>
-      <Text>{label}</Text>
+    <View accessibilityLabel={resolvedLabel}>
+      <Text>{resolvedLabel}</Text>
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <Pressable
           accessibilityRole="button"
@@ -19,11 +23,11 @@ export function PartySizeSelector({ label = 'Party size', value, onChange }: Par
             }
           }}
         >
-          <Text>−</Text>
+          <Text>{t('common.decrement')}</Text>
         </Pressable>
         <Text>{value}</Text>
         <Pressable accessibilityRole="button" onPress={() => onChange(value + 1)}>
-          <Text>+</Text>
+          <Text>{t('common.increment')}</Text>
         </Pressable>
       </View>
     </View>
