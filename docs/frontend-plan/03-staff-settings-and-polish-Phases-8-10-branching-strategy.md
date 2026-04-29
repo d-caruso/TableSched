@@ -211,7 +211,7 @@ git push origin feature/frontend-mvp-Phase8-staff-settings
 
 ---
 
-### ❌ Task 8.3 — Deposit Policy Editor
+### ✅ Task 8.3 — Deposit Policy Editor
 
 Implement `DepositPolicyEditor`. Three modes: `never`, `always`, `by_party_size`. When `by_party_size` is selected a numeric input appears for `min_party_size`. All labels via i18n keys (business doc §4).
 

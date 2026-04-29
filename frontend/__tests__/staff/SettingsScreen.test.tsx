@@ -58,6 +58,14 @@ jest.mock('@/components/ui/AppButton', () => {
   };
 });
 
+jest.mock('@/components/settings/OpeningHoursEditor', () => ({
+  OpeningHoursEditor: () => null,
+}));
+
+jest.mock('@/components/settings/DepositPolicyEditor', () => ({
+  DepositPolicyEditor: () => null,
+}));
+
 import { render, screen, waitFor } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import SettingsScreen from '@/app/(staff)/dashboard/settings';

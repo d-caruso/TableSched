@@ -130,9 +130,16 @@
     },
     "settings": {
       "title": "Settings",
+      "depositPolicy": "Deposit policy",
       "openingHours": "Opening hours",
       "open": "Open",
-      "close": "Close"
+      "close": "Close",
+      "minPartySize": "Min party size",
+      "depositModes": {
+        "never": "Never",
+        "always": "Always",
+        "by_party_size": "By party size"
+      }
     }
   },
   "error": {

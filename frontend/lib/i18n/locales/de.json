@@ -130,9 +130,16 @@
     },
     "settings": {
       "title": "Einstellungen",
+      "depositPolicy": "Anzahlung",
       "openingHours": "Öffnungszeiten",
       "open": "Offen",
-      "close": "Geschlossen"
+      "close": "Geschlossen",
+      "minPartySize": "Minimale Gruppengröße",
+      "depositModes": {
+        "never": "Nie",
+        "always": "Immer",
+        "by_party_size": "Nach Gruppengröße"
+      }
     }
   },
   "error": {

@@ -130,9 +130,16 @@
     },
     "settings": {
       "title": "Impostazioni",
+      "depositPolicy": "Politica dell'acconto",
       "openingHours": "Orari di apertura",
       "open": "Aperto",
-      "close": "Chiuso"
+      "close": "Chiuso",
+      "minPartySize": "Numero minimo di ospiti",
+      "depositModes": {
+        "never": "Mai",
+        "always": "Sempre",
+        "by_party_size": "In base al numero di ospiti"
+      }
     }
   },
   "error": {
