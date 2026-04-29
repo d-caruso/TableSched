@@ -461,7 +461,7 @@ git push -u origin feature/frontend-mvp-Phase6-staff-auth
 
 ---
 
-### ❌ Task 6.1 — Login Screen
+### ✅ Task 6.1 — Login Screen
 
 Implement `app/(staff)/login.tsx`. Calls `auth.login(email, password, tenant)` from `AuthContext`; on success redirects to `/dashboard`; on `ApiError` shows `t('staff.login.error')`.
 
@@ -533,6 +533,8 @@ git checkout feature/frontend-mvp-Phase6-staff-auth
 git merge task/frontend-mvp-Task6.1-login-screen
 git push origin feature/frontend-mvp-Phase6-staff-auth
 ```
+
+Completed in the frontend implementation branch.
 
 ---
 

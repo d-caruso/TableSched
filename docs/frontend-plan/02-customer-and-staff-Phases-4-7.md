@@ -373,6 +373,8 @@ export default function LoginScreen() {
 }
 ```
 
+Completed in the frontend implementation branch.
+
 ### Task 6.2 — Auth guard layout
 
 `app/(staff)/_layout.tsx`:
