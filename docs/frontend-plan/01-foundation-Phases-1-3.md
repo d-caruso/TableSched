@@ -99,7 +99,10 @@ npx create-expo-app@latest frontend --template tabs
     "typescript": "^5.x",
     "@types/react": "^18.x",
     "eslint": "^9.x",
-    "@typescript-eslint/parser": "^8.x"
+    "@typescript-eslint/parser": "^8.x",
+    "@testing-library/react-native": "^12.x",
+    "jest": "^29.x",
+    "jest-expo": "~52.x"
   }
 }
 ```
