@@ -10,6 +10,10 @@ from apps.restaurants.views import (
     OpeningWindowListCreateView,
     PublicRestaurantView,
     RestaurantSettingsView,
+    RoomDetailView,
+    RoomListCreateView,
+    TableDetailView,
+    TableListCreateView,
 )
 
 app_name = "restaurants"
@@ -32,4 +36,8 @@ urlpatterns: list[URLPattern | URLResolver] = [
         ClosedDayDetailView.as_view(),
         name="closed-day-detail",
     ),
+    path("restaurant/rooms/", RoomListCreateView.as_view(), name="rooms"),
+    path("restaurant/rooms/<uuid:pk>/", RoomDetailView.as_view(), name="room-detail"),
+    path("restaurant/tables/", TableListCreateView.as_view(), name="tables"),
+    path("restaurant/tables/<uuid:pk>/", TableDetailView.as_view(), name="table-detail"),
 ]

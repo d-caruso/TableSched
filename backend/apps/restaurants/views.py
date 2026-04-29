@@ -6,12 +6,14 @@ from rest_framework.views import APIView  # type: ignore[import-untyped]
 from rest_framework import generics  # type: ignore[import-untyped]
 
 from apps.common.permissions import IsManager, IsTenantMember
-from apps.restaurants.models import ClosedDay, OpeningHours, RestaurantSettings
+from apps.restaurants.models import ClosedDay, OpeningHours, RestaurantSettings, Room, Table
 from apps.restaurants.serializers import (
     ClosedDaySerializer,
     OpeningWindowSerializer,
     PublicRestaurantSerializer,
     RestaurantSettingsSerializer,
+    RoomSerializer,
+    TableSerializer,
 )
 
 
@@ -122,6 +124,66 @@ class ClosedDayDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return ClosedDay.objects.order_by("date")
+
+    def get_permissions(self):
+        if self.request.method in {"PATCH", "DELETE"}:
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class RoomListCreateView(generics.ListCreateAPIView):
+    """Tenant room collection endpoint."""
+
+    serializer_class = RoomSerializer
+
+    def get_queryset(self):
+        return Room.objects.order_by("name")
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Tenant room detail endpoint."""
+
+    serializer_class = RoomSerializer
+    lookup_url_kwarg = "pk"
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return Room.objects.order_by("name")
+
+    def get_permissions(self):
+        if self.request.method in {"PATCH", "DELETE"}:
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class TableListCreateView(generics.ListCreateAPIView):
+    """Tenant table collection endpoint."""
+
+    serializer_class = TableSerializer
+
+    def get_queryset(self):
+        return Table.objects.select_related("room").order_by("room__name", "label")
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class TableDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Tenant table detail endpoint."""
+
+    serializer_class = TableSerializer
+    lookup_url_kwarg = "pk"
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return Table.objects.select_related("room").order_by("room__name", "label")
 
     def get_permissions(self):
         if self.request.method in {"PATCH", "DELETE"}:

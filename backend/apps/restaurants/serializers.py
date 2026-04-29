@@ -5,6 +5,7 @@ from rest_framework import serializers  # type: ignore[import-untyped]
 from apps.restaurants.models import ClosedDay
 from apps.restaurants.models import OpeningHours as OpeningWindow
 from apps.restaurants.models import RestaurantSettings
+from apps.restaurants.models import Room, Table
 
 
 class OpeningHoursPublicSerializer(serializers.Serializer):
@@ -73,3 +74,19 @@ class ClosedDaySerializer(serializers.ModelSerializer[ClosedDay]):
     class Meta:
         model = ClosedDay
         fields = ("id", "date", "reason_code")
+
+
+class RoomSerializer(serializers.ModelSerializer[Room]):
+    """Tenant dining room."""
+
+    class Meta:
+        model = Room
+        fields = ("id", "name")
+
+
+class TableSerializer(serializers.ModelSerializer[Table]):
+    """Tenant restaurant table."""
+
+    class Meta:
+        model = Table
+        fields = ("id", "room", "label", "seats", "pos_x", "pos_y")

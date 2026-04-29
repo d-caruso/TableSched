@@ -331,7 +331,7 @@ git checkout -b task/backend-mvp-Task19.3-closed-days-endpoint
 git commit -m "[TASK] 19.3 add closed days endpoint"
 ```
 
-### ❌ Task 19.4 — Rooms And Tables Endpoints
+### ✅ Task 19.4 — Rooms And Tables Endpoints
 
 **Branch:** `task/backend-mvp-Task19.4-rooms-tables-endpoints`
 
