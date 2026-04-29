@@ -7,5 +7,10 @@
         "./*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "dist",
+    ".expo",
+    "node_modules"
+  ]
 }
