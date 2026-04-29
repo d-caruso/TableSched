@@ -172,7 +172,7 @@ git checkout -b feature/backend-mvp-Phase18-rest-api-normalization
 git push -u origin feature/backend-mvp-Phase18-rest-api-normalization
 ```
 
-### ❌ Task 18.1 — Booking PATCH Behavior
+### ✅ Task 18.1 — Booking PATCH Behavior
 
 **Branch:** `task/backend-mvp-Task18.1-booking-patch-behavior`
 

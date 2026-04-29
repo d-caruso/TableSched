@@ -11,7 +11,7 @@ from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 
 from apps.bookings import services
-from apps.bookings.models import Booking
+from apps.bookings.models import Booking, BookingStatus
 from apps.bookings.serializers import BookingSerializer
 from apps.bookings.services import opportunistic_maintenance
 from apps.common.codes import ErrorCode
@@ -29,6 +29,31 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Booking.objects.select_related("customer").prefetch_related("table_assignments")
+
+    def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        booking = self.get_object()
+        status = request.data.get("status")
+        if status is not None and status != BookingStatus.NO_SHOW:
+            raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "status"})
+
+        if status == BookingStatus.NO_SHOW:
+            services.mark_no_show(booking, by_membership=self._membership(request))
+
+        table = None
+        table_id = request.data.get("table")
+        if table_id:
+            table = get_object_or_404(Table, pk=table_id)
+
+        services.modify_by_staff(
+            booking,
+            by_membership=self._membership(request),
+            starts_at=request.data.get("starts_at"),
+            party_size=request.data.get("party_size"),
+            notes=request.data.get("notes"),
+            table=table,
+        )
+        booking.refresh_from_db()
+        return Response(self.get_serializer(booking).data)
 
     @action(detail=True, methods=["post"], url_path="approve")
     def approve(self, request: Request, pk: str | None = None) -> Response:
