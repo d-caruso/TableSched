@@ -823,7 +823,7 @@ export function StepDone({ draft, tenant }: { draft: BookingCreatePayload; tenan
     mutationFn: () => publicApi.createBooking(tenant, draft),
   });
 
-  useEffect(() => { mutate(); }, []);
+  useEffect(() => { mutate(); }, [mutate]);
 
   if (isPending) return <Spinner size="large" />;
   if (error) return <ErrorMessage error={error} />;
