@@ -118,6 +118,9 @@
       "title": "Walk-ins",
       "submit": "Add walk-in",
       "success": "Walk-in added"
+    },
+    "settings": {
+      "title": "Settings"
     }
   },
   "error": {

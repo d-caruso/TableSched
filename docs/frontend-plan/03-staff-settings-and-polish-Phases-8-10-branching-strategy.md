@@ -64,7 +64,7 @@ git push -u origin feature/frontend-mvp-Phase8-staff-settings
 
 ---
 
-### ❌ Task 8.1 — Settings Screen
+### ✅ Task 8.1 — Settings Screen
 
 Implement `app/(staff)/dashboard/settings/index.tsx`. Fetches current restaurant settings, diffs local `draft` state, and sends `PATCH` on save. Save button is disabled when `draft` is empty (nothing changed).
 

@@ -118,6 +118,9 @@
       "title": "Spontanbesuche",
       "submit": "Spontanbesuch hinzufügen",
       "success": "Spontanbesuch hinzugefügt"
+    },
+    "settings": {
+      "title": "Einstellungen"
     }
   },
   "error": {

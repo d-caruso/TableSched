@@ -21,12 +21,31 @@ export type TimeSlot = {
   available: boolean;
 };
 
+export type OpeningHour = {
+  day: number;
+  open: string;
+  close: string;
+};
+
+export type DepositPolicy = {
+  mode: 'never' | 'always' | 'by_party_size';
+  min_party_size?: number | null;
+};
+
 export type RestaurantPublicInfo = {
   name: string;
   description?: string | null;
   timezone: string;
   currency: string;
   booking_window_days: number;
+};
+
+export type RestaurantSettings = {
+  slug: string;
+  name: string;
+  opening_hours: OpeningHour[];
+  deposit_policy: DepositPolicy;
+  cancellation_cutoff_hours: number;
 };
 
 export type Room = {

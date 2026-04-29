@@ -3,6 +3,7 @@ import type {
   Booking,
   BookingCreatePayload,
   BookingModifyPayload,
+  RestaurantSettings,
   RestaurantPublicInfo,
   TimeSlot,
 } from '@/lib/api/types';
@@ -90,6 +91,18 @@ export const staffApi = {
   createWalkin(tenant: string, token: string, payload: { party_size: number }) {
     return apiRequest<Booking>(`/api/staff/${tenant}/walkins/`, {
       method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: payload,
+    });
+  },
+  getRestaurantSettings(tenant: string, token: string) {
+    return apiRequest<RestaurantSettings>(`/api/staff/${tenant}/settings/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+  updateRestaurantSettings(tenant: string, token: string, payload: Partial<RestaurantSettings>) {
+    return apiRequest<RestaurantSettings>(`/api/staff/${tenant}/settings/`, {
+      method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
     });

@@ -118,6 +118,9 @@
       "title": "Ingressi",
       "submit": "Aggiungi ingresso",
       "success": "Ingresso aggiunto"
+    },
+    "settings": {
+      "title": "Impostazioni"
     }
   },
   "error": {
