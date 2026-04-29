@@ -13,7 +13,10 @@ const mockUseAuth = jest.fn();
 
 jest.mock('expo-router', () => ({
   Slot: () => null,
-  useRouter: () => ({ replace: mockReplace }),
+  Redirect: ({ href }: { href: string }) => {
+    mockReplace(href);
+    return null;
+  },
   useSegments: () => ['(staff)', 'dashboard'],
 }));
 
