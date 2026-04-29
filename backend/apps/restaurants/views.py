@@ -6,8 +6,9 @@ from rest_framework.views import APIView  # type: ignore[import-untyped]
 from rest_framework import generics  # type: ignore[import-untyped]
 
 from apps.common.permissions import IsManager, IsTenantMember
-from apps.restaurants.models import OpeningHours, RestaurantSettings
+from apps.restaurants.models import ClosedDay, OpeningHours, RestaurantSettings
 from apps.restaurants.serializers import (
+    ClosedDaySerializer,
     OpeningWindowSerializer,
     PublicRestaurantSerializer,
     RestaurantSettingsSerializer,
@@ -91,6 +92,36 @@ class OpeningWindowDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return OpeningHours.objects.order_by("weekday", "opens_at")
+
+    def get_permissions(self):
+        if self.request.method in {"PATCH", "DELETE"}:
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class ClosedDayListCreateView(generics.ListCreateAPIView):
+    """Tenant closed-day collection endpoint."""
+
+    serializer_class = ClosedDaySerializer
+
+    def get_queryset(self):
+        return ClosedDay.objects.order_by("date")
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class ClosedDayDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Tenant closed-day detail endpoint."""
+
+    serializer_class = ClosedDaySerializer
+    lookup_url_kwarg = "pk"
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return ClosedDay.objects.order_by("date")
 
     def get_permissions(self):
         if self.request.method in {"PATCH", "DELETE"}:

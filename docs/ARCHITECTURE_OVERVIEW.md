@@ -37,4 +37,5 @@ The frontend is an Expo Router application with route groups for public and staf
 - Manual manager refunds use `POST /api/v1/payments/{payment_id}/refunds/`; the Stripe webhook remains `POST /stripe/webhook/`.
 - Tenant restaurant settings are exposed at `GET|PATCH /api/v1/restaurant/settings/`; reads require tenant membership and updates require manager role.
 - Tenant opening windows are exposed at `/api/v1/restaurant/opening-windows/`; reads require tenant membership and writes require manager role.
+- Tenant closed days are exposed at `/api/v1/restaurant/closed-days/`; reads require tenant membership and writes require manager role.
 - Legacy public booking `POST` and singular payment refund aliases remain until the Phase 20 API cleanup.

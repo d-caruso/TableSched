@@ -2,6 +2,7 @@
 
 from rest_framework import serializers  # type: ignore[import-untyped]
 
+from apps.restaurants.models import ClosedDay
 from apps.restaurants.models import OpeningHours as OpeningWindow
 from apps.restaurants.models import RestaurantSettings
 
@@ -64,3 +65,11 @@ class OpeningWindowSerializer(serializers.ModelSerializer[OpeningWindow]):
         if opens_at is not None and closes_at is not None and opens_at >= closes_at:
             raise serializers.ValidationError({"closes_at": "invalid"})
         return attrs
+
+
+class ClosedDaySerializer(serializers.ModelSerializer[ClosedDay]):
+    """Tenant one-off closed day."""
+
+    class Meta:
+        model = ClosedDay
+        fields = ("id", "date", "reason_code")

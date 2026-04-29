@@ -4,6 +4,8 @@ from django.urls import path
 from django.urls.resolvers import URLPattern, URLResolver
 
 from apps.restaurants.views import (
+    ClosedDayDetailView,
+    ClosedDayListCreateView,
     OpeningWindowDetailView,
     OpeningWindowListCreateView,
     PublicRestaurantView,
@@ -23,5 +25,11 @@ urlpatterns: list[URLPattern | URLResolver] = [
         "restaurant/opening-windows/<uuid:pk>/",
         OpeningWindowDetailView.as_view(),
         name="opening-window-detail",
+    ),
+    path("restaurant/closed-days/", ClosedDayListCreateView.as_view(), name="closed-days"),
+    path(
+        "restaurant/closed-days/<uuid:pk>/",
+        ClosedDayDetailView.as_view(),
+        name="closed-day-detail",
     ),
 ]
