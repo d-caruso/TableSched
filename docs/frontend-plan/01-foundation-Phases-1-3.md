@@ -202,6 +202,24 @@ export const ROUTES = {
 } as const;
 ```
 
+`eslint.config.js`:
+
+```js
+const { defineConfig } = require('eslint/config');
+const tsParser = require('@typescript-eslint/parser');
+
+module.exports = defineConfig([
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: { parser: tsParser },
+    rules: {
+      'react-hooks/exhaustive-deps': 'error',
+      'no-console': 'warn',
+    },
+  },
+]);
+```
+
 ### Task 1.4 — Tamagui config & root layout
 
 `tamagui.config.ts`:
