@@ -6,12 +6,13 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Count
 from rest_framework import viewsets  # type: ignore[import-untyped]
 from rest_framework.decorators import action  # type: ignore[import-untyped]
+from rest_framework import status as http_status  # type: ignore[import-untyped]
 from rest_framework.views import APIView  # type: ignore[import-untyped]
 from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 
 from apps.bookings import services
-from apps.bookings.models import Booking, BookingStatus
+from apps.bookings.models import Booking, BookingStatus, BookingTableAssignment
 from apps.bookings.serializers import BookingDecisionSerializer, BookingSerializer
 from apps.bookings.services import opportunistic_maintenance
 from apps.common.codes import ErrorCode
@@ -104,6 +105,39 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.refresh_from_db()
         return Response(self._decision_payload(booking), status=201)
 
+    @action(
+        detail=True,
+        methods=["get", "put", "delete"],
+        url_path=r"tables(?:/(?P<table_id>[^/.]+))?",
+    )
+    def tables(
+        self,
+        request: Request,
+        pk: str | None = None,
+        table_id: str | None = None,
+    ) -> Response:
+        booking = self.get_object()
+        if request.method == "GET":
+            return Response({"tables": self._assigned_table_ids(booking)})
+        if request.method == "PUT":
+            if table_id is not None:
+                raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "table_id"})
+            table_ids = request.data.get("tables")
+            if not isinstance(table_ids, list):
+                raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "tables"})
+            tables = [get_object_or_404(Table, pk=value) for value in table_ids]
+            services.replace_booking_tables(
+                booking,
+                tables=tables,
+                by_membership=self._membership(request),
+            )
+            return Response({"tables": self._assigned_table_ids(booking)})
+        if table_id is None:
+            raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "table_id"})
+        table = get_object_or_404(Table, pk=table_id)
+        services.remove_booking_table(booking, table=table)
+        return Response(status=http_status.HTTP_204_NO_CONTENT)
+
     @action(detail=True, methods=["post"], url_path="modify")
     def modify(self, request: Request, pk: str | None = None) -> Response:
         booking = self.get_object()
@@ -165,6 +199,14 @@ class BookingViewSet(viewsets.ModelViewSet):
             "decided_by": str(booking.decided_by.id) if booking.decided_by else None,
             "staff_message": booking.staff_message,
         }
+
+    def _assigned_table_ids(self, booking: Booking) -> list[str]:
+        return [
+            str(assignment.table.id)
+            for assignment in BookingTableAssignment.objects.filter(booking=booking).order_by(
+                "created_at"
+            ).select_related("table")
+        ]
 
 
 class AdminDashboardView(APIView):

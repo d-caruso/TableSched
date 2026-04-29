@@ -204,7 +204,7 @@ git checkout -b task/backend-mvp-Task18.2-booking-decisions-endpoint
 git commit -m "[TASK] 18.2 add booking decisions endpoint"
 ```
 
-### ❌ Task 18.3 — Booking Tables Endpoint
+### ✅ Task 18.3 — Booking Tables Endpoint
 
 **Branch:** `task/backend-mvp-Task18.3-booking-tables-endpoint`
 
