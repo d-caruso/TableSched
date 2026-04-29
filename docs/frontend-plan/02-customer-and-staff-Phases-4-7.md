@@ -218,6 +218,8 @@ export const stripePromise = loadStripe(ENV.STRIPE_KEY);
 
 ### Task 5.2 — Payment screen
 
+Completed in the frontend implementation branch.
+
 `app/(public)/[tenant]/booking/[token]/pay.tsx`:
 
 ```tsx
