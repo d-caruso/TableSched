@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Text, YStack } from 'tamagui';
 import { StepDateTime } from '@/components/booking/steps/StepDateTime';
+import { StepContact } from '@/components/booking/steps/StepContact';
+import { StepDone } from '@/components/booking/steps/StepDone';
 
 export type Draft = {
   date?: string;
@@ -26,26 +28,6 @@ type BookingFormFlowProps = {
   };
 };
 
-function StepContact() {
-  return (
-    <YStack testID="step-contact">
-      <Text fontSize="$5" fontWeight="$6">
-        Contact details
-      </Text>
-    </YStack>
-  );
-}
-
-function StepDone() {
-  return (
-    <YStack testID="step-done">
-      <Text fontSize="$5" fontWeight="$6">
-        Done
-      </Text>
-    </YStack>
-  );
-}
-
 export function BookingFormFlow({ tenant, restaurant }: BookingFormFlowProps) {
   const [step, setStep] = useState<Step>('datetime');
   const [draft, setDraft] = useState<Draft>({});
@@ -56,12 +38,28 @@ export function BookingFormFlow({ tenant, restaurant }: BookingFormFlowProps) {
   );
 
   if (context.step === 'datetime') {
-    return <StepDateTime tenant={tenant} restaurant={restaurant} />;
+    return (
+      <StepDateTime
+        tenant={tenant}
+        restaurant={restaurant}
+        onContinue={() => setStep('contact')}
+      />
+    );
   }
 
   if (context.step === 'contact') {
-    return <StepContact />;
+    return (
+      <StepContact
+        draft={draft}
+        tenant={tenant}
+        onBack={() => setStep('datetime')}
+        onNext={(nextDraft) => {
+          setDraft((current) => ({ ...current, ...nextDraft }));
+          setStep('done');
+        }}
+      />
+    );
   }
 
-  return <StepDone />;
+  return <StepDone tenant={tenant} draft={draft} onDone={() => setStep('done')} />;
 }

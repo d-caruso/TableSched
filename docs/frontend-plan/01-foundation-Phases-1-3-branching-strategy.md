@@ -925,7 +925,7 @@ git push origin feature/frontend-mvp-Phase3-public-booking
 
 ---
 
-### ❌ Task 3.4 — StepContact, StepDone & LocaleSelector
+### ✅ Task 3.4 — StepContact, StepDone & LocaleSelector
 
 Implement `StepContact` (name, phone, email, locale, notes), `StepDone` (submits via `publicApi.createBooking`, shows success), and `LocaleSelector`. Phone is required; email is optional (business doc §1, §12). `StepDone` fires the mutation once on mount.
 

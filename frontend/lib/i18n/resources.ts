@@ -4,14 +4,25 @@ export const resources = {
       common: {
         loading: 'Loading',
         error: 'Something went wrong',
+        submit: 'Submit',
       },
       booking: {
         page: {
           opening_hours: 'Opening hours',
           booking_flow: 'Booking form',
+          back: 'Back',
+          request_booking: 'Request booking',
+          booking_confirmed: 'Booking confirmed',
         },
         hours: {
           closed: 'Closed',
+        },
+        contact: {
+          full_name: 'Full name',
+          phone_number: 'Phone number',
+          email: 'Email',
+          locale: 'Language',
+          notes: 'Notes',
         },
         weekdays: {
           monday: 'Monday',
@@ -21,6 +32,11 @@ export const resources = {
           friday: 'Friday',
           saturday: 'Saturday',
           sunday: 'Sunday',
+        },
+        locales: {
+          en: 'English',
+          it: 'Italian',
+          de: 'German',
         },
         status: {
           pending_review: 'Pending review',

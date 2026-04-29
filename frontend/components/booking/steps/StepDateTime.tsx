@@ -10,6 +10,7 @@ type StepDateTimeProps = {
   restaurant: {
     name: string;
   };
+  onContinue?: () => void;
 };
 
 function toIsoDate(date: Date) {
@@ -26,7 +27,7 @@ function toQuarterHourTimes() {
   return slots;
 }
 
-export function StepDateTime({ tenant, restaurant }: StepDateTimeProps) {
+export function StepDateTime({ tenant, restaurant, onContinue }: StepDateTimeProps) {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [partySize, setPartySize] = useState(2);
@@ -81,7 +82,7 @@ export function StepDateTime({ tenant, restaurant }: StepDateTimeProps) {
       <DatePicker value={date} onChange={setDate} minDate={toIsoDate(new Date())} maxDays={90} />
       <PartySizeSelector value={partySize} onChange={setPartySize} />
       <TimeSlotGrid slots={slots} loading={loading} selected={time} onSelect={setTime} />
-      <Pressable accessibilityRole="button" disabled={!date || !time}>
+      <Pressable accessibilityRole="button" disabled={!date || !time} onPress={onContinue}>
         <Text>Continue</Text>
       </Pressable>
     </View>
