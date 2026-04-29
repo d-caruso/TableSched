@@ -797,7 +797,7 @@ git push origin feature/frontend-mvp-Phase3-public-booking
 
 ---
 
-### ❌ Task 3.2 — Booking Form Orchestrator
+### ✅ Task 3.2 — Booking Form Orchestrator
 
 Implement `BookingFormFlow` — manages the `datetime → contact → done` step state and the accumulated draft payload. Contains no fetch logic of its own; delegates to step components.
 
