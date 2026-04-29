@@ -641,7 +641,7 @@ git push origin feature/frontend-mvp-Phase2-shared-infra
 
 ---
 
-### ❌ Task 2.4 — Shared UI Primitives
+### ✅ Task 2.4 — Shared UI Primitives
 
 Implement `AppButton`, `AppInput`, `StatusBadge`, and `ErrorMessage`. All text via i18n keys — no hardcoded strings. `ErrorMessage` maps `ApiError.code` to an i18n key; if the key is missing it falls back to `common.error`.
 
