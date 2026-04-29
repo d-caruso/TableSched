@@ -236,7 +236,7 @@ git checkout -b task/backend-mvp-Task18.4-walkin-tables-endpoint
 git commit -m "[TASK] 18.4 add walk-in tables endpoint"
 ```
 
-### ❌ Task 18.5 — Public Booking PATCH/DELETE
+### ✅ Task 18.5 — Public Booking PATCH/DELETE
 
 **Branch:** `task/backend-mvp-Task18.5-public-booking-patch-delete`
 

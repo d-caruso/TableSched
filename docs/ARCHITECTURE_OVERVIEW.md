@@ -30,3 +30,8 @@ The frontend is an Expo Router application with route groups for public and staf
 - English is the source of truth for keys.
 - Italian and German must stay aligned with English.
 
+## Backend API
+
+- Public customer booking tokens expose the booking resource at `GET|PATCH|DELETE /api/v1/public/bookings/{token}/`.
+- Customer booking changes go through `modify_by_customer`; customer cancellation goes through `cancel_by_customer`.
+- Legacy public booking `POST` action compatibility remains until the Phase 20 API cleanup.

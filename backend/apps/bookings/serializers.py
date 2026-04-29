@@ -54,3 +54,11 @@ class BookingPublicSerializer(serializers.ModelSerializer[Booking]):
     class Meta:
         model = Booking
         fields = ("id", "starts_at", "party_size", "status", "notes")
+
+
+class CustomerBookingPatchSerializer(serializers.Serializer):
+    """Validate customer-editable booking update fields."""
+
+    starts_at = serializers.DateTimeField(required=False)
+    party_size = serializers.IntegerField(required=False, min_value=1)
+    notes = serializers.CharField(required=False, allow_blank=True)

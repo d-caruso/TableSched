@@ -1,6 +1,6 @@
 """Tests for token-authenticated customer booking endpoints."""
 
-from datetime import timedelta
+from datetime import time, timedelta
 
 import pytest
 from django.utils import timezone
@@ -9,7 +9,7 @@ from rest_framework.test import APIRequestFactory  # type: ignore[import-untyped
 from apps.bookings.models import Booking
 from apps.bookings.views_customer import CustomerBookingView
 from apps.customers.models import BookingAccessToken, Customer
-from apps.restaurants.models import RestaurantSettings
+from apps.restaurants.models import OpeningHours, RestaurantSettings
 from tests.tenant_helpers import tenant_schema
 
 
@@ -25,6 +25,23 @@ def _create_booking(starts_at):
         starts_at=starts_at,
         party_size=2,
         notes="window table",
+    )
+
+
+def _future_slot(days: int = 2):
+    return (timezone.now() + timedelta(days=days)).replace(
+        hour=19,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+
+def _open_for(slot) -> None:
+    OpeningHours.objects.create(
+        weekday=slot.weekday(),
+        opens_at=time(0, 0),
+        closes_at=time(23, 59),
     )
 
 
@@ -84,6 +101,122 @@ def test_cancel_booking_via_token():
 
     assert response.status_code == 200
     assert booking.status == "cancelled_by_customer"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_patch_booking_via_token_modifies_customer_editable_fields():
+    with tenant_schema("customer_endpoints"):
+        RestaurantSettings.objects.create()
+        starts_at = _future_slot()
+        new_starts_at = _future_slot(days=3)
+        _open_for(new_starts_at)
+        booking = _create_booking(starts_at)
+        _, raw_token = BookingAccessToken.issue(booking)
+        request = APIRequestFactory().patch(
+            f"/api/v1/public/bookings/{raw_token}/",
+            {
+                "starts_at": new_starts_at.isoformat(),
+                "party_size": 4,
+                "notes": "near bar",
+            },
+            format="json",
+        )
+
+        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+        booking.refresh_from_db()
+
+    assert response.status_code == 200
+    assert booking.starts_at == new_starts_at
+    assert booking.party_size == 4
+    assert booking.notes == "near bar"
+    assert response.data["party_size"] == 4
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_booking_via_token_cancels_customer_booking():
+    with tenant_schema("customer_endpoints"):
+        RestaurantSettings.objects.create()
+        booking = _create_booking(_future_slot())
+        _, raw_token = BookingAccessToken.issue(booking)
+        request = APIRequestFactory().delete(f"/api/v1/public/bookings/{raw_token}/")
+
+        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+        booking.refresh_from_db()
+
+    assert response.status_code == 200
+    assert booking.status == "cancelled_by_customer"
+    assert response.data["status"] == "cancelled_by_customer"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_patch_booking_via_token_rejects_unsupported_fields():
+    with tenant_schema("customer_endpoints"):
+        RestaurantSettings.objects.create()
+        booking = _create_booking(_future_slot())
+        _, raw_token = BookingAccessToken.issue(booking)
+        request = APIRequestFactory().patch(
+            f"/api/v1/public/bookings/{raw_token}/",
+            {"status": "cancelled_by_customer"},
+            format="json",
+        )
+
+        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+
+    assert response.status_code == 400
+    assert response.data["error_code"] == "validation_failed"
+    assert response.data["params"]["field"] == "status"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_patch_booking_via_invalid_token_returns_404():
+    with tenant_schema("customer_endpoints"):
+        request = APIRequestFactory().patch(
+            "/api/v1/public/bookings/badtoken/",
+            {"notes": "updated"},
+            format="json",
+        )
+        response = CustomerBookingView.as_view()(request, raw_token="badtoken")
+
+    assert response.status_code == 404
+    assert response.data["error_code"] == "token_invalid"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_booking_via_expired_token_returns_410():
+    with tenant_schema("customer_endpoints"):
+        RestaurantSettings.objects.create()
+        booking = _create_booking(timezone.now() - timedelta(days=8))
+        _, raw_token = BookingAccessToken.issue(booking)
+        request = APIRequestFactory().delete(f"/api/v1/public/bookings/{raw_token}/")
+
+        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+
+    assert response.status_code == 410
+    assert response.data["error_code"] == "token_expired"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_patch_booking_via_token_is_throttled():
+    with tenant_schema("customer_endpoints"):
+        RestaurantSettings.objects.create()
+        booking = _create_booking(_future_slot())
+        _, raw_token = BookingAccessToken.issue(booking)
+        factory = APIRequestFactory()
+        response = None
+
+        for _ in range(31):
+            request = factory.patch(
+                f"/api/v1/public/bookings/{raw_token}/",
+                {"notes": "updated"},
+                format="json",
+            )
+            request.META["REMOTE_ADDR"] = "127.0.18.5"
+            response = CustomerBookingView.as_view()(request, raw_token=raw_token)
+            if response.status_code == 429:
+                break
+
+    assert response is not None
+    assert response.status_code == 429
 
 
 @pytest.mark.django_db(transaction=True)
