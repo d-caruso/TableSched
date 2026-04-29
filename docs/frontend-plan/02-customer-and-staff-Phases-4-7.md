@@ -264,10 +264,17 @@ export default function PaymentPage() {
 ```tsx
 import { YStack, Text } from 'tamagui';
 import { useState } from 'react';
+import { Platform } from 'react-native';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
 import { AppButton } from '@/components/ui/AppButton';
+import { ENV } from '@/lib/env';
 import { ROUTES } from '@/constants/routes';
+
+const getOrigin = () =>
+  Platform.OS === 'web' && typeof window !== 'undefined'
+    ? window.location.origin
+    : ENV.API_BASE_URL;
 
 export function PaymentForm({ token }: { token: string }) {
   const { t } = useTranslation();
@@ -285,7 +292,7 @@ export function PaymentForm({ token }: { token: string }) {
       elements,
       confirmParams: {
         // Stripe redirects here on success; booking detail will show updated status
-        return_url: `${window.location.origin}${ROUTES.bookingDetail(token)}`,
+        return_url: `${getOrigin()}${ROUTES.bookingDetail(token)}`,
       },
     });
 
