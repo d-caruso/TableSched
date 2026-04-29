@@ -101,6 +101,13 @@ export const staffApi = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+  updateTablePosition(tenant: string, token: string, tableId: string, x: number, y: number) {
+    return apiRequest<void>(`/api/tables/${tableId}/position/`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+      body: { x, y },
+    });
+  },
   getRestaurantSettings(tenant: string, token: string) {
     return apiRequest<RestaurantSettings>(`/api/staff/${tenant}/settings/`, {
       headers: { Authorization: `Bearer ${token}` },

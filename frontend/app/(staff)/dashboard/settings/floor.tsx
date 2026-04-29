@@ -5,17 +5,9 @@ import { ScrollView, Spinner, Text, YStack } from 'tamagui';
 import '@/lib/i18n';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { RoomTabs } from '@/components/floor/RoomTabs';
+import { FloorCanvas } from '@/components/floor/FloorCanvas';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { staffApi } from '@/lib/api/endpoints';
-import type { Room } from '@/lib/api/types';
-
-function FloorCanvas({ room }: { room: Room }) {
-  return (
-    <YStack padding="$4">
-      <Text>{room.name}</Text>
-    </YStack>
-  );
-}
 
 export default function FloorScreen() {
   const { t } = useTranslation();
@@ -58,7 +50,7 @@ export default function FloorScreen() {
         {roomList.length > 1 ? (
           <RoomTabs rooms={roomList} activeId={activeRoom?.id ?? roomList[0].id} onSelect={setActiveRoomId} />
         ) : null}
-        {activeRoom ? <FloorCanvas room={activeRoom} /> : null}
+        {activeRoom ? <FloorCanvas room={activeRoom} tenant={tenant!} token={accessToken!} /> : null}
       </YStack>
     </ScrollView>
   );

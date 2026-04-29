@@ -370,7 +370,7 @@ git push origin feature/frontend-mvp-Phase9-floor-plan
 
 ---
 
-### ❌ Task 9.2 — Canvas & Drag-and-Drop Tables
+### ✅ Task 9.2 — Canvas & Drag-and-Drop Tables
 
 Implement `FloorCanvas` and `DraggableTable`. Uses `react-native-gesture-handler` + `react-native-reanimated` for drag. On drag end, calls `staffApi.updateTablePosition(tenant, token, tableId, x, y)`. Coordinates are absolute pixel offsets within the canvas view.
 

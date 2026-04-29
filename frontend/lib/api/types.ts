@@ -59,6 +59,8 @@ export type Table = {
   name: string;
   room?: Room | null;
   capacity: number;
+  x?: number | null;
+  y?: number | null;
 };
 
 export type BookingPayment = {
