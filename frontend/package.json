@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
+    "validate-i18n": "node --experimental-strip-types scripts/validate-i18n.ts",
     "test": "jest"
   },
   "dependencies": {

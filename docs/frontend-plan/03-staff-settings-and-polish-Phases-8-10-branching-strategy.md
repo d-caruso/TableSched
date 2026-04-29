@@ -469,7 +469,7 @@ git push -u origin feature/frontend-mvp-Phase10-polish
 
 ---
 
-### ❌ Task 10.1 — i18n Completion & Validation Script
+### ✅ Task 10.1 — i18n Completion & Validation Script
 
 Ensure `it.json` and `de.json` are complete translations of `en.json`. Add `scripts/validate-i18n.ts` that exits with code 1 if any key present in `en.json` is missing from the other locales. Add it to `package.json` scripts.
 
