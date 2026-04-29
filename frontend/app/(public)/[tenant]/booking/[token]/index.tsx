@@ -3,15 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, YStack } from 'tamagui';
 import { BookingInfoCard } from '@/components/booking/BookingInfoCard';
+import { CustomerBookingActions } from '@/components/booking/CustomerBookingActions';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { publicApi } from '@/lib/api/endpoints';
 import { ApiError } from '@/lib/api/client';
 import type { Booking } from '@/lib/api/types';
-
-function CustomerBookingActionsStub() {
-  return null;
-}
 
 export default function CustomerBookingDetailPage() {
   const { token } = useLocalSearchParams<{ tenant: string; token: string }>();
@@ -64,7 +61,7 @@ export default function CustomerBookingDetailPage() {
     <YStack padding="$4" gap="$6">
       <StatusBadge status={booking.status} />
       <BookingInfoCard booking={booking} />
-      <CustomerBookingActionsStub />
+      <CustomerBookingActions booking={booking} token={tokenValue} />
     </YStack>
   );
 }

@@ -133,7 +133,7 @@ git push origin feature/frontend-mvp-Phase4-customer-token
 
 ---
 
-### ❌ Task 4.2 — Customer Action Controls
+### ✅ Task 4.2 — Customer Action Controls
 
 Implement `CustomerBookingActions`. Derives available actions from booking status: cancel, modify, pay. Actions are shown only for statuses where they are valid (e.g., cannot cancel a `declined` booking). Cutoff enforcement is server-side; the frontend reflects the result via `ApiError`.
 
