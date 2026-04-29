@@ -437,10 +437,17 @@ git checkout -b task/frontend-mvp-Task2.1-i18n
 // __tests__/i18n.test.ts
 import i18n from '@/lib/i18n';
 
+function flatKeys(obj: Record<string, unknown>, prefix = ''): string[] {
+  return Object.entries(obj).flatMap(([k, v]) => {
+    const full = prefix ? `${prefix}.${k}` : k;
+    return v && typeof v === 'object' ? flatKeys(v as Record<string, unknown>, full) : [full];
+  });
+}
+
 test('all en keys are present in it and de', () => {
-  const enKeys = Object.keys(i18n.getResourceBundle('en', 'translation'));
-  const itKeys = Object.keys(i18n.getResourceBundle('it', 'translation'));
-  const deKeys = Object.keys(i18n.getResourceBundle('de', 'translation'));
+  const enKeys = flatKeys(i18n.getResourceBundle('en', 'translation'));
+  const itKeys = flatKeys(i18n.getResourceBundle('it', 'translation'));
+  const deKeys = flatKeys(i18n.getResourceBundle('de', 'translation'));
   enKeys.forEach(k => {
     expect(itKeys).toContain(k);
     expect(deKeys).toContain(k);
