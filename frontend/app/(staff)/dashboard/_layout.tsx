@@ -1,15 +1,51 @@
-import { Tabs } from 'expo-router';
+import { Slot, useRouter, useSegments } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Pressable } from 'react-native';
+import { Text, YStack } from 'tamagui';
 import '@/lib/i18n';
+import { ResponsiveShell } from '@/components/ui/ResponsiveShell';
 
-export default function DashboardLayout() {
+const NAV_ITEMS = [
+  { href: '/dashboard', labelKey: 'staff.dashboard.tabs.bookings' },
+  { href: '/dashboard/walkins', labelKey: 'staff.dashboard.tabs.walkins' },
+  { href: '/dashboard/settings', labelKey: 'staff.dashboard.tabs.settings' },
+] as const;
+
+function DashboardSidebar() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const segments = useSegments();
+  const path = `/${segments.slice(1).join('/')}`;
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
-      <Tabs.Screen name="index" options={{ title: t('staff.dashboard.tabs.bookings') }} />
-      <Tabs.Screen name="walkins" options={{ title: t('staff.dashboard.tabs.walkins') }} />
-      <Tabs.Screen name="settings" options={{ title: t('staff.dashboard.tabs.settings') }} />
-    </Tabs>
+    <YStack padding="$4" gap="$2">
+      {NAV_ITEMS.map(item => {
+        const isActive = path === item.href;
+
+        return (
+          <Pressable
+            key={item.href}
+            onPress={() => router.push(item.href)}
+            accessibilityRole="button"
+          >
+            <YStack
+              padding="$3"
+              borderRadius="$4"
+              backgroundColor={isActive ? '$color5' : 'transparent'}
+              borderWidth={1}
+              borderColor={isActive ? '$color10' : '$borderColor'}
+            >
+              <Text>{t(item.labelKey)}</Text>
+            </YStack>
+          </Pressable>
+        );
+      })}
+    </YStack>
+  );
+}
+
+export default function DashboardLayout() {
+  return (
+    <ResponsiveShell sidebar={<DashboardSidebar />} content={<Slot />} />
   );
 }

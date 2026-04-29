@@ -582,7 +582,7 @@ git push origin feature/frontend-mvp-Phase10-polish
 
 ---
 
-### ❌ Task 10.2 — Responsive Layout
+### ✅ Task 10.2 — Responsive Layout
 
 Implement `ResponsiveShell` using Tamagui's `useMedia`. On screens wider than `md` breakpoint the staff dashboard displays a sidebar; below it stacks vertically. The public booking page is already single-column and needs no changes.
 
