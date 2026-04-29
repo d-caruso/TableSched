@@ -104,6 +104,10 @@ npx create-expo-app@latest frontend --template tabs
 }
 ```
 
+Also add the initial frontend linting setup:
+- `package.json` scripts for `typecheck` and `lint`
+- an initial ESLint config file for the frontend app
+
 ### Task 1.3 — Configuration files
 
 `app.json`:
