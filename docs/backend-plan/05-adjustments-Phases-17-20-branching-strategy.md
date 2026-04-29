@@ -82,7 +82,7 @@ git checkout -b feature/backend-mvp-Phase17-multi-table-assignments
 git push -u origin feature/backend-mvp-Phase17-multi-table-assignments
 ```
 
-### ❌ Task 17.1 — Booking Table Assignments
+### ✅ Task 17.1 — Booking Table Assignments
 
 **Branch:** `task/backend-mvp-Task17.1-booking-table-assignments`
 

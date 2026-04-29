@@ -28,7 +28,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
 
     def get_queryset(self):
-        return Booking.objects.select_related("customer", "table")
+        return Booking.objects.select_related("customer").prefetch_related("table_assignments")
 
     @action(detail=True, methods=["post"], url_path="approve")
     def approve(self, request: Request, pk: str | None = None) -> Response:

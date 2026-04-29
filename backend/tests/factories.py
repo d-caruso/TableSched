@@ -105,7 +105,6 @@ class BookingFactory(factory.django.DjangoModelFactory):
     party_size = 2
     status = BookingStatus.PENDING_REVIEW
     notes = ""
-    table = None
     staff_message = ""
     payment_due_at = None
     decided_at = None
