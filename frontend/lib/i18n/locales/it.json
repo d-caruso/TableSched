@@ -17,9 +17,10 @@
       "pending_payment": "In attesa di pagamento",
       "confirmed": "Confermata",
       "confirmed_without_deposit": "Confermata senza acconto",
-      "declined": "Rifiutata",
-      "cancelled_by_customer": "Annullata dal cliente",
-      "authorization_expired": "Autorizzazione scaduta"
+  "declined": "Rifiutata",
+  "cancelled_by_customer": "Annullata dal cliente",
+  "cancelled_by_staff": "Annullata dallo staff",
+  "authorization_expired": "Autorizzazione scaduta"
     },
     "payment_status": {
       "pending": "In attesa",
@@ -91,14 +92,22 @@
     "dashboard": {
       "empty": "Nessuna prenotazione trovata",
       "filters": {
-        "pending_review": "In revisione",
-        "pending_payment": "In attesa di pagamento",
-        "confirmed": "Confermate",
-        "declined": "Rifiutate",
-        "all": "Tutte",
-        "walkins": "Ingressi"
-      }
+      "pending_review": "In revisione",
+      "pending_payment": "In attesa di pagamento",
+      "pending": "In attesa",
+      "confirmed": "Confermate",
+      "declined": "Rifiutate",
+      "all": "Tutte",
+      "walkins": "Ingressi",
+      "bookings": "Prenotazioni",
+      "settings": "Impostazioni"
     },
+    "tabs": {
+      "bookings": "Prenotazioni",
+      "walkins": "Ingressi",
+      "settings": "Impostazioni"
+    }
+  },
     "booking": {
       "approve": "Approva",
       "reject": "Rifiuta",

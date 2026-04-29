@@ -10,6 +10,7 @@ const COLORS: Record<BookingStatus, string> = {
   confirmed_without_deposit: '#057a55',
   declined: '#e02424',
   cancelled_by_customer: '#6b7280',
+  cancelled_by_staff: '#6b7280',
   authorization_expired: '#6b7280',
 };
 

@@ -17,9 +17,10 @@
       "pending_payment": "Pending payment",
       "confirmed": "Confirmed",
       "confirmed_without_deposit": "Confirmed without deposit",
-      "declined": "Declined",
-      "cancelled_by_customer": "Cancelled by customer",
-      "authorization_expired": "Authorization expired"
+  "declined": "Declined",
+  "cancelled_by_customer": "Cancelled by customer",
+  "cancelled_by_staff": "Cancelled by staff",
+  "authorization_expired": "Authorization expired"
     },
     "payment_status": {
       "pending": "Pending",
@@ -91,14 +92,22 @@
     "dashboard": {
       "empty": "No bookings found",
       "filters": {
-        "pending_review": "Pending review",
-        "pending_payment": "Pending payment",
-        "confirmed": "Confirmed",
-        "declined": "Declined",
-        "all": "All",
-        "walkins": "Walk-ins"
-      }
+      "pending_review": "Pending review",
+      "pending_payment": "Pending payment",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "declined": "Declined",
+      "all": "All",
+      "walkins": "Walk-ins",
+      "bookings": "Bookings",
+      "settings": "Settings"
     },
+    "tabs": {
+      "bookings": "Bookings",
+      "walkins": "Walk-ins",
+      "settings": "Settings"
+    }
+  },
     "booking": {
       "approve": "Approve",
       "reject": "Reject",

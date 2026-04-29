@@ -550,6 +550,8 @@ export function FilterTabs({ labels, selected, onSelect }: Props) {
 }
 ```
 
+Completed in the frontend implementation branch.
+
 ### Task 7.2 — Booking detail + staff actions
 
 `app/(staff)/dashboard/bookings/[id].tsx`:

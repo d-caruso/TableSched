@@ -642,7 +642,7 @@ git push -u origin feature/frontend-mvp-Phase7-staff-dashboard
 
 ---
 
-### ❌ Task 7.1 — Bookings List
+### ✅ Task 7.1 — Bookings List
 
 Implement `app/(staff)/dashboard/index.tsx`, `BookingCard`, and `FilterTabs`. Triggers `staffApi.triggerExpirationSweep` on mount. Polls every 60 seconds via `refetchInterval`. Filter options: all, pending, confirmed, declined.
 
@@ -703,6 +703,8 @@ git checkout feature/frontend-mvp-Phase7-staff-dashboard
 git merge task/frontend-mvp-Task7.1-bookings-list
 git push origin feature/frontend-mvp-Phase7-staff-dashboard
 ```
+
+Completed in the frontend implementation branch.
 
 ---
 

@@ -17,9 +17,10 @@
       "pending_payment": "Zahlung ausstehend",
       "confirmed": "Bestätigt",
       "confirmed_without_deposit": "Ohne Anzahlung bestätigt",
-      "declined": "Abgelehnt",
-      "cancelled_by_customer": "Vom Kunden storniert",
-      "authorization_expired": "Autorisierung abgelaufen"
+  "declined": "Abgelehnt",
+  "cancelled_by_customer": "Vom Kunden storniert",
+  "cancelled_by_staff": "Vom Personal storniert",
+  "authorization_expired": "Autorisierung abgelaufen"
     },
     "payment_status": {
       "pending": "Ausstehend",
@@ -91,14 +92,22 @@
     "dashboard": {
       "empty": "Keine Buchungen gefunden",
       "filters": {
-        "pending_review": "In Prüfung",
-        "pending_payment": "Zahlung ausstehend",
-        "confirmed": "Bestätigt",
-        "declined": "Abgelehnt",
-        "all": "Alle",
-        "walkins": "Spontanbesuche"
-      }
+      "pending_review": "In Prüfung",
+      "pending_payment": "Zahlung ausstehend",
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "declined": "Abgelehnt",
+      "all": "Alle",
+      "walkins": "Spontanbesuche",
+      "bookings": "Buchungen",
+      "settings": "Einstellungen"
     },
+    "tabs": {
+      "bookings": "Buchungen",
+      "walkins": "Spontanbesuche",
+      "settings": "Einstellungen"
+    }
+  },
     "booking": {
       "approve": "Genehmigen",
       "reject": "Ablehnen",

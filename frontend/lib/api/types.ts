@@ -5,6 +5,7 @@ export type BookingStatus =
   | 'confirmed_without_deposit'
   | 'declined'
   | 'cancelled_by_customer'
+  | 'cancelled_by_staff'
   | 'authorization_expired';
 
 export type PaymentStatus =
