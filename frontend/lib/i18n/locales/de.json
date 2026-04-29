@@ -1,0 +1,158 @@
+{
+  "common": {
+    "loading": "Laden",
+    "error": "Etwas ist schiefgelaufen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "back": "Zurück",
+    "confirm": "Bestätigen",
+    "submit": "Senden",
+    "close": "Schließen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "booking": {
+    "status": {
+      "pending_review": "In Prüfung",
+      "pending_payment": "Zahlung ausstehend",
+      "confirmed": "Bestätigt",
+      "confirmed_without_deposit": "Ohne Anzahlung bestätigt",
+  "declined": "Abgelehnt",
+  "cancelled_by_customer": "Vom Kunden storniert",
+  "cancelled_by_staff": "Vom Personal storniert",
+  "authorization_expired": "Autorisierung abgelaufen"
+    },
+    "payment_status": {
+      "pending": "Ausstehend",
+      "authorized": "Autorisiert",
+      "captured": "Eingezogen",
+      "failed": "Fehlgeschlagen",
+      "requires_action": "Aktion erforderlich"
+    },
+    "form": {
+      "title": "Tisch reservieren",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "name": "Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "notes": "Notizen",
+      "partySize": "Personenzahl",
+      "submit": "Anfrage senden"
+    },
+    "page": {
+      "opening_hours": "Öffnungszeiten",
+      "booking_flow": "Buchungsformular",
+      "back": "Zurück",
+      "request_booking": "Reservierung anfragen",
+      "booking_confirmed": "Reservierung bestätigt"
+    },
+    "contact": {
+      "full_name": "Vollständiger Name",
+      "phone_number": "Telefonnummer",
+      "email": "E-Mail",
+      "locale": "Sprache",
+      "notes": "Notizen"
+    },
+    "locales": {
+      "en": "Englisch",
+      "it": "Italienisch",
+      "de": "Deutsch"
+    },
+    "actions": {
+      "pay": "Anzahlung zahlen",
+      "modify": "Reservierung ändern",
+      "cancel": "Reservierung stornieren"
+    },
+    "detail": {
+      "title": "Reservierungsdetails",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "guests": "Gäste",
+      "table": "Tisch",
+      "payment": "Zahlung",
+      "notes": "Notizen",
+      "no_table": "Kein Tisch zugewiesen",
+      "no_notes": "Keine Notizen",
+      "amount": "Betrag"
+    },
+    "success": {
+      "requested": "Anfrage gesendet",
+      "requestedBody": "Wir melden uns bald{email}."
+    },
+    "weekdays": {
+      "0": "Sonntag",
+      "1": "Montag",
+      "2": "Dienstag",
+      "3": "Mittwoch",
+      "4": "Donnerstag",
+      "5": "Freitag",
+      "6": "Samstag"
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Mitarbeiter-Login",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "submit": "Anmelden",
+      "error": "Anmeldung fehlgeschlagen"
+    },
+    "dashboard": {
+      "empty": "Keine Buchungen gefunden",
+      "filters": {
+      "pending_review": "In Prüfung",
+      "pending_payment": "Zahlung ausstehend",
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "declined": "Abgelehnt",
+      "all": "Alle",
+      "walkins": "Spontanbesuche",
+      "bookings": "Buchungen",
+      "settings": "Einstellungen"
+    },
+    "tabs": {
+      "bookings": "Buchungen",
+      "walkins": "Spontanbesuche",
+      "settings": "Einstellungen"
+    }
+  },
+    "booking": {
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "assignTable": "Tisch zuweisen",
+      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
+    },
+    "walkins": {
+      "title": "Spontanbesuche",
+      "submit": "Spontanbesuch hinzufügen",
+      "success": "Spontanbesuch hinzugefügt"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "depositPolicy": "Anzahlung",
+      "openingHours": "Öffnungszeiten",
+      "open": "Offen",
+      "close": "Geschlossen",
+      "minPartySize": "Minimale Gruppengröße",
+      "depositModes": {
+        "never": "Nie",
+        "always": "Immer",
+        "by_party_size": "Nach Gruppengröße"
+      }
+    },
+    "floor": {
+      "title": "Grundriss"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Etwas ist schiefgelaufen",
+    "booking_not_found": "Buchung nicht gefunden",
+    "BOOKING_NOT_FOUND": "Buchung nicht gefunden",
+    "TOKEN_EXPIRED": "Dieser Link ist abgelaufen",
+    "INVALID_CREDENTIALS": "Ungültige E-Mail oder Passwort",
+    "SESSION_EXPIRED": "Ihre Sitzung ist abgelaufen",
+    "VALIDATION_ERROR": "Bitte prüfen Sie das Formular",
+    "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden"
+  }
+}

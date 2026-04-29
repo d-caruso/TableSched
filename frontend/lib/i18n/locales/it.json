@@ -1,0 +1,158 @@
+{
+  "common": {
+    "loading": "Caricamento",
+    "error": "Si è verificato un errore",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "back": "Indietro",
+    "confirm": "Conferma",
+    "submit": "Invia",
+    "close": "Chiudi",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "booking": {
+    "status": {
+      "pending_review": "In attesa di revisione",
+      "pending_payment": "In attesa di pagamento",
+      "confirmed": "Confermata",
+      "confirmed_without_deposit": "Confermata senza acconto",
+  "declined": "Rifiutata",
+  "cancelled_by_customer": "Annullata dal cliente",
+  "cancelled_by_staff": "Annullata dallo staff",
+  "authorization_expired": "Autorizzazione scaduta"
+    },
+    "payment_status": {
+      "pending": "In attesa",
+      "authorized": "Autorizzato",
+      "captured": "Incassato",
+      "failed": "Fallito",
+      "requires_action": "Azione richiesta"
+    },
+    "form": {
+      "title": "Prenota un tavolo",
+      "date": "Data",
+      "time": "Ora",
+      "name": "Nome",
+      "phone": "Telefono",
+      "email": "Email",
+      "notes": "Note",
+      "partySize": "Numero di ospiti",
+      "submit": "Invia richiesta"
+    },
+    "page": {
+      "opening_hours": "Orari di apertura",
+      "booking_flow": "Modulo di prenotazione",
+      "back": "Indietro",
+      "request_booking": "Richiedi prenotazione",
+      "booking_confirmed": "Prenotazione confermata"
+    },
+    "contact": {
+      "full_name": "Nome completo",
+      "phone_number": "Numero di telefono",
+      "email": "Email",
+      "locale": "Lingua",
+      "notes": "Note"
+    },
+    "locales": {
+      "en": "Inglese",
+      "it": "Italiano",
+      "de": "Tedesco"
+    },
+    "actions": {
+      "pay": "Paga acconto",
+      "modify": "Modifica prenotazione",
+      "cancel": "Annulla prenotazione"
+    },
+    "detail": {
+      "title": "Dettagli prenotazione",
+      "date": "Data",
+      "time": "Ora",
+      "guests": "ospiti",
+      "table": "Tavolo",
+      "payment": "Pagamento",
+      "notes": "Note",
+      "no_table": "Nessun tavolo assegnato",
+      "no_notes": "Nessuna nota",
+      "amount": "Importo"
+    },
+    "success": {
+      "requested": "Richiesta inviata",
+      "requestedBody": "Ti contatteremo presto{email}."
+    },
+    "weekdays": {
+      "0": "Domenica",
+      "1": "Lunedì",
+      "2": "Martedì",
+      "3": "Mercoledì",
+      "4": "Giovedì",
+      "5": "Venerdì",
+      "6": "Sabato"
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Accesso staff",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Accedi",
+      "error": "Impossibile accedere"
+    },
+    "dashboard": {
+      "empty": "Nessuna prenotazione trovata",
+      "filters": {
+      "pending_review": "In revisione",
+      "pending_payment": "In attesa di pagamento",
+      "pending": "In attesa",
+      "confirmed": "Confermate",
+      "declined": "Rifiutate",
+      "all": "Tutte",
+      "walkins": "Ingressi",
+      "bookings": "Prenotazioni",
+      "settings": "Impostazioni"
+    },
+    "tabs": {
+      "bookings": "Prenotazioni",
+      "walkins": "Ingressi",
+      "settings": "Impostazioni"
+    }
+  },
+    "booking": {
+      "approve": "Approva",
+      "reject": "Rifiuta",
+      "assignTable": "Assegna tavolo",
+      "confirmWithoutDeposit": "Conferma senza acconto"
+    },
+    "walkins": {
+      "title": "Ingressi",
+      "submit": "Aggiungi ingresso",
+      "success": "Ingresso aggiunto"
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "depositPolicy": "Politica dell'acconto",
+      "openingHours": "Orari di apertura",
+      "open": "Aperto",
+      "close": "Chiuso",
+      "minPartySize": "Numero minimo di ospiti",
+      "depositModes": {
+        "never": "Mai",
+        "always": "Sempre",
+        "by_party_size": "In base al numero di ospiti"
+      }
+    },
+    "floor": {
+      "title": "Pianta"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Si è verificato un errore",
+    "booking_not_found": "Prenotazione non trovata",
+    "BOOKING_NOT_FOUND": "Prenotazione non trovata",
+    "TOKEN_EXPIRED": "Questo link è scaduto",
+    "INVALID_CREDENTIALS": "Email o password non validi",
+    "SESSION_EXPIRED": "La sessione è scaduta",
+    "VALIDATION_ERROR": "Controlla il modulo",
+    "PAYMENT_FAILED": "Il pagamento non è andato a buon fine"
+  }
+}

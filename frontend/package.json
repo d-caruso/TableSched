@@ -1,0 +1,49 @@
+{
+  "name": "tablesched-frontend",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "build": "expo export",
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "validate-i18n": "node --experimental-strip-types scripts/validate-i18n.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^2.x",
+    "@stripe/stripe-js": "^4.x",
+    "@tamagui/animations-react-native": "^1.120.x",
+    "@tamagui/config": "^1.120.x",
+    "@tamagui/core": "^1.120.x",
+    "@tanstack/react-query": "^5.x",
+    "expo": "~52.0.0",
+    "expo-constants": "~17.x",
+    "expo-router": "~4.0.0",
+    "expo-secure-store": "~14.x",
+    "i18next": "^23.x",
+    "react-i18next": "^15.x",
+    "react-native": "0.76.x",
+    "react-native-gesture-handler": "~2.20.x",
+    "react-native-reanimated": "~3.16.x",
+    "react-native-safe-area-context": "4.12.x",
+    "react-native-screens": "~4.4.x",
+    "react-native-web": "~0.19.x",
+    "tamagui": "^1.120.x",
+    "zod": "^3.x"
+  },
+  "devDependencies": {
+    "@tamagui/babel-plugin": "^1.120.x",
+    "@testing-library/react-native": "^12.x",
+    "@types/react": "^18.x",
+    "@typescript-eslint/parser": "^8.x",
+    "eslint": "^9.x",
+    "jest": "^29.x",
+    "jest-expo": "~52.x",
+    "react-test-renderer": "18.3.1",
+    "typescript": "^5.x"
+  }
+}

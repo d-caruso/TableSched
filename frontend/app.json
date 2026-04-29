@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "TableSched",
+    "slug": "tablesched",
+    "scheme": "tablesched",
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "root": "app",
+          "origin": "https://tablesched.domenicocaruso.com"
+        }
+      ]
+    ]
+  }
+}

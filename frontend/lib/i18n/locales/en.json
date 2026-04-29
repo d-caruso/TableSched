@@ -1,0 +1,158 @@
+{
+  "common": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
+  },
+    "booking": {
+      "status": {
+      "pending_review": "Pending review",
+      "pending_payment": "Pending payment",
+      "confirmed": "Confirmed",
+      "confirmed_without_deposit": "Confirmed without deposit",
+  "declined": "Declined",
+  "cancelled_by_customer": "Cancelled by customer",
+  "cancelled_by_staff": "Cancelled by staff",
+  "authorization_expired": "Authorization expired"
+    },
+    "payment_status": {
+      "pending": "Pending",
+      "authorized": "Authorized",
+      "captured": "Captured",
+      "failed": "Failed",
+      "requires_action": "Requires action"
+    },
+    "form": {
+      "title": "Book a table",
+      "date": "Date",
+      "time": "Time",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "notes": "Notes",
+      "partySize": "Party size",
+      "submit": "Submit request"
+    },
+    "page": {
+      "opening_hours": "Opening hours",
+      "booking_flow": "Booking form",
+      "back": "Back",
+      "request_booking": "Request booking",
+      "booking_confirmed": "Booking confirmed"
+    },
+    "contact": {
+      "full_name": "Full name",
+      "phone_number": "Phone number",
+      "email": "Email",
+      "locale": "Language",
+      "notes": "Notes"
+    },
+    "locales": {
+      "en": "English",
+      "it": "Italian",
+      "de": "German"
+    },
+    "actions": {
+      "pay": "Pay deposit",
+      "modify": "Modify booking",
+      "cancel": "Cancel booking"
+    },
+    "detail": {
+      "title": "Booking details",
+      "date": "Date",
+      "time": "Time",
+      "guests": "guests",
+      "table": "Table",
+      "payment": "Payment",
+      "notes": "Notes",
+      "no_table": "No table assigned",
+      "no_notes": "No notes",
+      "amount": "Amount"
+    },
+    "success": {
+      "requested": "Request submitted",
+      "requestedBody": "We will contact you soon{email}."
+    },
+    "weekdays": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "staff": {
+    "login": {
+      "title": "Staff login",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "error": "Unable to sign in"
+    },
+    "dashboard": {
+      "empty": "No bookings found",
+      "filters": {
+      "pending_review": "Pending review",
+      "pending_payment": "Pending payment",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "declined": "Declined",
+      "all": "All",
+      "walkins": "Walk-ins",
+      "bookings": "Bookings",
+      "settings": "Settings"
+    },
+    "tabs": {
+      "bookings": "Bookings",
+      "walkins": "Walk-ins",
+      "settings": "Settings"
+    }
+  },
+    "booking": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "assignTable": "Assign table",
+      "confirmWithoutDeposit": "Confirm without deposit"
+    },
+    "walkins": {
+      "title": "Walk-ins",
+      "submit": "Add walk-in",
+      "success": "Walk-in added"
+    },
+    "settings": {
+      "title": "Settings",
+      "depositPolicy": "Deposit policy",
+      "openingHours": "Opening hours",
+      "open": "Open",
+      "close": "Close",
+      "minPartySize": "Min party size",
+      "depositModes": {
+        "never": "Never",
+        "always": "Always",
+        "by_party_size": "By party size"
+      }
+    },
+    "floor": {
+      "title": "Floor plan"
+    }
+  },
+  "error": {
+    "UNKNOWN_ERROR": "Something went wrong",
+    "booking_not_found": "Booking not found",
+    "BOOKING_NOT_FOUND": "Booking not found",
+    "TOKEN_EXPIRED": "This link has expired",
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "SESSION_EXPIRED": "Your session has expired",
+    "VALIDATION_ERROR": "Please check the form",
+    "PAYMENT_FAILED": "Payment could not be completed"
+  }
+}
