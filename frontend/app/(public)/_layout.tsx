@@ -1,1 +1,6 @@
-// Task 1.1 scaffold placeholder.
+import { Slot } from 'expo-router';
+
+export default function PublicLayout() {
+  return <Slot />;
+}
+

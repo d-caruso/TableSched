@@ -2,9 +2,26 @@ export const resources = {
   en: {
     translation: {
       common: {
+        loading: 'Loading',
         error: 'Something went wrong',
       },
       booking: {
+        page: {
+          opening_hours: 'Opening hours',
+          booking_flow: 'Booking form',
+        },
+        hours: {
+          closed: 'Closed',
+        },
+        weekdays: {
+          monday: 'Monday',
+          tuesday: 'Tuesday',
+          wednesday: 'Wednesday',
+          thursday: 'Thursday',
+          friday: 'Friday',
+          saturday: 'Saturday',
+          sunday: 'Sunday',
+        },
         status: {
           pending_review: 'Pending review',
           pending_payment: 'Pending payment',
@@ -21,4 +38,3 @@ export const resources = {
     },
   },
 } as const;
-

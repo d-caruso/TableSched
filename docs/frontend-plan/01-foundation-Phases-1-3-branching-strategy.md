@@ -741,7 +741,7 @@ git push -u origin feature/frontend-mvp-Phase3-public-booking
 
 ---
 
-### ❌ Task 3.1 — Restaurant Info Display
+### ✅ Task 3.1 — Restaurant Info Display
 
 Implement `app/(public)/[tenant]/index.tsx`, `RestaurantHeader`, and `OpeningHoursList`. Fetches restaurant public info via `publicApi.getRestaurant`. No user-facing strings — all labels via i18n keys.
 
