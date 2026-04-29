@@ -220,7 +220,7 @@ git checkout -b task/backend-mvp-Task18.3-booking-tables-endpoint
 git commit -m "[TASK] 18.3 add booking tables endpoint"
 ```
 
-### ❌ Task 18.4 — Walk-in Tables Endpoint
+### ✅ Task 18.4 — Walk-in Tables Endpoint
 
 **Branch:** `task/backend-mvp-Task18.4-walkin-tables-endpoint`
 
