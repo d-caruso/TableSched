@@ -1,0 +1,84 @@
+export type BookingStatus =
+  | 'pending_review'
+  | 'pending_payment'
+  | 'confirmed'
+  | 'confirmed_without_deposit'
+  | 'declined'
+  | 'cancelled_by_customer'
+  | 'authorization_expired';
+
+export type PaymentStatus =
+  | 'pending'
+  | 'authorized'
+  | 'captured'
+  | 'failed'
+  | 'requires_action';
+
+export type TimeSlot = {
+  date: string;
+  time: string;
+  available: boolean;
+};
+
+export type RestaurantPublicInfo = {
+  name: string;
+  description?: string | null;
+  timezone: string;
+  currency: string;
+  booking_window_days: number;
+};
+
+export type Room = {
+  id: string;
+  name: string;
+};
+
+export type Table = {
+  id: string;
+  name: string;
+  room?: Room | null;
+  capacity: number;
+};
+
+export type BookingPayment = {
+  status: PaymentStatus;
+  amount: number;
+  currency: string;
+  client_secret?: string | null;
+};
+
+export type BookingCustomer = {
+  name: string;
+  phone: string;
+  locale?: string | null;
+  email?: string | null;
+};
+
+export type Booking = {
+  id: string;
+  status: BookingStatus;
+  date: string;
+  time: string;
+  party_size: number;
+  customer: BookingCustomer;
+  created_at: string;
+  notes?: string | null;
+  table?: Table | null;
+  payment?: BookingPayment | null;
+};
+
+export type BookingCreatePayload = {
+  date: string;
+  time: string;
+  party_size: number;
+  name: string;
+  phone: string;
+  email?: string;
+  notes?: string;
+};
+
+export type BookingModifyPayload = {
+  date: string;
+  time: string;
+  party_size: number;
+};
