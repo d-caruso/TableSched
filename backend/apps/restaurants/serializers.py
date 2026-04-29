@@ -1,4 +1,4 @@
-"""Serializers for restaurant public endpoints."""
+"""Serializers for restaurant endpoints."""
 
 from rest_framework import serializers  # type: ignore[import-untyped]
 
@@ -26,3 +26,20 @@ class PublicRestaurantSerializer(serializers.Serializer):
     booking_cutoff_minutes = serializers.IntegerField()
     advance_booking_days = serializers.IntegerField()
     opening_hours = OpeningHoursPublicSerializer(many=True)
+
+
+class RestaurantSettingsSerializer(serializers.ModelSerializer[RestaurantSettings]):
+    """Tenant restaurant booking and deposit settings."""
+
+    class Meta:
+        model = RestaurantSettings
+        fields = (
+            "deposit_policy",
+            "deposit_party_threshold",
+            "deposit_amount_cents",
+            "near_term_threshold_hours",
+            "long_term_payment_window_hours",
+            "cancellation_cutoff_hours",
+            "booking_cutoff_minutes",
+            "advance_booking_days",
+        )

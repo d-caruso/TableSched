@@ -1,11 +1,12 @@
-"""Views for restaurant public APIs."""
+"""Views for restaurant APIs."""
 
 from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 from rest_framework.views import APIView  # type: ignore[import-untyped]
 
+from apps.common.permissions import IsManager, IsTenantMember
 from apps.restaurants.models import OpeningHours, RestaurantSettings
-from apps.restaurants.serializers import PublicRestaurantSerializer
+from apps.restaurants.serializers import PublicRestaurantSerializer, RestaurantSettingsSerializer
 
 
 class PublicRestaurantView(APIView):
@@ -36,3 +37,27 @@ class PublicRestaurantView(APIView):
         serializer = PublicRestaurantSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data)
+
+
+class RestaurantSettingsView(APIView):
+    """Tenant-member endpoint for singleton restaurant settings."""
+
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [IsManager()]
+        return [IsTenantMember()]
+
+    def get(self, request: Request) -> Response:
+        settings_obj = self._settings()
+        return Response(RestaurantSettingsSerializer(settings_obj).data)
+
+    def patch(self, request: Request) -> Response:
+        settings_obj = self._settings()
+        serializer = RestaurantSettingsSerializer(settings_obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def _settings(self) -> RestaurantSettings:
+        settings_obj, _created = RestaurantSettings.objects.get_or_create()
+        return settings_obj
