@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button, Text, YStack } from 'tamagui';
+import { Text, YStack } from 'tamagui';
+import { StepDateTime } from '@/components/booking/steps/StepDateTime';
 
 export type Draft = {
   date?: string;
@@ -24,17 +25,6 @@ type BookingFormFlowProps = {
     cancellation_cutoff_hours?: number;
   };
 };
-
-function StepDateTime() {
-  return (
-    <YStack testID="step-datetime" gap="$3">
-      <Text fontSize="$5" fontWeight="$6">
-        Select date and time
-      </Text>
-      <Button>Continue</Button>
-    </YStack>
-  );
-}
 
 function StepContact() {
   return (
@@ -66,7 +56,7 @@ export function BookingFormFlow({ tenant, restaurant }: BookingFormFlowProps) {
   );
 
   if (context.step === 'datetime') {
-    return <StepDateTime />;
+    return <StepDateTime tenant={tenant} restaurant={restaurant} />;
   }
 
   if (context.step === 'contact') {

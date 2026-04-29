@@ -852,7 +852,7 @@ git push origin feature/frontend-mvp-Phase3-public-booking
 
 ---
 
-### ❌ Task 3.3 — StepDateTime (date, time slot, party size)
+### ✅ Task 3.3 — StepDateTime (date, time slot, party size)
 
 Implement `StepDateTime`, `TimeSlotGrid`, and `PartySizeSelector`. Fetches available slots via `publicApi.getAvailableSlots` when a date is selected. Slots with `busy_warning` show an indicator but remain selectable (business doc §3). Time slots are 15-minute intervals; advance limit is 90 days (business doc §11).
 
