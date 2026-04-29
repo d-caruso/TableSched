@@ -323,6 +323,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     },
     "payment_status": { "pending": "Payment pending", "authorized": "Authorized", "captured": "Captured", "failed": "Failed", "refund_pending": "Refund pending", "refunded": "Refunded", "refund_failed": "Refund failed" },
     "actions": { "cancel": "Cancel booking", "modify": "Modify booking", "pay": "Pay deposit" },
+    "guestCount_one": "{{count}} guest",
+    "guestCount_other": "{{count}} guests",
     "success": { "requested": "Booking request received", "requestedBody": "We'll notify you by SMS{{email}}.", "cancelled": "Your booking has been cancelled." }
   },
   "staff": {
