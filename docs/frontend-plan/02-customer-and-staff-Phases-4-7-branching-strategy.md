@@ -538,7 +538,7 @@ Completed in the frontend implementation branch.
 
 ---
 
-### ❌ Task 6.2 — Auth Guard Layout
+### ✅ Task 6.2 — Auth Guard Layout
 
 Implement `app/(staff)/_layout.tsx` with `AuthProvider` + `Guard`. Guard watches `accessToken` and `isLoading`; unauthenticated navigation to any staff route redirects to `/login`.
 
@@ -610,6 +610,8 @@ git checkout feature/frontend-mvp-Phase6-staff-auth
 git merge task/frontend-mvp-Task6.2-auth-guard
 git push origin feature/frontend-mvp-Phase6-staff-auth
 ```
+
+Completed in the frontend implementation branch.
 
 ---
 

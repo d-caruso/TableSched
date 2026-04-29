@@ -408,6 +408,8 @@ export default function StaffLayout() {
 }
 ```
 
+Completed in the frontend implementation branch.
+
 **Verification — Phase 6:**
 - Login with valid credentials → redirected to `/dashboard`
 - Invalid credentials → error message shown, no redirect
