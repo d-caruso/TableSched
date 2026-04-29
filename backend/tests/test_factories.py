@@ -24,5 +24,5 @@ def test_core_factories_create_related_objects(customer, booking, payment, resta
     assert restaurant_settings.pk is not None
     assert room.pk is not None
     assert table.room_id == room.id
-    assert walkin.table_id == table.id
+    assert walkin.pk is not None
     assert booking_access_token.booking_id == booking.id

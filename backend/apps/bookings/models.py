@@ -78,10 +78,33 @@ class Walkin(TimeStampedModel):
 
     starts_at: models.DateTimeField = models.DateTimeField()
     party_size: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField()
+    notes: models.TextField = models.TextField(blank=True)
+
+
+class WalkinTableAssignment(TimeStampedModel):
+    """Manual table assignment for a walk-in."""
+
+    walkin: models.ForeignKey = models.ForeignKey(
+        Walkin,
+        on_delete=models.CASCADE,
+        related_name="table_assignments",
+    )
     table: models.ForeignKey = models.ForeignKey(
         "restaurants.Table",
+        on_delete=models.CASCADE,
+        related_name="walkin_assignments",
+    )
+    assigned_by: models.ForeignKey = models.ForeignKey(
+        "memberships.StaffMembership",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
-    notes: models.TextField = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["walkin", "table"],
+                name="uniq_walkin_table_assignment",
+            )
+        ]

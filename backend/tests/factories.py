@@ -117,7 +117,6 @@ class WalkinFactory(factory.django.DjangoModelFactory):
 
     starts_at = factory.LazyFunction(lambda: timezone.now())
     party_size = 2
-    table = None
     notes = ""
 
 

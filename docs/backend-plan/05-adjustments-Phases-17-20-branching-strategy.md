@@ -107,7 +107,7 @@ git merge task/backend-mvp-Task17.1-booking-table-assignments
 git push origin feature/backend-mvp-Phase17-multi-table-assignments
 ```
 
-### ❌ Task 17.2 — Walk-in Table Assignments
+### ✅ Task 17.2 — Walk-in Table Assignments
 
 **Branch:** `task/backend-mvp-Task17.2-walkin-table-assignments`
 

@@ -130,8 +130,9 @@ def booking(tenant_db, customer) -> Booking:
 @pytest.fixture
 def walkin(tenant_db, table) -> Walkin:
     _tenant, schema_name, _domain_name = tenant_db
+    _ = table
     with schema_context(schema_name):
-        return cast(Walkin, WalkinFactory(table=table))
+        return cast(Walkin, WalkinFactory())
 
 
 @pytest.fixture

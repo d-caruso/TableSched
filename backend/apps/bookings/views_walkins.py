@@ -14,7 +14,7 @@ class WalkinViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsTenantMember]
     serializer_class = WalkinSerializer
-    queryset = Walkin.objects.all()
+    queryset = Walkin.objects.prefetch_related("table_assignments")
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)

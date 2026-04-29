@@ -3,17 +3,19 @@
 from rest_framework import serializers  # type: ignore[import-untyped]
 
 from apps.bookings.models import Walkin
-from apps.restaurants.models import Table
 
 
 class WalkinSerializer(serializers.ModelSerializer):
     """Serialize walk-in records."""
 
-    table = serializers.PrimaryKeyRelatedField(
-        queryset=Table.objects.all(),
-        allow_null=True,
-        required=False,
-    )
+    table = serializers.SerializerMethodField()
+
+    def get_table(self, obj: Walkin):
+        assignments = getattr(obj, "table_assignments")
+        assignment = next(iter(assignments.all()), None)
+        if assignment is None:
+            return None
+        return assignment.table_id
 
     class Meta:
         model = Walkin
