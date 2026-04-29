@@ -649,7 +649,7 @@ git push origin feature/frontend-mvp-Phase10-polish
 
 ---
 
-### ❌ Task 10.3 — Vercel Deployment Config
+### ✅ Task 10.3 — Vercel Deployment Config
 
 Add `vercel.json` at the repo root. All env vars are referenced via Vercel secret names — no values committed to the repo.
 

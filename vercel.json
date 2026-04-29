@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd frontend && npx expo export -p web",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "env": {
+    "EXPO_PUBLIC_API_BASE_URL": "@tablesched_api_base_url",
+    "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@tablesched_stripe_key"
+  }
+}
