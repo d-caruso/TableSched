@@ -708,7 +708,7 @@ Completed in the frontend implementation branch.
 
 ---
 
-### ❌ Task 7.2 — Booking Detail & Staff Actions
+### ✅ Task 7.2 — Booking Detail & Staff Actions
 
 Implement `app/(staff)/dashboard/bookings/[id].tsx`, `StaffBookingActions`, `RejectDialog`, and `AssignTableDialog`. Actions available per status:
 
@@ -781,6 +781,8 @@ git checkout feature/frontend-mvp-Phase7-staff-dashboard
 git merge task/frontend-mvp-Task7.2-booking-detail-actions
 git push origin feature/frontend-mvp-Phase7-staff-dashboard
 ```
+
+Completed in the frontend implementation branch.
 
 ---
 

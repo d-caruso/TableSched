@@ -663,6 +663,8 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
 }
 ```
 
+Completed in the frontend implementation branch.
+
 ### Task 7.3 — Walk-in form
 
 `app/(staff)/dashboard/walkins.tsx`:
