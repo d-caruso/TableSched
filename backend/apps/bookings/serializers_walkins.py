@@ -8,15 +8,12 @@ from apps.bookings.models import Walkin
 class WalkinSerializer(serializers.ModelSerializer):
     """Serialize walk-in records."""
 
-    table = serializers.SerializerMethodField()
+    tables = serializers.SerializerMethodField()
 
-    def get_table(self, obj: Walkin):
+    def get_tables(self, obj: Walkin):
         assignments = getattr(obj, "table_assignments")
-        assignment = next(iter(assignments.all()), None)
-        if assignment is None:
-            return None
-        return assignment.table_id
+        return [assignment.table_id for assignment in assignments.all()]
 
     class Meta:
         model = Walkin
-        fields = ("id", "starts_at", "party_size", "table", "notes")
+        fields = ("id", "starts_at", "party_size", "tables", "notes")

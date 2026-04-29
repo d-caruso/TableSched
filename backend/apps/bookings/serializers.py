@@ -8,14 +8,11 @@ from apps.bookings.models import Booking
 class BookingSerializer(serializers.ModelSerializer[Booking]):
     """Staff-facing serializer for booking CRUD and action responses."""
 
-    table = serializers.SerializerMethodField()
+    tables = serializers.SerializerMethodField()
 
-    def get_table(self, obj: Booking):
+    def get_tables(self, obj: Booking):
         assignments = getattr(obj, "table_assignments")
-        assignment = next(iter(assignments.all()), None)
-        if assignment is None:
-            return None
-        return assignment.table_id
+        return [assignment.table_id for assignment in assignments.all()]
 
     class Meta:
         model = Booking
@@ -25,7 +22,7 @@ class BookingSerializer(serializers.ModelSerializer[Booking]):
             "starts_at",
             "party_size",
             "status",
-            "table",
+            "tables",
             "notes",
             "staff_message",
             "payment_due_at",

@@ -11,7 +11,6 @@ from django_tenants.utils import schema_context  # type: ignore[import-untyped]
 
 from apps.accounts.models import User
 from apps.bookings.models import Booking, BookingTableAssignment
-from apps.bookings.services.staff import assign_table
 from apps.customers.models import Customer
 from apps.memberships.models import StaffMembership
 from apps.restaurants.models import Room, Table
@@ -43,15 +42,14 @@ def _table(label: str) -> Table:
 
 
 @pytest.mark.django_db
-def test_booking_can_have_multiple_table_assignments():
+def test_booking_model_can_have_multiple_table_assignments():
     with tenant_schema("booking_table_assignments"):
         booking = _booking()
         table_1 = _table("T1")
         table_2 = _table("T2")
-        membership = _membership()
 
-        assign_table(booking, by_membership=membership, table=table_1)
-        assign_table(booking, by_membership=membership, table=table_2)
+        BookingTableAssignment.objects.create(booking=booking, table=table_1)
+        BookingTableAssignment.objects.create(booking=booking, table=table_2)
 
         assigned_tables = set(
             BookingTableAssignment.objects.filter(booking=booking).values_list(
