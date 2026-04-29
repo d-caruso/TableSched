@@ -303,7 +303,7 @@ git push -u origin feature/frontend-mvp-Phase9-floor-plan
 
 ---
 
-### ❌ Task 9.1 — Floor Screen & Room Tabs
+### ✅ Task 9.1 — Floor Screen & Room Tabs
 
 Implement `app/(staff)/dashboard/settings/floor.tsx` and `RoomTabs`. Fetches rooms via `staffApi.listRooms`. If there is only one room, `RoomTabs` is not rendered. The first room is selected by default.
 

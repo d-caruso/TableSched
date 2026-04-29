@@ -140,6 +140,9 @@
         "always": "Sempre",
         "by_party_size": "In base al numero di ospiti"
       }
+    },
+    "floor": {
+      "title": "Pianta"
     }
   },
   "error": {

@@ -140,6 +140,9 @@
         "always": "Always",
         "by_party_size": "By party size"
       }
+    },
+    "floor": {
+      "title": "Floor plan"
     }
   },
   "error": {

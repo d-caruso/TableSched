@@ -140,6 +140,9 @@
         "always": "Immer",
         "by_party_size": "Nach Gruppengröße"
       }
+    },
+    "floor": {
+      "title": "Grundriss"
     }
   },
   "error": {

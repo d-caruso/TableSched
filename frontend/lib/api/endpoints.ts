@@ -5,6 +5,7 @@ import type {
   BookingModifyPayload,
   RestaurantSettings,
   RestaurantPublicInfo,
+  Room,
   TimeSlot,
 } from '@/lib/api/types';
 
@@ -93,6 +94,11 @@ export const staffApi = {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
+    });
+  },
+  listRooms(tenant: string, token: string) {
+    return apiRequest<Room[]>(`/api/staff/${tenant}/rooms/`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
   },
   getRestaurantSettings(tenant: string, token: string) {

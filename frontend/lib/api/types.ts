@@ -51,6 +51,7 @@ export type RestaurantSettings = {
 export type Room = {
   id: string;
   name: string;
+  tables?: Table[] | null;
 };
 
 export type Table = {
