@@ -69,7 +69,7 @@ develop
 
 ---
 
-## ❌ Phase 17 — Multi-Table Assignments
+## ✅ Phase 17 — Multi-Table Assignments
 
 Adds multi-table assignment support for bookings and walk-ins before API route normalization.
 
