@@ -786,7 +786,7 @@ Completed in the frontend implementation branch.
 
 ---
 
-### ❌ Task 7.3 — Walk-in Form
+### ✅ Task 7.3 — Walk-in Form
 
 Implement `app/(staff)/dashboard/walkins.tsx`. Walk-ins occupy capacity and can be assigned a table, but do not create a booking and require no customer phone number (business doc §10).
 
@@ -846,6 +846,8 @@ git checkout feature/frontend-mvp-Phase7-staff-dashboard
 git merge task/frontend-mvp-Task7.3-walkins
 git push origin feature/frontend-mvp-Phase7-staff-dashboard
 ```
+
+Completed in the frontend implementation branch.
 
 ---
 

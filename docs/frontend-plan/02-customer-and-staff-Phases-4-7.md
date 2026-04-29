@@ -706,6 +706,8 @@ export default function WalkinsScreen() {
 }
 ```
 
+Completed in the frontend implementation branch.
+
 **Verification — Phase 7:**
 - Dashboard loads with correct filter tabs and booking list
 - Approve booking → status changes to `confirmed`, list refreshes

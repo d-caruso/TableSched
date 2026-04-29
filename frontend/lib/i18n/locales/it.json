@@ -113,6 +113,11 @@
       "reject": "Rifiuta",
       "assignTable": "Assegna tavolo",
       "confirmWithoutDeposit": "Conferma senza acconto"
+    },
+    "walkins": {
+      "title": "Ingressi",
+      "submit": "Aggiungi ingresso",
+      "success": "Ingresso aggiunto"
     }
   },
   "error": {

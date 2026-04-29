@@ -113,6 +113,11 @@
       "reject": "Reject",
       "assignTable": "Assign table",
       "confirmWithoutDeposit": "Confirm without deposit"
+    },
+    "walkins": {
+      "title": "Walk-ins",
+      "submit": "Add walk-in",
+      "success": "Walk-in added"
     }
   },
   "error": {

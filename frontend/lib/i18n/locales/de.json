@@ -113,6 +113,11 @@
       "reject": "Ablehnen",
       "assignTable": "Tisch zuweisen",
       "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
+    },
+    "walkins": {
+      "title": "Spontanbesuche",
+      "submit": "Spontanbesuch hinzufügen",
+      "success": "Spontanbesuch hinzugefügt"
     }
   },
   "error": {
