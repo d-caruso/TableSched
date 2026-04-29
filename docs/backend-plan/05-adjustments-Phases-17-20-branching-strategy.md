@@ -252,7 +252,7 @@ git checkout -b task/backend-mvp-Task18.5-public-booking-patch-delete
 git commit -m "[TASK] 18.5 normalize public booking token endpoint"
 ```
 
-### ❌ Task 18.6 — Payment Refunds Endpoint
+### ✅ Task 18.6 — Payment Refunds Endpoint
 
 **Branch:** `task/backend-mvp-Task18.6-payment-refunds-endpoint`
 

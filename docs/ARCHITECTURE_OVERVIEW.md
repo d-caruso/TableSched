@@ -34,4 +34,5 @@ The frontend is an Expo Router application with route groups for public and staf
 
 - Public customer booking tokens expose the booking resource at `GET|PATCH|DELETE /api/v1/public/bookings/{token}/`.
 - Customer booking changes go through `modify_by_customer`; customer cancellation goes through `cancel_by_customer`.
-- Legacy public booking `POST` action compatibility remains until the Phase 20 API cleanup.
+- Manual manager refunds use `POST /api/v1/payments/{payment_id}/refunds/`; the Stripe webhook remains `POST /stripe/webhook/`.
+- Legacy public booking `POST` and singular payment refund aliases remain until the Phase 20 API cleanup.

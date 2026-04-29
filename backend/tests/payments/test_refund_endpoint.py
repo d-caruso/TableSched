@@ -82,7 +82,7 @@ class RefundEndpointTestCase(FastTenantTestCase):
         tenant_client = TenantClient(self.tenant)
         tenant_client.force_login(membership.user)
 
-        response = tenant_client.post(f"/api/v1/payments/{payment.id}/refund/")
+        response = tenant_client.post(f"/api/v1/payments/{payment.id}/refunds/")
 
         assert response.status_code == 403
         payment.refresh_from_db()
@@ -97,7 +97,7 @@ class RefundEndpointTestCase(FastTenantTestCase):
 
         refund_mock = Mock(return_value=Mock())
         with patch.object(stripe_sdk.Refund, "create", refund_mock):
-            response = tenant_client.post(f"/api/v1/payments/{payment.id}/refund/")
+            response = tenant_client.post(f"/api/v1/payments/{payment.id}/refunds/")
         payment.refresh_from_db()
 
         assert response.status_code == 200
