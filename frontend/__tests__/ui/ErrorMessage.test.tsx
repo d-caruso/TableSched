@@ -14,7 +14,7 @@ jest.mock('tamagui', () => {
 });
 
 import { render, screen } from '@testing-library/react-native';
-import { expect, test } from '@jest/globals';
+import { expect, jest, test } from '@jest/globals';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { ApiError } from '@/lib/api/client';
 
