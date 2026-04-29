@@ -299,7 +299,7 @@ git checkout -b task/backend-mvp-Task19.1-restaurant-settings-endpoint
 git commit -m "[TASK] 19.1 add restaurant settings endpoint"
 ```
 
-### ❌ Task 19.2 — Opening Windows Endpoint
+### ✅ Task 19.2 — Opening Windows Endpoint
 
 **Branch:** `task/backend-mvp-Task19.2-opening-windows-endpoint`
 

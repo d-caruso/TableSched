@@ -2,6 +2,7 @@
 
 from rest_framework import serializers  # type: ignore[import-untyped]
 
+from apps.restaurants.models import OpeningHours as OpeningWindow
 from apps.restaurants.models import RestaurantSettings
 
 
@@ -43,3 +44,23 @@ class RestaurantSettingsSerializer(serializers.ModelSerializer[RestaurantSetting
             "booking_cutoff_minutes",
             "advance_booking_days",
         )
+
+
+class OpeningWindowSerializer(serializers.ModelSerializer[OpeningWindow]):
+    """Tenant restaurant weekly opening window."""
+
+    class Meta:
+        model = OpeningWindow
+        fields = ("id", "weekday", "opens_at", "closes_at")
+
+    def validate_weekday(self, value: int) -> int:
+        if value < 0 or value > 6:
+            raise serializers.ValidationError("invalid")
+        return value
+
+    def validate(self, attrs):
+        opens_at = attrs.get("opens_at", getattr(self.instance, "opens_at", None))
+        closes_at = attrs.get("closes_at", getattr(self.instance, "closes_at", None))
+        if opens_at is not None and closes_at is not None and opens_at >= closes_at:
+            raise serializers.ValidationError({"closes_at": "invalid"})
+        return attrs

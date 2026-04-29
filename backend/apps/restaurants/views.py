@@ -3,10 +3,15 @@
 from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 from rest_framework.views import APIView  # type: ignore[import-untyped]
+from rest_framework import generics  # type: ignore[import-untyped]
 
 from apps.common.permissions import IsManager, IsTenantMember
 from apps.restaurants.models import OpeningHours, RestaurantSettings
-from apps.restaurants.serializers import PublicRestaurantSerializer, RestaurantSettingsSerializer
+from apps.restaurants.serializers import (
+    OpeningWindowSerializer,
+    PublicRestaurantSerializer,
+    RestaurantSettingsSerializer,
+)
 
 
 class PublicRestaurantView(APIView):
@@ -61,3 +66,33 @@ class RestaurantSettingsView(APIView):
     def _settings(self) -> RestaurantSettings:
         settings_obj, _created = RestaurantSettings.objects.get_or_create()
         return settings_obj
+
+
+class OpeningWindowListCreateView(generics.ListCreateAPIView):
+    """Tenant opening-window collection endpoint."""
+
+    serializer_class = OpeningWindowSerializer
+
+    def get_queryset(self):
+        return OpeningHours.objects.order_by("weekday", "opens_at")
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsManager()]
+        return [IsTenantMember()]
+
+
+class OpeningWindowDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Tenant opening-window detail endpoint."""
+
+    serializer_class = OpeningWindowSerializer
+    lookup_url_kwarg = "pk"
+    http_method_names = ["get", "patch", "delete", "head", "options"]
+
+    def get_queryset(self):
+        return OpeningHours.objects.order_by("weekday", "opens_at")
+
+    def get_permissions(self):
+        if self.request.method in {"PATCH", "DELETE"}:
+            return [IsManager()]
+        return [IsTenantMember()]
