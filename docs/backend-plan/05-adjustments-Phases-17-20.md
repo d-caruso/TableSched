@@ -274,7 +274,7 @@ Tests:
 - Backend route tests cover every supported normalized endpoint.
 - No frontend API client references deprecated endpoint strings.
 
-### Task 20.3 — Remove old action endpoints
+### ✅ Task 20.3 — Remove old action endpoints
 
 Remove legacy routes and old tests after contract verification passes.
 

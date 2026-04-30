@@ -44,30 +44,6 @@ def _seed_staff():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_approve_endpoint_requires_auth():
-    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
-        RestaurantSettings.objects.create()
-        booking = _seed_booking()
-        request = APIRequestFactory().post(f"/api/v1/bookings/{booking.id}/approve/")
-        response = BookingViewSet.as_view({"post": "approve"})(request, pk=str(booking.id))
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db(transaction=True)
-def test_approve_endpoint_returns_updated_status():
-    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
-        RestaurantSettings.objects.create(deposit_policy=RestaurantSettings.DEPOSIT_NEVER)
-        booking = _seed_booking()
-        user = _seed_staff()
-        request = APIRequestFactory().post(f"/api/v1/bookings/{booking.id}/approve/")
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
-        request.user = user
-        response = BookingViewSet.as_view({"post": "approve"})(request, pk=str(booking.id))
-    assert response.status_code == 200
-    assert response.data["status"] == "confirmed_without_deposit"
-
-
-@pytest.mark.django_db(transaction=True)
 def test_response_contains_no_localized_strings():
     with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
         RestaurantSettings.objects.create()
@@ -79,22 +55,6 @@ def test_response_contains_no_localized_strings():
         response = BookingViewSet.as_view({"get": "retrieve"})(request, pk=str(booking.id))
     assert response.status_code == 200
     assert " " not in response.data["status"]
-
-
-@pytest.mark.django_db(transaction=True)
-def test_assign_table_without_table_returns_code_form():
-    with tenant_schema("booking_views") as (_tenant, _schema_name, _domain_name):
-        RestaurantSettings.objects.create()
-        booking = _seed_booking()
-        user = _seed_staff()
-        request = APIRequestFactory().post(f"/api/v1/bookings/{booking.id}/assign-table/", {})
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
-        request.user = user
-        response = BookingViewSet.as_view({"post": "assign_table"})(request, pk=str(booking.id))
-
-    assert response.status_code == 400
-    assert response.data["error_code"] == "validation_failed"
-    assert response.data["params"]["field"] == "table"
 
 
 @pytest.mark.django_db(transaction=True)

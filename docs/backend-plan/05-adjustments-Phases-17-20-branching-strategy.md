@@ -394,7 +394,7 @@ git checkout -b task/backend-mvp-Task20.2-contract-verification
 git commit -m "[TEST] 20.2 verify normalized API contract"
 ```
 
-### ❌ Task 20.3 — Remove Action Endpoints
+### ✅ Task 20.3 — Remove Action Endpoints
 
 **Branch:** `task/backend-mvp-Task20.3-remove-action-endpoints`
 

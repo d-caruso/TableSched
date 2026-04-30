@@ -86,24 +86,6 @@ def test_expired_token_returns_410():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_cancel_booking_via_token():
-    with tenant_schema("customer_endpoints"):
-        RestaurantSettings.objects.create()
-        booking = _create_booking(timezone.now() + timedelta(days=2))
-        _, raw_token = BookingAccessToken.issue(booking)
-        request = APIRequestFactory().post(
-            f"/api/v1/public/bookings/{raw_token}/",
-            {"action": "cancel"},
-            format="json",
-        )
-        response = CustomerBookingView.as_view()(request, raw_token=raw_token)
-        booking.refresh_from_db()
-
-    assert response.status_code == 200
-    assert booking.status == "cancelled_by_customer"
-
-
-@pytest.mark.django_db(transaction=True)
 def test_patch_booking_via_token_modifies_customer_editable_fields():
     with tenant_schema("customer_endpoints"):
         RestaurantSettings.objects.create()
