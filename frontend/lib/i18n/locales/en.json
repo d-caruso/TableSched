@@ -121,7 +121,9 @@
       "approve": "Approve",
       "reject": "Reject",
       "assignTable": "Assign table",
-      "confirmWithoutDeposit": "Confirm without deposit"
+      "confirmWithoutDeposit": "Confirm without deposit",
+      "noShow": "No show",
+      "modify": "Modify booking"
     },
     "walkins": {
       "title": "Walk-ins",

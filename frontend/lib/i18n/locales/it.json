@@ -121,7 +121,9 @@
       "approve": "Approva",
       "reject": "Rifiuta",
       "assignTable": "Assegna tavolo",
-      "confirmWithoutDeposit": "Conferma senza acconto"
+      "confirmWithoutDeposit": "Conferma senza acconto",
+      "noShow": "Non presentato",
+      "modify": "Modifica prenotazione"
     },
     "walkins": {
       "title": "Ingressi",

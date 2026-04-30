@@ -121,7 +121,9 @@
       "approve": "Genehmigen",
       "reject": "Ablehnen",
       "assignTable": "Tisch zuweisen",
-      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
+      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen",
+      "noShow": "Nicht erschienen",
+      "modify": "Buchung ändern"
     },
     "walkins": {
       "title": "Spontanbesuche",

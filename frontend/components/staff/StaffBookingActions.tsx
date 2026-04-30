@@ -7,6 +7,7 @@ import { staffApi } from '@/lib/api/endpoints';
 import { AppButton } from '@/components/ui/AppButton';
 import { AssignTableDialog } from '@/components/staff/AssignTableDialog';
 import { RejectDialog } from '@/components/staff/RejectDialog';
+import { StaffModifyDialog } from '@/components/staff/StaffModifyDialog';
 
 type Props = {
   booking: Booking;
@@ -19,6 +20,7 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
   const { t } = useTranslation();
   const [showReject, setShowReject] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
+  const [showModify, setShowModify] = useState(false);
 
   const approve = useMutation({
     mutationFn: () => staffApi.postDecision(tenant, token, booking.id, { outcome: 'approved' }),
@@ -48,12 +50,31 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
     },
   });
 
+  const noShow = useMutation({
+    mutationFn: () => staffApi.patchBooking(tenant, token, booking.id, { status: 'no_show' }),
+    onSuccess: onActionComplete,
+  });
+
+  const modify = useMutation({
+    mutationFn: (payload: { party_size?: number; notes?: string }) =>
+      staffApi.patchBooking(tenant, token, booking.id, payload),
+    onSuccess: () => {
+      setShowModify(false);
+      void onActionComplete();
+    },
+  });
+
   const canApprove = booking.status === 'pending_review' || booking.status === 'authorization_expired';
   const canConfirmWithoutDeposit = booking.status === 'authorization_expired';
   const canReject = canApprove;
   const canAssign =
     booking.status === 'pending_review' ||
     booking.status === 'authorization_expired' ||
+    booking.status === 'confirmed' ||
+    booking.status === 'confirmed_without_deposit';
+  const canNoShow = booking.status === 'confirmed' || booking.status === 'confirmed_without_deposit';
+  const canModify =
+    booking.status === 'pending_review' ||
     booking.status === 'confirmed' ||
     booking.status === 'confirmed_without_deposit';
 
@@ -83,6 +104,26 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
             {t('staff.booking.assignTable')}
           </AppButton>
           {showAssign ? <AssignTableDialog onSubmit={tableId => assignTable.mutate(tableId)} loading={assignTable.isPending} /> : null}
+        </>
+      ) : null}
+      {canNoShow ? (
+        <AppButton variant="secondary" onPress={() => noShow.mutate()} loading={noShow.isPending}>
+          {t('staff.booking.noShow')}
+        </AppButton>
+      ) : null}
+      {canModify ? (
+        <>
+          <AppButton variant="secondary" onPress={() => setShowModify(true)}>
+            {t('staff.booking.modify')}
+          </AppButton>
+          {showModify ? (
+            <StaffModifyDialog
+              booking={booking}
+              onSubmit={payload => modify.mutate(payload)}
+              onClose={() => setShowModify(false)}
+              loading={modify.isPending}
+            />
+          ) : null}
         </>
       ) : null}
     </YStack>
