@@ -3,6 +3,7 @@ import type {
   Booking,
   BookingCreatePayload,
   BookingModifyPayload,
+  Payment,
   RestaurantSettings,
   RestaurantPublicInfo,
   Room,
@@ -69,24 +70,41 @@ export const staffApi = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
-  approveBooking(tenant: string, token: string, id: string) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/approve/`, {
+  postDecision(
+    tenant: string,
+    token: string,
+    id: string,
+    payload: { outcome: 'approved' | 'declined' | 'confirmed_without_deposit'; reason_code?: string; staff_message?: string },
+  ) {
+    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/decisions/`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
+      body: payload,
     });
   },
-  rejectBooking(tenant: string, token: string, id: string, reason: string) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/reject/`, {
-      method: 'POST',
+  assignTables(tenant: string, token: string, id: string, tableIds: string[]) {
+    return apiRequest<{ tables: string[] }>(`/api/staff/${tenant}/bookings/${id}/tables/`, {
+      method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
-      body: { reason },
+      body: { tables: tableIds },
     });
   },
-  assignTable(tenant: string, token: string, id: string, table_id: string) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/assign-table/`, {
+  patchBooking(
+    tenant: string,
+    token: string,
+    id: string,
+    payload: { starts_at?: string; party_size?: number; notes?: string; status?: 'no_show' },
+  ) {
+    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+      body: payload,
+    });
+  },
+  refundPayment(tenant: string, token: string, paymentId: string) {
+    return apiRequest<Payment>(`/api/payments/${paymentId}/refunds/`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
-      body: { table_id },
     });
   },
   createWalkin(tenant: string, token: string, payload: { party_size: number }) {
