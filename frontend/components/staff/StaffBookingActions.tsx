@@ -21,17 +21,19 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
   const [showAssign, setShowAssign] = useState(false);
 
   const approve = useMutation({
-    mutationFn: () => staffApi.approveBooking(tenant, token, booking.id),
+    mutationFn: () => staffApi.postDecision(tenant, token, booking.id, { outcome: 'approved' }),
     onSuccess: onActionComplete,
   });
 
   const confirmWithoutDeposit = useMutation({
-    mutationFn: () => staffApi.approveBooking(tenant, token, booking.id),
+    mutationFn: () =>
+      staffApi.postDecision(tenant, token, booking.id, { outcome: 'confirmed_without_deposit' }),
     onSuccess: onActionComplete,
   });
 
-  const reject = useMutation({
-    mutationFn: (reason: string) => staffApi.rejectBooking(tenant, token, booking.id, reason),
+  const decline = useMutation({
+    mutationFn: (reason_code: string) =>
+      staffApi.postDecision(tenant, token, booking.id, { outcome: 'declined', reason_code }),
     onSuccess: () => {
       setShowReject(false);
       void onActionComplete();
@@ -39,7 +41,7 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
   });
 
   const assignTable = useMutation({
-    mutationFn: (tableId: string) => staffApi.assignTable(tenant, token, booking.id, tableId),
+    mutationFn: (tableId: string) => staffApi.assignTables(tenant, token, booking.id, [tableId]),
     onSuccess: () => {
       setShowAssign(false);
       void onActionComplete();
@@ -72,7 +74,7 @@ export function StaffBookingActions({ booking, tenant, token, onActionComplete }
           <AppButton variant="secondary" onPress={() => setShowReject(true)}>
             {t('staff.booking.reject')}
           </AppButton>
-          {showReject ? <RejectDialog onSubmit={reason => reject.mutate(reason)} loading={reject.isPending} /> : null}
+          {showReject ? <RejectDialog onSubmit={reason => decline.mutate(reason)} loading={decline.isPending} /> : null}
         </>
       ) : null}
       {canAssign ? (

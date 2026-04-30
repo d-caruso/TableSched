@@ -1,3 +1,10 @@
+jest.mock('@/lib/api/endpoints', () => ({
+  staffApi: {
+    postDecision: jest.fn(() => Promise.resolve({})),
+    assignTables: jest.fn(() => Promise.resolve({ tables: [] })),
+  },
+}));
+
 jest.mock('tamagui', () => {
   const React = require('react');
   const { Text, View, TextInput } = require('react-native');
@@ -63,4 +70,24 @@ test('shows confirm without deposit for authorization_expired', () => {
 test('does not show approve for confirmed booking', () => {
   renderWithClient(<StaffBookingActions booking={{ ...base, status: 'confirmed' }} tenant="r" token="tok" onActionComplete={() => undefined} />);
   expect(screen.queryByText('Approve')).toBeNull();
+});
+
+test('approve button calls postDecision with outcome approved', async () => {
+  const { staffApi } = require('@/lib/api/endpoints');
+  const { fireEvent, waitFor } = require('@testing-library/react-native');
+  renderWithClient(<StaffBookingActions booking={{ ...base, status: 'pending_review' }} tenant="r" token="tok" onActionComplete={() => undefined} />);
+  fireEvent.press(screen.getByText('Approve'));
+  await waitFor(() =>
+    expect(staffApi.postDecision).toHaveBeenCalledWith('r', 'tok', '1', { outcome: 'approved' })
+  );
+});
+
+test('confirm-without-deposit button calls postDecision with correct outcome', async () => {
+  const { staffApi } = require('@/lib/api/endpoints');
+  const { fireEvent, waitFor } = require('@testing-library/react-native');
+  renderWithClient(<StaffBookingActions booking={{ ...base, status: 'authorization_expired' }} tenant="r" token="tok" onActionComplete={() => undefined} />);
+  fireEvent.press(screen.getByText('Confirm without deposit'));
+  await waitFor(() =>
+    expect(staffApi.postDecision).toHaveBeenCalledWith('r', 'tok', '1', { outcome: 'confirmed_without_deposit' })
+  );
 });
