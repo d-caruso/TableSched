@@ -27,8 +27,8 @@ export const publicApi = {
     return apiRequest<Booking>(`/api/public/bookings/${token}/`);
   },
   cancelBooking(token: string) {
-    return apiRequest<void>(`/api/public/bookings/${token}/cancel/`, {
-      method: 'POST',
+    return apiRequest<void>(`/api/public/bookings/${token}/`, {
+      method: 'DELETE',
     });
   },
   modifyBooking(token: string, payload: BookingModifyPayload) {
