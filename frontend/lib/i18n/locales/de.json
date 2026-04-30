@@ -123,7 +123,8 @@
       "assignTable": "Tisch zuweisen",
       "confirmWithoutDeposit": "Ohne Anzahlung bestätigen",
       "noShow": "Nicht erschienen",
-      "modify": "Buchung ändern"
+      "modify": "Buchung ändern",
+      "refund": "Anzahlung erstatten"
     },
     "walkins": {
       "title": "Spontanbesuche",

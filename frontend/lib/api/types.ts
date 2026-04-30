@@ -72,6 +72,7 @@ export type Table = {
 };
 
 export type BookingPayment = {
+  id: string;
   status: PaymentStatus;
   amount: number;
   currency: string;
