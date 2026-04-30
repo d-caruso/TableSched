@@ -35,7 +35,8 @@ develop
     ├── task/frontend-APIs-Task2-booking-actions
     ├── task/frontend-APIs-Task3-assign-tables
     ├── task/frontend-APIs-Task4-noshow-modify
-    └── task/frontend-APIs-Task5-refund-cleanup
+    ├── task/frontend-APIs-Task5-refund-cleanup
+    └── task/frontend-APIs-Task6-cancel-booking
 ```
 
 ---
@@ -53,7 +54,7 @@ git push -u origin refactor/frontend-APIs
 
 ---
 
-## ❌ Task 1 — Replace `staffApi` method definitions
+## ✅ Task 1 — Replace `staffApi` method definitions
 
 Remove verb-based methods (`approveBooking`, `rejectBooking`, `assignTable`, `markNoShow`, `modifyBooking`, `requestPayment`) and replace with RESTful equivalents (`postDecision`, `assignTables`, `patchBooking`, `refundPayment`) in `lib/api/endpoints.ts`.
 
@@ -125,7 +126,7 @@ git push origin refactor/frontend-APIs
 
 ---
 
-## ❌ Task 2 — Update `StaffBookingActions` mutations
+## ✅ Task 2 — Update `StaffBookingActions` mutations
 
 Replace the single `approve` mutation (which was incorrectly reused for both approve and confirm-without-deposit) with three distinct mutations: `approve`, `confirmWithoutDeposit`, `decline` — each calling `staffApi.postDecision` with the correct `outcome`.
 
@@ -207,7 +208,7 @@ git push origin refactor/frontend-APIs
 
 ---
 
-## ❌ Task 3 — Update table assignment call site
+## ✅ Task 3 — Update table assignment call site
 
 Replace `staffApi.assignTable(tenant, token, booking.id, tableId)` with `staffApi.assignTables(tenant, token, booking.id, [tableId])`.
 
@@ -273,7 +274,7 @@ git push origin refactor/frontend-APIs
 
 ---
 
-## ❌ Task 4 — Update no-show and modify booking call sites
+## ✅ Task 4 — Update no-show and modify booking call sites
 
 Replace `staffApi.markNoShow(...)` with `staffApi.patchBooking(..., { status: 'no_show' })` and `staffApi.modifyBooking(...)` with `staffApi.patchBooking(..., { starts_at, party_size, notes })`.
 
@@ -358,7 +359,7 @@ git push origin refactor/frontend-APIs
 
 ---
 
-## ❌ Task 5 — Update refund call site and remove requestPayment
+## ✅ Task 5 — Update refund call site and remove requestPayment
 
 Update refund call site to use `staffApi.refundPayment(tenant, token, payment.id)` (URL now `/refunds/`). Remove any `requestPayment` mutation and its associated UI button — no backend endpoint exists.
 
@@ -424,6 +425,87 @@ npm test
 git push origin task/frontend-APIs-Task5-refund-cleanup
 git checkout refactor/frontend-APIs
 git merge task/frontend-APIs-Task5-refund-cleanup
+git push origin refactor/frontend-APIs
+```
+
+---
+
+## ❌ Task 6 — Fix `publicApi.cancelBooking` to use DELETE
+
+Replace the deleted `POST /api/public/bookings/{token}/cancel/` with `DELETE /api/public/bookings/{token}/`.
+
+**Branch:** `task/frontend-APIs-Task6-cancel-booking` — created from `refactor/frontend-APIs`
+
+**⚠️ Create only after Task 5 is merged into `refactor/frontend-APIs`.**
+
+```bash
+git checkout refactor/frontend-APIs
+git pull origin refactor/frontend-APIs
+git checkout -b task/frontend-APIs-Task6-cancel-booking
+```
+
+**Files to modify:**
+- `lib/api/endpoints.ts` — update `cancelBooking` method
+
+```ts
+// before
+cancelBooking(token: string) {
+  return apiRequest<void>(`/api/public/bookings/${token}/cancel/`, { method: 'POST' });
+},
+
+// after
+cancelBooking(token: string) {
+  return apiRequest<void>(`/api/public/bookings/${token}/`, { method: 'DELETE' });
+},
+```
+
+**Tests:**
+
+```ts
+// __tests__/api/publicApi.test.ts
+import { expect, jest, test } from '@jest/globals';
+import { publicApi } from '@/lib/api/endpoints';
+
+const fetchMock = jest.fn() as jest.MockedFunction<typeof fetch>;
+global.fetch = fetchMock;
+
+test('cancelBooking calls DELETE on /api/public/bookings/{token}/', async () => {
+  fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+  await publicApi.cancelBooking('tok123');
+  expect(fetchMock).toHaveBeenCalledWith(
+    expect.stringContaining('/api/public/bookings/tok123/'),
+    expect.objectContaining({ method: 'DELETE' }),
+  );
+});
+
+test('cancelBooking URL does not contain /cancel/', async () => {
+  fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+  await publicApi.cancelBooking('tok123');
+  const calledUrl = (fetchMock.mock.calls[0] as any)[0] as string;
+  expect(calledUrl).not.toContain('/cancel/');
+});
+```
+
+**Commit:**
+```bash
+git add lib/api/endpoints.ts __tests__/api/publicApi.test.ts
+git commit -m "[TASK] 6 fix publicApi.cancelBooking to use DELETE instead of POST cancel"
+```
+
+**Pre-merge checks:**
+```bash
+npm run build
+npm run typecheck
+npm run lint
+npm test -- __tests__/api/publicApi.test.ts
+npm test
+```
+
+**Push & merge:**
+```bash
+git push origin task/frontend-APIs-Task6-cancel-booking
+git checkout refactor/frontend-APIs
+git merge task/frontend-APIs-Task6-cancel-booking
 git push origin refactor/frontend-APIs
 ```
 

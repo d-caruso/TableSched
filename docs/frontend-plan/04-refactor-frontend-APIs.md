@@ -12,6 +12,8 @@ or replaced. It does not duplicate the existing implementation plan.
 
 ## Endpoint Mapping
 
+### Staff API
+
 | Deleted | Replacement |
 |---|---|
 | `POST /bookings/{id}/approve/` | `POST /bookings/{id}/decisions/` `{outcome:"approved"}` |
@@ -22,6 +24,12 @@ or replaced. It does not duplicate the existing implementation plan.
 | `POST /bookings/{id}/mark-no-show/` | `PATCH /bookings/{id}/` `{status:"no_show"}` |
 | `POST /bookings/{id}/request-payment/` | **removed** — no backend endpoint; drop from frontend |
 | `POST /payments/{id}/refund/` | `POST /payments/{id}/refunds/` (trailing `s`) |
+
+### Public API
+
+| Deleted | Replacement |
+|---|---|
+| `POST /public/bookings/{token}/cancel/` | `DELETE /public/bookings/{token}/` |
 
 ---
 
@@ -120,3 +128,25 @@ staffApi.modifyBooking(tenant, token, booking.id, { starts_at, party_size, notes
 - Remove `requestPayment` mutation and any associated UI button. No backend endpoint exists for this action.
 
 **Commit:** `[TASK] 5 update refund call site and remove requestPayment`
+
+---
+
+### Task 6 — Fix `publicApi.cancelBooking` to use DELETE
+
+`publicApi.cancelBooking` still uses the deleted `POST /api/public/bookings/{token}/cancel/`. Replace with `DELETE /api/public/bookings/{token}/`.
+
+```ts
+// before
+cancelBooking(token: string) {
+  return apiRequest<void>(`/api/public/bookings/${token}/cancel/`, { method: 'POST' });
+},
+
+// after
+cancelBooking(token: string) {
+  return apiRequest<void>(`/api/public/bookings/${token}/`, { method: 'DELETE' });
+},
+```
+
+**File:** `lib/api/endpoints.ts`
+
+**Commit:** `[TASK] 6 fix publicApi.cancelBooking to use DELETE instead of POST cancel`
