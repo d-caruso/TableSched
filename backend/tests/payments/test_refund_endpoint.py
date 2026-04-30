@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 from uuid import uuid4
 
 from django.utils import timezone
+from django.urls import resolve
 import stripe as stripe_sdk
 from django_tenants.test.cases import FastTenantTestCase  # type: ignore[import-untyped]
 from django_tenants.test.client import TenantClient  # type: ignore[import-untyped]
@@ -105,3 +106,19 @@ class RefundEndpointTestCase(FastTenantTestCase):
         assert response.json()["status"] == PaymentStatus.REFUNDED
         assert payment.status == PaymentStatus.REFUNDED
         assert refund_mock.called
+
+    def test_legacy_refund_route_still_resolves_and_succeeds(self):
+        booking = self._booking()
+        payment = self._payment(booking=booking)
+        membership = self._manager_membership()
+        tenant_client = TenantClient(self.tenant)
+        tenant_client.force_login(membership.user)
+
+        match = resolve(f"/api/v1/payments/{payment.id}/refund/")
+        refund_mock = Mock(return_value=Mock())
+        with patch.object(stripe_sdk.Refund, "create", refund_mock):
+            response = tenant_client.post(f"/api/v1/payments/{payment.id}/refund/")
+
+        assert match.url_name == "payment-refund"
+        assert response.status_code == 200
+        assert response.json()["status"] == PaymentStatus.REFUNDED

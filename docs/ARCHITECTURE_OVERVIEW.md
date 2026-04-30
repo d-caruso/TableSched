@@ -39,4 +39,13 @@ The frontend is an Expo Router application with route groups for public and staf
 - Tenant opening windows are exposed at `/api/v1/restaurant/opening-windows/`; reads require tenant membership and writes require manager role.
 - Tenant closed days are exposed at `/api/v1/restaurant/closed-days/`; reads require tenant membership and writes require manager role.
 - Tenant rooms and tables are exposed at `/api/v1/restaurant/rooms/` and `/api/v1/restaurant/tables/`; reads require tenant membership and writes require manager role.
-- Legacy public booking `POST` and singular payment refund aliases remain until the Phase 20 API cleanup.
+- Legacy compatibility aliases remain until the Phase 20 API cleanup:
+  - `POST /api/v1/bookings/{id}/approve/`
+  - `POST /api/v1/bookings/{id}/decline/`
+  - `POST /api/v1/bookings/{id}/modify/`
+  - `POST /api/v1/bookings/{id}/assign-table/`
+  - `POST /api/v1/bookings/{id}/mark-no-show/`
+  - `POST /api/v1/bookings/{id}/confirm-without-deposit/`
+  - `POST /api/v1/bookings/{id}/request-payment/`
+  - `POST /api/v1/public/bookings/{token}/`
+  - `POST /api/v1/payments/{id}/refund/`

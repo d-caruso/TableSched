@@ -2,6 +2,7 @@
 
 ## Recent Changes
 
+- Task 20.1 documented the deprecated booking action, public booking POST, and payment refund alias endpoints and added compatibility tests.
 - Task 19.4 added tenant room and table collection/detail endpoints.
 - Task 19.3 added tenant closed-day collection and detail endpoints.
 - Task 19.2 added tenant opening-window collection and detail endpoints.

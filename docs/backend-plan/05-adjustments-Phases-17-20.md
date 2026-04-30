@@ -251,7 +251,7 @@ Tests:
 
 Remove legacy action-style endpoints after the new resource endpoints and frontend calls are migrated. Compatibility must be explicit and temporary.
 
-### Task 20.1 — Deprecation tests and documentation
+### ✅ Task 20.1 — Deprecation tests and documentation
 
 Document all old endpoints as deprecated and add tests that define the expected compatibility behavior until removal.
 
