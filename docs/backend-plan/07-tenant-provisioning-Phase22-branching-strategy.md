@@ -39,12 +39,13 @@ All checks must pass (0 errors, 0 failures) before merging.
 develop
 └── feature/backend-mvp
     └── feature/backend-mvp-Phase22-tenant-provisioning
-        └── task/backend-mvp-Task22.1-provision-tenant-command
+        ├── task/backend-mvp-Task22.1-provision-tenant-command
+        └── task/backend-mvp-Task22.2-tenant-directory-endpoint
 ```
 
 ---
 
-## ✅ Phase 22 — Tenant Provisioning Command
+## ❌ Phase 22 — Tenant Provisioning Command
 
 Single atomic command to onboard a new restaurant: schema, domain, user, and manager membership in one shot.
 
@@ -60,6 +61,7 @@ git push -u origin feature/backend-mvp-Phase22-tenant-provisioning
 ---
 
 ### ✅ Task 22.1 — provision_tenant command
+
 
 Create `provision_tenant` management command and its tests. The existing `create_tenant` command is unchanged.
 
@@ -99,7 +101,47 @@ git push origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ---
 
-### ✅ Phase 22 complete — merge into feature branch
+### ✅ Task 22.2 — Tenant directory endpoint
+
+Public unauthenticated `GET /api/tenants/` endpoint returning active tenants with their API prefix. Registered on the public schema urlconf.
+
+**Branch:** `task/backend-mvp-Task22.2-tenant-directory-endpoint` — created from `feature/backend-mvp-Phase22-tenant-provisioning`
+
+```bash
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git pull origin feature/backend-mvp-Phase22-tenant-provisioning
+git checkout -b task/backend-mvp-Task22.2-tenant-directory-endpoint
+```
+
+See [`07-tenant-provisioning-Phase22.md`](./07-tenant-provisioning-Phase22.md) for full code.
+
+**i18n rule:** Response contains only data fields — no user-facing strings.
+
+**Commit:**
+```bash
+git add apps/tenants/views.py apps/tenants/urls.py config/urls_public.py tests/tenants/test_tenant_directory.py
+git commit -m "[TASK] 22.2 add public tenant directory endpoint"
+```
+
+**Pre-merge checks:**
+```bash
+ruff check backend/
+mypy backend/
+pytest backend/tests/tenants/test_tenant_directory.py
+pytest backend/
+```
+
+**Push & merge:**
+```bash
+git push origin task/backend-mvp-Task22.2-tenant-directory-endpoint
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git merge task/backend-mvp-Task22.2-tenant-directory-endpoint
+git push origin feature/backend-mvp-Phase22-tenant-provisioning
+```
+
+---
+
+### ❌ Phase 22 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp

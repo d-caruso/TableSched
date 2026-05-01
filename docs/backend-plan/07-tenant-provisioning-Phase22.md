@@ -48,6 +48,104 @@ Branch: `feature/backend-mvp-Phase22-tenant-provisioning`
 
 ---
 
+### Task 22.2 — Tenant directory endpoint
+
+Public unauthenticated endpoint returning the list of active tenants. Used by the frontend to render a tenant directory when `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY=true`.
+
+```
+GET /api/tenants/
+```
+
+Response:
+```json
+[
+  {"name": "Rome Restaurant", "schema": "rome", "api_prefix": "/restaurants/rome/"},
+  {"name": "Milan Restaurant", "schema": "milan", "api_prefix": "/restaurants/milan/"}
+]
+```
+
+- Filters `Restaurant.objects.filter(is_active=True).exclude(schema_name="public")`
+- No authentication required
+- Registered on the **public schema** urlconf (`config/urls_public.py`)
+
+**Files:**
+- `apps/tenants/views.py` — NEW
+- `apps/tenants/urls.py` — NEW
+- `config/urls_public.py` — add `include("apps.tenants.urls")`
+- `tests/tenants/test_tenant_directory.py` — NEW
+
+**`apps/tenants/views.py`:**
+
+```python
+from django.http import JsonResponse, HttpRequest
+from apps.tenants.models import Restaurant
+
+
+def tenant_directory(request: HttpRequest) -> JsonResponse:
+    tenants = (
+        Restaurant.objects.filter(is_active=True)
+        .exclude(schema_name="public")
+        .values("name", "schema_name")
+        .order_by("name")
+    )
+    data = [
+        {
+            "name": t["name"],
+            "schema": t["schema_name"],
+            "api_prefix": f"/restaurants/{t['schema_name']}/",
+        }
+        for t in tenants
+    ]
+    return JsonResponse(data, safe=False)
+```
+
+**`apps/tenants/urls.py`:**
+
+```python
+from django.urls import path
+from apps.tenants.views import tenant_directory
+
+urlpatterns = [
+    path("api/tenants/", tenant_directory, name="tenant-directory"),
+]
+```
+
+**`config/urls_public.py`** — add:
+```python
+path("", include("apps.tenants.urls")),
+```
+
+**Tests:**
+
+```python
+# tests/tenants/test_tenant_directory.py
+
+@pytest.mark.django_db(transaction=True)
+def test_tenant_directory_lists_active_tenants(client, public_tenant):
+    Restaurant.objects.create(schema_name="rome", name="Rome Restaurant", is_active=True)
+    Restaurant.objects.create(schema_name="milan", name="Milan Restaurant", is_active=True)
+    Restaurant.objects.create(schema_name="inactive", name="Inactive", is_active=False)
+
+    response = client.get("/api/tenants/")
+
+    assert response.status_code == 200
+    data = response.json()
+    schemas = [t["schema"] for t in data]
+    assert "rome" in schemas
+    assert "milan" in schemas
+    assert "inactive" not in schemas
+    assert "public" not in schemas
+    assert data[0]["api_prefix"] == f"/restaurants/{data[0]['schema']}/"
+
+
+@pytest.mark.django_db(transaction=True)
+def test_tenant_directory_requires_no_auth(client, public_tenant):
+    response = client.get("/api/tenants/")
+    assert response.status_code == 200
+```
+
+---
+
 ### Task 22.1 — provision_tenant command
 
 **Files:**
