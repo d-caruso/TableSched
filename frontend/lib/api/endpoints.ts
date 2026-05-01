@@ -10,47 +10,49 @@ import type {
   TimeSlot,
 } from '@/lib/api/types';
 
+const tp = (tenant: string, path: string) => `/restaurants/${tenant}/api/v1/${path}`;
+
 export const publicApi = {
   getRestaurantInfo(tenant: string) {
-    return apiRequest<RestaurantPublicInfo>(`/api/public/${tenant}/restaurant/`);
+    return apiRequest<RestaurantPublicInfo>(tp(tenant, 'public/restaurant/'));
   },
   getAvailableSlots(tenant: string, date: string) {
-    return apiRequest<TimeSlot[]>(`/api/public/${tenant}/slots/?date=${encodeURIComponent(date)}`);
+    return apiRequest<TimeSlot[]>(tp(tenant, `public/slots/?date=${encodeURIComponent(date)}`));
   },
   createBooking(tenant: string, payload: BookingCreatePayload) {
-    return apiRequest<Booking>(`/api/public/${tenant}/bookings/`, {
+    return apiRequest<Booking>(tp(tenant, 'public/bookings/'), {
       method: 'POST',
       body: payload,
     });
   },
-  getBookingByToken(token: string) {
-    return apiRequest<Booking>(`/api/public/bookings/${token}/`);
+  getBookingByToken(tenant: string, token: string) {
+    return apiRequest<Booking>(tp(tenant, `public/bookings/${token}/`));
   },
-  cancelBooking(token: string) {
-    return apiRequest<void>(`/api/public/bookings/${token}/`, {
+  cancelBooking(tenant: string, token: string) {
+    return apiRequest<void>(tp(tenant, `public/bookings/${token}/`), {
       method: 'DELETE',
     });
   },
-  modifyBooking(token: string, payload: BookingModifyPayload) {
-    return apiRequest<Booking>(`/api/public/bookings/${token}/`, {
+  modifyBooking(tenant: string, token: string, payload: BookingModifyPayload) {
+    return apiRequest<Booking>(tp(tenant, `public/bookings/${token}/`), {
       method: 'PATCH',
       body: payload,
     });
   },
-  getPaymentIntent(token: string) {
-    return apiRequest<{ client_secret: string }>(`/api/public/bookings/${token}/payment-intent/`);
+  getPaymentIntent(tenant: string, token: string) {
+    return apiRequest<{ client_secret: string }>(tp(tenant, `public/bookings/${token}/payment-intent/`));
   },
 };
 
 export const staffApi = {
   login(tenant: string, email: string, password: string) {
-    return apiRequest<{ access: string; refresh: string }>(`/api/staff/${tenant}/login/`, {
+    return apiRequest<{ access: string; refresh: string }>(tp(tenant, 'auth/login/'), {
       method: 'POST',
       body: { email, password },
     });
   },
   triggerExpirationSweep(tenant: string, token: string) {
-    return apiRequest<void>(`/api/staff/${tenant}/bookings/sweep/`, {
+    return apiRequest<void>(tp(tenant, 'bookings/sweep/'), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -61,12 +63,12 @@ export const staffApi = {
       if (value !== undefined && value !== '') query.set(key, String(value));
     });
     const suffix = query.toString() ? `?${query.toString()}` : '';
-    return apiRequest<Booking[]>(`/api/staff/${tenant}/bookings/${suffix}`, {
+    return apiRequest<Booking[]>(tp(tenant, `bookings/${suffix}`), {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
   getBooking(tenant: string, token: string, id: string) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/`, {
+    return apiRequest<Booking>(tp(tenant, `bookings/${id}/`), {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
@@ -76,14 +78,14 @@ export const staffApi = {
     id: string,
     payload: { outcome: 'approved' | 'declined' | 'confirmed_without_deposit'; reason_code?: string; staff_message?: string },
   ) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/decisions/`, {
+    return apiRequest<Booking>(tp(tenant, `bookings/${id}/decisions/`), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
     });
   },
   assignTables(tenant: string, token: string, id: string, tableIds: string[]) {
-    return apiRequest<{ tables: string[] }>(`/api/staff/${tenant}/bookings/${id}/tables/`, {
+    return apiRequest<{ tables: string[] }>(tp(tenant, `bookings/${id}/tables/`), {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
       body: { tables: tableIds },
@@ -95,44 +97,44 @@ export const staffApi = {
     id: string,
     payload: { starts_at?: string; party_size?: number; notes?: string; status?: 'no_show' },
   ) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/bookings/${id}/`, {
+    return apiRequest<Booking>(tp(tenant, `bookings/${id}/`), {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
     });
   },
   refundPayment(tenant: string, token: string, paymentId: string) {
-    return apiRequest<Payment>(`/api/payments/${paymentId}/refunds/`, {
+    return apiRequest<Payment>(tp(tenant, `payments/${paymentId}/refunds/`), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });
   },
   createWalkin(tenant: string, token: string, payload: { party_size: number }) {
-    return apiRequest<Booking>(`/api/staff/${tenant}/walkins/`, {
+    return apiRequest<Booking>(tp(tenant, 'walkins/'), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
     });
   },
   listRooms(tenant: string, token: string) {
-    return apiRequest<Room[]>(`/api/staff/${tenant}/rooms/`, {
+    return apiRequest<Room[]>(tp(tenant, 'rooms/'), {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
   updateTablePosition(tenant: string, token: string, tableId: string, x: number, y: number) {
-    return apiRequest<void>(`/api/tables/${tableId}/position/`, {
+    return apiRequest<void>(tp(tenant, `tables/${tableId}/position/`), {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: { x, y },
     });
   },
   getRestaurantSettings(tenant: string, token: string) {
-    return apiRequest<RestaurantSettings>(`/api/staff/${tenant}/settings/`, {
+    return apiRequest<RestaurantSettings>(tp(tenant, 'settings/'), {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
   updateRestaurantSettings(tenant: string, token: string, payload: Partial<RestaurantSettings>) {
-    return apiRequest<RestaurantSettings>(`/api/staff/${tenant}/settings/`, {
+    return apiRequest<RestaurantSettings>(tp(tenant, 'settings/'), {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: payload,
