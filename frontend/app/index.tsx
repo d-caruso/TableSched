@@ -41,9 +41,19 @@ function TenantTable() {
   );
 }
 
+function LandingPage() {
+  const { t } = useTranslation();
+  return (
+    <YStack flex={1} alignItems="center" justifyContent="center" padding="$4" gap="$3">
+      <Text fontSize="$9" fontWeight="$8">{t('app.name')}</Text>
+      <Text fontSize="$5" color="$placeholderColor">{t('app.tagline')}</Text>
+    </YStack>
+  );
+}
+
 export default function TenantDirectoryPage() {
   if (!ENV.SHOW_TENANT_DIRECTORY) {
-    return null;
+    return <LandingPage />;
   }
 
   return <TenantTable />;

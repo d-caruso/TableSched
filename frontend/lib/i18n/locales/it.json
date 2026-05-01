@@ -171,6 +171,10 @@
     "PAYMENT_FAILED": "Il pagamento non è andato a buon fine",
     "notFound": "Pagina non trovata"
   },
+  "app": {
+    "name": "TableSched",
+    "tagline": "Gestione prenotazioni ristorante"
+  },
   "tenantDirectory": {
     "title": "TableSched — Ristoranti",
     "restaurant": "Ristorante",

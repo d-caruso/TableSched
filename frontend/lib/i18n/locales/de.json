@@ -171,6 +171,10 @@
     "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden",
     "notFound": "Seite nicht gefunden"
   },
+  "app": {
+    "name": "TableSched",
+    "tagline": "Restaurant-Buchungsverwaltung"
+  },
   "tenantDirectory": {
     "title": "TableSched — Restaurants",
     "restaurant": "Restaurant",

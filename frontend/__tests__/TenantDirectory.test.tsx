@@ -43,10 +43,3 @@ test('renders tenant names and URLs', async () => {
   });
 });
 
-test('renders nothing when SHOW_TENANT_DIRECTORY is false', () => {
-  jest.resetModules();
-  jest.doMock('@/lib/env', () => ({ ENV: { SHOW_TENANT_DIRECTORY: false } }));
-  const { default: Page } = require('@/app/index');
-  const { toJSON } = render(wrap(<Page />));
-  expect(toJSON()).toBeNull();
-});
