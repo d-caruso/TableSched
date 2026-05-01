@@ -14,11 +14,10 @@ def payment_tenant() -> Iterator[tuple[Restaurant, str, str]]:
     """Create an isolated tenant schema and matching test domain."""
 
     schema_name = f"pay_{uuid4().hex[:8]}"
-    domain_name = f"{schema_name}.localhost"
-    restaurant = Restaurant.objects.create(schema_name=schema_name, name="Payment Test")
 
     with schema_context("public"):
-        Domain.objects.create(domain=domain_name, tenant=restaurant, is_primary=True)
+        restaurant = Restaurant.objects.create(schema_name=schema_name, name="Payment Test")
+        Domain.objects.create(domain=schema_name, tenant=restaurant, is_primary=True)
 
     with schema_context(schema_name):
-        yield restaurant, schema_name, domain_name
+        yield restaurant, schema_name, schema_name

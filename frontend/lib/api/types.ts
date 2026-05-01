@@ -13,7 +13,15 @@ export type PaymentStatus =
   | 'authorized'
   | 'captured'
   | 'failed'
-  | 'requires_action';
+  | 'requires_action'
+  | 'refund_pending'
+  | 'refunded'
+  | 'refund_failed';
+
+export type Payment = {
+  id: string;
+  status: PaymentStatus;
+};
 
 export type TimeSlot = {
   date: string;
@@ -64,6 +72,7 @@ export type Table = {
 };
 
 export type BookingPayment = {
+  id: string;
   status: PaymentStatus;
   amount: number;
   currency: string;

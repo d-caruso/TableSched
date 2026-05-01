@@ -10,12 +10,13 @@ import { PartySizeSelector } from '@/components/booking/PartySizeSelector';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 
 type ModifyBookingFormProps = {
+  tenant: string;
   token: string;
   booking: Booking;
   onDone: () => void;
 };
 
-export function ModifyBookingForm({ token, booking, onDone }: ModifyBookingFormProps) {
+export function ModifyBookingForm({ tenant, token, booking, onDone }: ModifyBookingFormProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [date, setDate] = useState(booking.date);
@@ -23,7 +24,7 @@ export function ModifyBookingForm({ token, booking, onDone }: ModifyBookingFormP
   const [partySize, setPartySize] = useState(booking.party_size);
 
   const mutation = useMutation({
-    mutationFn: () => publicApi.modifyBooking(token, { date, time, party_size: partySize }),
+    mutationFn: () => publicApi.modifyBooking(tenant, token, { date, time, party_size: partySize }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['booking', token] });
       onDone();

@@ -30,12 +30,6 @@ class Booking(TimeStampedModel):
         default=BookingStatus.PENDING_REVIEW,
     )
     notes: models.TextField = models.TextField(blank=True)
-    table: models.ForeignKey = models.ForeignKey(
-        "restaurants.Table",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
     staff_message: models.TextField = models.TextField(blank=True)
     payment_due_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
     decided_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
@@ -50,15 +44,67 @@ class Booking(TimeStampedModel):
         indexes = [models.Index(fields=["status", "starts_at"])]
 
 
+class BookingTableAssignment(TimeStampedModel):
+    """Manual table assignment for a booking."""
+
+    booking: models.ForeignKey = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name="table_assignments",
+    )
+    table: models.ForeignKey = models.ForeignKey(
+        "restaurants.Table",
+        on_delete=models.CASCADE,
+        related_name="booking_assignments",
+    )
+    assigned_by: models.ForeignKey = models.ForeignKey(
+        "memberships.StaffMembership",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["booking", "table"],
+                name="uniq_booking_table_assignment",
+            )
+        ]
+
+
 class Walkin(TimeStampedModel):
     """Staff-only in-person reservation record."""
 
     starts_at: models.DateTimeField = models.DateTimeField()
     party_size: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField()
+    notes: models.TextField = models.TextField(blank=True)
+
+
+class WalkinTableAssignment(TimeStampedModel):
+    """Manual table assignment for a walk-in."""
+
+    walkin: models.ForeignKey = models.ForeignKey(
+        Walkin,
+        on_delete=models.CASCADE,
+        related_name="table_assignments",
+    )
     table: models.ForeignKey = models.ForeignKey(
         "restaurants.Table",
+        on_delete=models.CASCADE,
+        related_name="walkin_assignments",
+    )
+    assigned_by: models.ForeignKey = models.ForeignKey(
+        "memberships.StaffMembership",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
-    notes: models.TextField = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["walkin", "table"],
+                name="uniq_walkin_table_assignment",
+            )
+        ]

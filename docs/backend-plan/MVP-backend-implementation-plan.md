@@ -7,7 +7,7 @@ Strict references — anything in this plan that conflicts with these docs is wr
 - `docs/MVP-technical-analysis.md`
 - `CLAUDE.md` (engineering rules: KISS, YAGNI, DRY, file <500 LOC, function <50 LOC, class <100 LOC, no hardcoded user-facing strings, branching policy)
 
-The plan is split into four phase groups. Each group is one file:
+The plan is split into five phase groups. Each group is one file:
 
 1. [`01-foundation-Phases-1-3.md`](./01-foundation-Phases-1-3.md) — **Phases 1–3**
    - Phase 1: Repository & Project Bootstrap
@@ -26,12 +26,18 @@ The plan is split into four phase groups. Each group is one file:
    - Phase 10: Walk-ins
 
 4. [`04-ops-Phases-11-16.md`](./04-ops-Phases-11-16.md) — **Phases 11–16**
-   - Phase 11: Opportunistic Background Sweeps
+   - Phase 11: Opportunistic Background Maintenance
    - Phase 12: Audit Log
    - Phase 13: Security Hardening
    - Phase 14: Testing Strategy
    - Phase 15: Observability
    - Phase 16: Deployment Prep
+
+5. [`05-adjustments-Phases-17-20.md`](./05-adjustments-Phases-17-20.md) — **Phases 17–20**
+   - Phase 17: Multi-Table Assignments
+   - Phase 18: REST API Normalization
+   - Phase 19: Restaurant Config API
+   - Phase 20: API Compatibility Cleanup
 
 ---
 

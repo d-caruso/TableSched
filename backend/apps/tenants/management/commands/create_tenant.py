@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--name", required=True)
         parser.add_argument("--schema", required=True)
-        parser.add_argument("--domain", required=True)
+        parser.add_argument("--domain", default="")
 
     def handle(self, *args, **options):
         name = options["name"]
@@ -19,5 +19,7 @@ class Command(BaseCommand):
         domain = options["domain"]
 
         restaurant = Restaurant.objects.create(schema_name=schema, name=name)
-        Domain.objects.create(domain=domain, tenant=restaurant, is_primary=True)
-        self.stdout.write(f"Created tenant schema={schema} domain={domain}")
+        if domain:
+            Domain.objects.create(domain=domain, tenant=restaurant, is_primary=True)
+        self.stdout.write(f"Created tenant schema={schema}")
+        self.stdout.write(f"Tenant API prefix: /restaurants/{schema}/")

@@ -1,8 +1,11 @@
-"""Serializers for restaurant public endpoints."""
+"""Serializers for restaurant endpoints."""
 
 from rest_framework import serializers  # type: ignore[import-untyped]
 
+from apps.restaurants.models import ClosedDay
+from apps.restaurants.models import OpeningHours as OpeningWindow
 from apps.restaurants.models import RestaurantSettings
+from apps.restaurants.models import Room, Table
 
 
 class OpeningHoursPublicSerializer(serializers.Serializer):
@@ -26,3 +29,64 @@ class PublicRestaurantSerializer(serializers.Serializer):
     booking_cutoff_minutes = serializers.IntegerField()
     advance_booking_days = serializers.IntegerField()
     opening_hours = OpeningHoursPublicSerializer(many=True)
+
+
+class RestaurantSettingsSerializer(serializers.ModelSerializer[RestaurantSettings]):
+    """Tenant restaurant booking and deposit settings."""
+
+    class Meta:
+        model = RestaurantSettings
+        fields = (
+            "deposit_policy",
+            "deposit_party_threshold",
+            "deposit_amount_cents",
+            "near_term_threshold_hours",
+            "long_term_payment_window_hours",
+            "cancellation_cutoff_hours",
+            "booking_cutoff_minutes",
+            "advance_booking_days",
+        )
+
+
+class OpeningWindowSerializer(serializers.ModelSerializer[OpeningWindow]):
+    """Tenant restaurant weekly opening window."""
+
+    class Meta:
+        model = OpeningWindow
+        fields = ("id", "weekday", "opens_at", "closes_at")
+
+    def validate_weekday(self, value: int) -> int:
+        if value < 0 or value > 6:
+            raise serializers.ValidationError("invalid")
+        return value
+
+    def validate(self, attrs):
+        opens_at = attrs.get("opens_at", getattr(self.instance, "opens_at", None))
+        closes_at = attrs.get("closes_at", getattr(self.instance, "closes_at", None))
+        if opens_at is not None and closes_at is not None and opens_at >= closes_at:
+            raise serializers.ValidationError({"closes_at": "invalid"})
+        return attrs
+
+
+class ClosedDaySerializer(serializers.ModelSerializer[ClosedDay]):
+    """Tenant one-off closed day."""
+
+    class Meta:
+        model = ClosedDay
+        fields = ("id", "date", "reason_code")
+
+
+class RoomSerializer(serializers.ModelSerializer[Room]):
+    """Tenant dining room."""
+
+    class Meta:
+        model = Room
+        fields = ("id", "name")
+
+
+class TableSerializer(serializers.ModelSerializer[Table]):
+    """Tenant restaurant table."""
+
+    class Meta:
+        model = Table
+        fields = ("id", "room", "label", "seats", "pos_x", "pos_y")

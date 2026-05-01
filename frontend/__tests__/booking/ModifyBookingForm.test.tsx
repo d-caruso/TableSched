@@ -39,11 +39,11 @@ test('save button triggers modifyBooking', async () => {
 
   render(
     <QueryClientProvider client={client}>
-      <ModifyBookingForm token="tok" booking={booking} onDone={onDone} />
+      <ModifyBookingForm tenant="rome" token="tok" booking={booking} onDone={onDone} />
     </QueryClientProvider>,
   );
 
   fireEvent.press(screen.getByText('Save'));
 
-  await waitFor(() => expect(publicApi.modifyBooking).toHaveBeenCalledWith('tok', expect.any(Object)));
+  await waitFor(() => expect(publicApi.modifyBooking).toHaveBeenCalledWith('rome', 'tok', expect.any(Object)));
 });

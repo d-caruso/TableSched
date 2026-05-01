@@ -132,7 +132,10 @@
       "reject": "Ablehnen",
       "rejectReason": "Ablehnungsgrund",
       "assignTable": "Tisch zuweisen",
-      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen"
+      "confirmWithoutDeposit": "Ohne Anzahlung bestätigen",
+      "noShow": "Nicht erschienen",
+      "modify": "Buchung ändern",
+      "refund": "Anzahlung erstatten"
     },
     "tableId": "Tisch-ID",
     "walkins": {

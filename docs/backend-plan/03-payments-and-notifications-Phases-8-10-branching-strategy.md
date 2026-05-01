@@ -56,7 +56,7 @@ develop
 
 ---
 
-## ❌ Phase 8 — Payments (Stripe only)
+## ✅ Phase 8 — Payments (Stripe only)
 
 Implements the full Stripe payment lifecycle: Payment model, gateway abstraction, Payment Element pre-authorization flow (near-term), Stripe Checkout session links (long-term), webhook handler, and manual refunds. PayPal is out of scope.
 
@@ -611,7 +611,7 @@ git push origin feature/backend-mvp-Phase8-payments
 
 ---
 
-### ❌ Phase 8 complete — merge into feature branch
+### ✅ Phase 8 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -621,7 +621,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 9 — Notifications (Twilio SMS + Django SMTP, synchronous)
+## ✅ Phase 9 — Notifications (Twilio SMS + Django SMTP, synchronous)
 
 Implements synchronous, localized notifications. SMS is always sent (phone mandatory). Email is sent when `Customer.email` is set. Templates stored per code per locale (`en`, `it`, `de`). Failures are logged and never block the booking flow.
 
@@ -1017,7 +1017,7 @@ git push origin feature/backend-mvp-Phase9-notifications
 
 ---
 
-### ❌ Phase 9 complete — merge into feature branch
+### ✅ Phase 9 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -1027,7 +1027,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 10 — Walk-ins
+## ✅ Phase 10 — Walk-ins
 
 Walk-ins are staff-only records that occupy capacity and can have a table assigned. They are not bookings: no customer link, no status machine, no notifications.
 
@@ -1112,7 +1112,7 @@ git push origin feature/backend-mvp-Phase10-walkins
 
 ---
 
-### ❌ Phase 10 complete — merge into feature branch
+### ✅ Phase 10 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp

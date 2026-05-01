@@ -4,10 +4,10 @@ from datetime import timedelta
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
+import pytest
 from django.utils import timezone
+from django_tenants.utils import schema_context  # type: ignore[import-untyped]
 import stripe as stripe_sdk
-from django_tenants.test.cases import FastTenantTestCase  # type: ignore[import-untyped]
-from django_tenants.test.client import TenantClient  # type: ignore[import-untyped]
 
 from apps.accounts.models import User
 from apps.bookings.models import Booking
@@ -16,16 +16,8 @@ from apps.memberships.models import StaffMembership
 from apps.payments.models import Payment, PaymentStatus
 
 
-class RefundEndpointTestCase(FastTenantTestCase):
-    @classmethod
-    def get_test_schema_name(cls) -> str:
-        return "refund_test"
-
-    @classmethod
-    def get_test_tenant_domain(cls) -> str:
-        return "refund.test.com"
-
-    def _booking(self) -> Booking:
+def _booking(schema_name: str) -> Booking:
+    with schema_context(schema_name):
         suffix = uuid4().hex[:8]
         customer = Customer.objects.create(
             phone=f"+3900086{suffix}",
@@ -39,7 +31,9 @@ class RefundEndpointTestCase(FastTenantTestCase):
             party_size=2,
         )
 
-    def _payment(self, *, booking: Booking) -> Payment:
+
+def _payment(booking: Booking, schema_name: str) -> Payment:
+    with schema_context(schema_name):
         return Payment.objects.create(
             booking=booking,
             kind=Payment.KIND_PREAUTH,
@@ -49,59 +43,58 @@ class RefundEndpointTestCase(FastTenantTestCase):
             status=PaymentStatus.CAPTURED,
         )
 
-    def _manager_membership(self) -> StaffMembership:
+
+def _membership(schema_name: str, *, manager: bool) -> StaffMembership:
+    with schema_context(schema_name):
         suffix = uuid4().hex[:8]
+        role = "manager" if manager else "staff"
         user = User.objects.create_user(
-            username=f"manager_8_6_{suffix}",
-            email=f"manager86-{suffix}@example.com",
+            username=f"{role}_{suffix}",
+            email=f"{role}-{suffix}@example.com",
             password="testpass123",
         )
         return StaffMembership.objects.create(
             user=user,
-            role=StaffMembership.ROLE_MANAGER,
+            role=StaffMembership.ROLE_MANAGER if manager else StaffMembership.ROLE_STAFF,
             is_active=True,
         )
 
-    def _staff_membership(self) -> StaffMembership:
-        suffix = uuid4().hex[:8]
-        user = User.objects.create_user(
-            username=f"staff_8_6_{suffix}",
-            email=f"staff86-{suffix}@example.com",
-            password="testpass123",
-        )
-        return StaffMembership.objects.create(
-            user=user,
-            role=StaffMembership.ROLE_STAFF,
-            is_active=True,
-        )
 
-    def test_refund_requires_manager_role(self):
-        booking = self._booking()
-        payment = self._payment(booking=booking)
-        membership = self._staff_membership()
-        tenant_client = TenantClient(self.tenant)
-        tenant_client.force_login(membership.user)
+@pytest.mark.django_db(transaction=True)
+def test_refund_requires_manager_role(client, tenant_db):
+    _tenant, schema_name, _domain = tenant_db
+    prefix = f"/restaurants/{schema_name}"
+    booking = _booking(schema_name)
+    payment = _payment(booking, schema_name)
+    membership = _membership(schema_name, manager=False)
 
-        response = tenant_client.post(f"/api/v1/payments/{payment.id}/refund/")
+    client.force_login(membership.user)
+    response = client.post(f"{prefix}/api/v1/payments/{payment.id}/refunds/")
 
-        assert response.status_code == 403
+    assert response.status_code == 403
+    with schema_context(schema_name):
         payment.refresh_from_db()
         assert payment.status == PaymentStatus.CAPTURED
 
-    def test_refund_succeeds_for_manager(self):
-        booking = self._booking()
-        payment = self._payment(booking=booking)
-        membership = self._manager_membership()
-        tenant_client = TenantClient(self.tenant)
-        tenant_client.force_login(membership.user)
 
-        refund_mock = Mock(return_value=Mock())
-        with patch.object(stripe_sdk.Refund, "create", refund_mock):
-            response = tenant_client.post(f"/api/v1/payments/{payment.id}/refund/")
+@pytest.mark.django_db(transaction=True)
+def test_refund_succeeds_for_manager(client, tenant_db):
+    _tenant, schema_name, _domain = tenant_db
+    prefix = f"/restaurants/{schema_name}"
+    booking = _booking(schema_name)
+    payment = _payment(booking, schema_name)
+    membership = _membership(schema_name, manager=True)
+
+    client.force_login(membership.user)
+    refund_mock = Mock(return_value=Mock())
+    with patch.object(stripe_sdk.Refund, "create", refund_mock):
+        response = client.post(f"{prefix}/api/v1/payments/{payment.id}/refunds/")
+
+    with schema_context(schema_name):
         payment.refresh_from_db()
 
-        assert response.status_code == 200
-        assert response.json()["id"] == str(payment.id)
-        assert response.json()["status"] == PaymentStatus.REFUNDED
-        assert payment.status == PaymentStatus.REFUNDED
-        assert refund_mock.called
+    assert response.status_code == 200
+    assert response.json()["id"] == str(payment.id)
+    assert response.json()["status"] == PaymentStatus.REFUNDED
+    assert payment.status == PaymentStatus.REFUNDED
+    assert refund_mock.called

@@ -6,9 +6,9 @@ import pytest
 
 
 @pytest.mark.django_db(transaction=True)
-def test_tenant_fixture_exposes_domain(tenant):
+def test_tenant_fixture_exposes_prefix(tenant):
     assert tenant.schema_name
-    assert tenant.domain.endswith(".localhost")
+    assert tenant.prefix.startswith("/restaurants/")
 
 
 @pytest.mark.django_db(transaction=True)
@@ -24,5 +24,5 @@ def test_core_factories_create_related_objects(customer, booking, payment, resta
     assert restaurant_settings.pk is not None
     assert room.pk is not None
     assert table.room_id == room.id
-    assert walkin.table_id == table.id
+    assert walkin.pk is not None
     assert booking_access_token.booking_id == booking.id

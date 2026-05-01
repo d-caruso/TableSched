@@ -132,7 +132,10 @@
       "reject": "Rifiuta",
       "rejectReason": "Motivo del rifiuto",
       "assignTable": "Assegna tavolo",
-      "confirmWithoutDeposit": "Conferma senza acconto"
+      "confirmWithoutDeposit": "Conferma senza acconto",
+      "noShow": "Non presentato",
+      "modify": "Modifica prenotazione",
+      "refund": "Rimborsa acconto"
     },
     "tableId": "ID tavolo",
     "walkins": {

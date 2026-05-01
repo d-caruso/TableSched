@@ -5,8 +5,31 @@ from rest_framework import serializers  # type: ignore[import-untyped]
 from apps.bookings.models import Booking
 
 
+class BookingDecisionSerializer(serializers.Serializer):
+    """Validate staff review decision requests."""
+
+    OUTCOME_APPROVED = "approved"
+    OUTCOME_DECLINED = "declined"
+    OUTCOME_CONFIRMED_WITHOUT_DEPOSIT = "confirmed_without_deposit"
+    OUTCOME_CHOICES = (
+        OUTCOME_APPROVED,
+        OUTCOME_DECLINED,
+        OUTCOME_CONFIRMED_WITHOUT_DEPOSIT,
+    )
+
+    outcome = serializers.ChoiceField(choices=OUTCOME_CHOICES)
+    reason_code = serializers.CharField(required=False, allow_blank=True)
+    staff_message = serializers.CharField(required=False, allow_blank=True)
+
+
 class BookingSerializer(serializers.ModelSerializer[Booking]):
     """Staff-facing serializer for booking CRUD and action responses."""
+
+    tables = serializers.SerializerMethodField()
+
+    def get_tables(self, obj: Booking):
+        assignments = getattr(obj, "table_assignments")
+        return [assignment.table_id for assignment in assignments.all()]
 
     class Meta:
         model = Booking
@@ -16,7 +39,7 @@ class BookingSerializer(serializers.ModelSerializer[Booking]):
             "starts_at",
             "party_size",
             "status",
-            "table",
+            "tables",
             "notes",
             "staff_message",
             "payment_due_at",
@@ -31,3 +54,11 @@ class BookingPublicSerializer(serializers.ModelSerializer[Booking]):
     class Meta:
         model = Booking
         fields = ("id", "starts_at", "party_size", "status", "notes")
+
+
+class CustomerBookingPatchSerializer(serializers.Serializer):
+    """Validate customer-editable booking update fields."""
+
+    starts_at = serializers.DateTimeField(required=False)
+    party_size = serializers.IntegerField(required=False, min_value=1)
+    notes = serializers.CharField(required=False, allow_blank=True)

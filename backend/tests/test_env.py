@@ -33,3 +33,10 @@ def test_required_env_vars_listed_in_env_example():
 
     for name in required:
         assert any(line.startswith(f"{name}=") for line in contents), name
+
+
+def test_public_booking_base_url_has_no_tenant_slug(settings):
+    """PUBLIC_BOOKING_BASE_URL must be the frontend root, not a tenant path."""
+    url = getattr(settings, "PUBLIC_BOOKING_BASE_URL", "")
+    if url:
+        assert "/restaurants/" not in url

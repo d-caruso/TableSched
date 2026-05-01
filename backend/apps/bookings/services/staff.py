@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from apps.bookings.models import Booking, BookingStatus
 from apps.bookings.services.state_machine import transition
+from apps.bookings.services.table_assignments import replace_booking_tables
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
 from apps.memberships.models import StaffMembership
@@ -148,8 +149,7 @@ def assign_table(
 ) -> Booking:
     """Assign or reassign the booking table."""
 
-    booking.table = table
-    booking.save(update_fields=["table", "updated_at"])
+    replace_booking_tables(booking, tables=[table], by_membership=by_membership)
     _record_audit(
         actor=by_membership,
         action="booking.assign_table",
@@ -195,16 +195,19 @@ def modify_by_staff(
         booking.notes = notes
         update_fields.append("notes")
     if table is not None:
-        booking.table = table
-        update_fields.append("table")
+        replace_booking_tables(booking, tables=[table], by_membership=by_membership)
 
     if update_fields:
         booking.save(update_fields=[*update_fields, "updated_at"])
+    if update_fields or table is not None:
+        payload_fields = [*update_fields]
+        if table is not None:
+            payload_fields.append("table")
         _record_audit(
             actor=by_membership,
             action="booking.modify_by_staff",
             booking=booking,
-            payload={"fields": update_fields},
+            payload={"fields": payload_fields},
         )
     return booking
 

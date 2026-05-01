@@ -2,9 +2,10 @@
 
 ## Recent Changes
 
-- Frontend MVP completed and merged through Phase 10.
-- Task 10.3 added Vercel deployment configuration.
-- Task 10.2 added the responsive staff dashboard shell.
-- Task 10.1 added i18n validation for locale completeness.
-- Phase 9 added the floor plan editor and drag-and-drop table positioning.
-
+- Task 20.3 removed the legacy booking action routes, the public booking POST alias, and the singular payment refund alias.
+- Task 20.1 documented the deprecated booking action, public booking POST, and payment refund alias endpoints and added compatibility tests.
+- Task 19.4 added tenant room and table collection/detail endpoints.
+- Task 19.3 added tenant closed-day collection and detail endpoints.
+- Task 19.2 added tenant opening-window collection and detail endpoints.
+- Task 19.1 added the tenant restaurant settings endpoint at `GET|PATCH /api/v1/restaurant/settings/`.
+- Task 18.6 renamed the manager payment refund endpoint to `POST /api/v1/payments/{payment_id}/refunds/`.

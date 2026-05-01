@@ -132,7 +132,10 @@
       "reject": "Reject",
       "rejectReason": "Rejection reason",
       "assignTable": "Assign table",
-      "confirmWithoutDeposit": "Confirm without deposit"
+      "confirmWithoutDeposit": "Confirm without deposit",
+      "noShow": "No show",
+      "modify": "Modify booking",
+      "refund": "Refund deposit"
     },
     "tableId": "Table ID",
     "walkins": {

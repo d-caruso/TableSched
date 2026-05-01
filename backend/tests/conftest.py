@@ -7,7 +7,6 @@ from typing import cast
 
 import pytest
 from django.core.management import call_command
-from django_tenants.test.client import TenantClient  # type: ignore[import-untyped]
 from django_tenants.utils import schema_context  # type: ignore[import-untyped]
 
 from apps.bookings.models import Booking
@@ -34,24 +33,35 @@ from tests.factories import (
 
 
 @pytest.fixture
-def tenant_db(transactional_db) -> tuple[Restaurant, str, str]:
+def public_tenant(transactional_db):
+    """Ensure the public tenant row exists — required by TenantSubfolderMiddleware."""
+    Restaurant.objects.get_or_create(schema_name="public", defaults={"name": "Public"})
+
+
+@pytest.fixture
+def tenant_db(transactional_db, public_tenant) -> tuple[Restaurant, str, str]:
     schema_name = f"test_{uuid4().hex[:8]}"
-    domain_name = f"{schema_name}.localhost"
-    tenant = cast(Restaurant, RestaurantFactory(schema_name=schema_name, name="Test Restaurant"))
 
     with schema_context("public"):
-        DomainFactory(domain=domain_name, tenant=tenant, is_primary=True)
+        tenant = cast(Restaurant, RestaurantFactory(schema_name=schema_name, name="Test Restaurant"))
+        DomainFactory(domain=schema_name, tenant=tenant, is_primary=True)
 
     call_command("migrate_schemas", schema_name=schema_name, interactive=False, verbosity=0)
 
-    return tenant, schema_name, domain_name
+    return tenant, schema_name, schema_name
 
 
 @pytest.fixture
 def tenant(tenant_db) -> Restaurant:
-    tenant, _schema_name, domain_name = tenant_db
-    setattr(tenant, "domain", domain_name)
+    tenant, schema_name, _domain_name = tenant_db
+    setattr(tenant, "prefix", f"/restaurants/{schema_name}")
     return tenant
+
+
+@pytest.fixture
+def tenant_prefix(tenant_db) -> str:
+    _tenant, schema_name, _domain_name = tenant_db
+    return f"/restaurants/{schema_name}"
 
 
 @pytest.fixture
@@ -79,16 +89,16 @@ def manager_membership(tenant_db, manager_user) -> StaffMembership:
 
 
 @pytest.fixture
-def staff_client(tenant, staff_membership):
-    client = TenantClient(tenant)
+def staff_client(client, tenant_prefix, staff_membership):
     client.force_login(staff_membership.user)
+    client.tenant_prefix = tenant_prefix
     return client
 
 
 @pytest.fixture
-def manager_client(tenant, manager_membership):
-    client = TenantClient(tenant)
+def manager_client(client, tenant_prefix, manager_membership):
     client.force_login(manager_membership.user)
+    client.tenant_prefix = tenant_prefix
     return client
 
 
@@ -130,8 +140,9 @@ def booking(tenant_db, customer) -> Booking:
 @pytest.fixture
 def walkin(tenant_db, table) -> Walkin:
     _tenant, schema_name, _domain_name = tenant_db
+    _ = table
     with schema_context(schema_name):
-        return cast(Walkin, WalkinFactory(table=table))
+        return cast(Walkin, WalkinFactory())
 
 
 @pytest.fixture

@@ -30,3 +30,13 @@ The frontend is an Expo Router application with route groups for public and staf
 - English is the source of truth for keys.
 - Italian and German must stay aligned with English.
 
+## Backend API
+
+- Public customer booking tokens expose the booking resource at `GET|PATCH|DELETE /api/v1/public/bookings/{token}/`.
+- Customer booking changes go through `modify_by_customer`; customer cancellation goes through `cancel_by_customer`.
+- Manual manager refunds use `POST /api/v1/payments/{payment_id}/refunds/`; the Stripe webhook remains `POST /stripe/webhook/`.
+- Tenant restaurant settings are exposed at `GET|PATCH /api/v1/restaurant/settings/`; reads require tenant membership and updates require manager role.
+- Tenant opening windows are exposed at `/api/v1/restaurant/opening-windows/`; reads require tenant membership and writes require manager role.
+- Tenant closed days are exposed at `/api/v1/restaurant/closed-days/`; reads require tenant membership and writes require manager role.
+- Tenant rooms and tables are exposed at `/api/v1/restaurant/rooms/` and `/api/v1/restaurant/tables/`; reads require tenant membership and writes require manager role.
+- Legacy booking action routes, the public booking `POST` alias, and the singular payment refund alias were removed in Phase 20.

@@ -69,7 +69,7 @@ def test_staff_cannot_read_other_tenant_bookings(client):
 
     with tenant_schema("security_b") as (tenant_b, _schema_b, _domain_b):
         _booking("b")
-        response = client.get("/api/v1/bookings/", HTTP_HOST=_domain_b)
+        response = client.get(f"/restaurants/{_schema_b}/api/v1/bookings/")
 
     assert response.status_code in (403, 404)
     with schema_context(tenant_a.schema_name):
@@ -121,10 +121,7 @@ def test_token_from_tenant_a_invalid_on_tenant_b(client):
 
     with tenant_schema("security_token_b") as (tenant_b, schema_b, domain_b):
         _booking("tb")
-        response = client.get(
-            f"/api/v1/public/bookings/{raw_token_a}/",
-            HTTP_HOST=domain_b,
-        )
+        response = client.get(f"/restaurants/{schema_b}/api/v1/public/bookings/{raw_token_a}/")
 
     assert response.status_code in (404, 410)
     with schema_context(schema_a):
