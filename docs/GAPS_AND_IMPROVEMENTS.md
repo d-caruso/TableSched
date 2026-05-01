@@ -15,4 +15,5 @@ Known post-MVP frontend gaps:
 - Viewer-role UI is still not implemented.
 - Responsive staff sidebar is desktop-focused and should be validated on tablets.
 - Internationalization coverage should be kept in sync as new strings are added.
+- **Single `/login` with tenant selector** — currently each tenant has its own `/restaurants/{slug}/login` URL. Post-MVP: a single `/login` page where staff enter email + password, the backend resolves all `StaffMembership` records for that user, and if multiple tenants are found a "Select restaurant" screen is shown before redirecting to the correct dashboard.
 

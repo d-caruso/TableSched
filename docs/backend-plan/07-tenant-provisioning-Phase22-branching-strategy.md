@@ -44,7 +44,7 @@ develop
 
 ---
 
-## ❌ Phase 22 — Tenant Provisioning Command
+## ✅ Phase 22 — Tenant Provisioning Command
 
 Single atomic command to onboard a new restaurant: schema, domain, user, and manager membership in one shot.
 
@@ -59,7 +59,7 @@ git push -u origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ---
 
-### ❌ Task 22.1 — provision_tenant command
+### ✅ Task 22.1 — provision_tenant command
 
 Create `provision_tenant` management command and its tests. The existing `create_tenant` command is unchanged.
 
@@ -99,7 +99,7 @@ git push origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ---
 
-### ❌ Phase 22 complete — merge into feature branch
+### ✅ Phase 22 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
