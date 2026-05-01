@@ -33,6 +33,12 @@ from tests.factories import (
 )
 
 
+@pytest.fixture(autouse=True)
+def public_tenant(transactional_db):
+    """Ensure the public tenant row exists — required by TenantSubfolderMiddleware."""
+    Restaurant.objects.get_or_create(schema_name="public", defaults={"name": "Public"})
+
+
 @pytest.fixture
 def tenant_db(transactional_db) -> tuple[Restaurant, str, str]:
     schema_name = f"test_{uuid4().hex[:8]}"

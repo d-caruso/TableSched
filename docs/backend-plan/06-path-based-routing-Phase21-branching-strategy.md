@@ -65,9 +65,9 @@ git push -u origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.1 — Switch Middleware and Add Subfolder Prefix
+### ❌ Task 21.1 — Switch Middleware, Subfolder Prefix, and Settings/Env Split
 
-Replace `TenantMainMiddleware` with `TenantSubfolderMiddleware` and set `TENANT_SUBFOLDER_PREFIX`. No other settings, URL patterns, views, or services change.
+Replace `TenantMainMiddleware` with `TenantSubfolderMiddleware` and set `TENANT_SUBFOLDER_PREFIX`. Also introduce the standard Django settings/env split so `pytest` works without any prefix (`pytest backend/`).
 
 **Branch:** `task/backend-mvp-Task21.1-subfolder-middleware` — created from `feature/backend-mvp-Phase21-path-based-routing`
 
@@ -78,6 +78,8 @@ git checkout -b task/backend-mvp-Task21.1-subfolder-middleware
 ```
 
 **`config/settings/base.py`:**
+
+Remove the `environ.Env.read_env()` call — `base.py` no longer loads any env file directly.
 
 ```python
 MIDDLEWARE = [
@@ -94,6 +96,36 @@ MIDDLEWARE = [
 
 TENANT_SUBFOLDER_PREFIX = "restaurants"
 ```
+
+**`config/settings/dev.py`** — add at the top:
+```python
+import environ, pathlib
+environ.Env.read_env(pathlib.Path(__file__).resolve().parents[2] / ".env")
+```
+
+**`config/settings/prod.py`** — add at the top:
+```python
+import environ, pathlib
+environ.Env.read_env(pathlib.Path(__file__).resolve().parents[2] / ".env.prod")
+```
+
+**`config/settings/test.py`** (NEW):
+```python
+"""Test settings — uses local PostgreSQL via .env.test."""
+import environ, pathlib
+environ.Env.read_env(pathlib.Path(__file__).resolve().parents[2] / ".env.test")
+
+from .base import *  # noqa: F401, F403
+```
+
+**`pyproject.toml`** — add pytest config:
+```toml
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+```
+
+**`.env.test`** (gitignored) — local PostgreSQL credentials for tests.
+**`.env.prod`** (gitignored) — production credentials, set as HF Spaces secret.
 
 Tenant API URLs become:
 ```
@@ -137,16 +169,16 @@ def test_public_schema_admin_unchanged(client):
 
 **Commit:**
 ```bash
-git add config/settings/base.py
-git commit -m "[TASK] 21.1 switch to TenantSubfolderMiddleware with restaurants prefix"
+git add config/settings/ backend/pyproject.toml tests/test_urls.py
+git commit -m "[TASK] 21.1 switch to TenantSubfolderMiddleware with restaurants prefix and settings/env split"
 ```
 
 **Pre-merge checks:**
 ```bash
 ruff check backend/
 mypy backend/
-pytest tests/test_urls.py
-pytest
+pytest backend/tests/test_urls.py
+pytest backend/
 ```
 
 **Push & merge:**

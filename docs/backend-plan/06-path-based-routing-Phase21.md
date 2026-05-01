@@ -11,7 +11,15 @@ to:
 api.tablesched.domenicocaruso.com/restaurants/resto-a/api/v1/bookings/
 ```
 
-All views, services, models, URL patterns, and the Stripe webhook handler are unaffected. The Stripe webhook already resolves the tenant via `metadata.tenant_schema` and `schema_context` — it is fully path-independent.
+All views, services, models, URL patterns, and the Stripe webhook handler are unaffected.
+
+This phase also introduces the standard Django settings/env split so that `pytest` works without any prefix:
+
+- `config/settings/test.py` — new, reads `.env.test` (local PostgreSQL)
+- `config/settings/dev.py` — reads `.env` (Supabase)
+- `config/settings/prod.py` — reads `.env.prod`
+- `pyproject.toml` — pins `DJANGO_SETTINGS_MODULE = "config.settings.test"` for pytest
+- `base.py` — no longer calls `read_env` directly The Stripe webhook already resolves the tenant via `metadata.tenant_schema` and `schema_context` — it is fully path-independent.
 
 ---
 
