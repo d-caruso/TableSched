@@ -17,3 +17,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-django", "factory-boy", "responses", "ruff", "mypy"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"

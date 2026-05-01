@@ -7,7 +7,6 @@ import environ  # type: ignore[import-untyped]  # django-environ ships without t
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 env = environ.Env(DEBUG=(bool, False))
-environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
 DEBUG = env.bool("DEBUG", default=False)
@@ -52,9 +51,10 @@ INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in S
 
 TENANT_MODEL = "tenants.Restaurant"
 TENANT_DOMAIN_MODEL = "tenants.Domain"
+TENANT_SUBFOLDER_PREFIX = "restaurants"
 
 MIDDLEWARE = [
-    "django_tenants.middleware.main.TenantMainMiddleware",
+    "django_tenants.middleware.TenantSubfolderMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
