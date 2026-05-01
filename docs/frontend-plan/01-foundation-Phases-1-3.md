@@ -99,7 +99,10 @@ npx create-expo-app@latest frontend --template tabs
     "typescript": "^5.x",
     "@types/react": "^18.x",
     "eslint": "^9.x",
-    "@typescript-eslint/parser": "^8.x"
+    "@typescript-eslint/parser": "^8.x",
+    "@testing-library/react-native": "^12.x",
+    "jest": "^29.x",
+    "jest-expo": "~52.x"
   }
 }
 ```
@@ -197,6 +200,24 @@ export const ROUTES = {
   settings: '/dashboard/settings',
   floor: '/dashboard/settings/floor',
 } as const;
+```
+
+`eslint.config.js`:
+
+```js
+const { defineConfig } = require('eslint/config');
+const tsParser = require('@typescript-eslint/parser');
+
+module.exports = defineConfig([
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: { parser: tsParser },
+    rules: {
+      'react-hooks/exhaustive-deps': 'error',
+      'no-console': 'warn',
+    },
+  },
+]);
 ```
 
 ### Task 1.4 — Tamagui config & root layout
@@ -323,6 +344,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     },
     "payment_status": { "pending": "Payment pending", "authorized": "Authorized", "captured": "Captured", "failed": "Failed", "refund_pending": "Refund pending", "refunded": "Refunded", "refund_failed": "Refund failed" },
     "actions": { "cancel": "Cancel booking", "modify": "Modify booking", "pay": "Pay deposit" },
+    "guestCount_one": "{{count}} guest",
+    "guestCount_other": "{{count}} guests",
     "success": { "requested": "Booking request received", "requestedBody": "We'll notify you by SMS{{email}}.", "cancelled": "Your booking has been cancelled." }
   },
   "staff": {
@@ -512,9 +535,16 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const KEY_ACCESS = 'ts_access', KEY_REFRESH = 'ts_refresh', KEY_TENANT = 'ts_tenant';
 
-const get = (k: string) => Platform.OS === 'web' ? sessionStorage.getItem(k) : SecureStore.getItemAsync(k);
-const set = (k: string, v: string) => Platform.OS === 'web' ? (sessionStorage.setItem(k, v), Promise.resolve()) : SecureStore.setItemAsync(k, v);
-const del = (k: string) => Platform.OS === 'web' ? (sessionStorage.removeItem(k), Promise.resolve()) : SecureStore.deleteItemAsync(k);
+const get = (k: string): Promise<string | null> =>
+  Platform.OS === 'web' ? Promise.resolve(sessionStorage.getItem(k)) : SecureStore.getItemAsync(k);
+const set = (k: string, v: string): Promise<void> => {
+  if (Platform.OS === 'web') { sessionStorage.setItem(k, v); return Promise.resolve(); }
+  return SecureStore.setItemAsync(k, v);
+};
+const del = (k: string): Promise<void> => {
+  if (Platform.OS === 'web') { sessionStorage.removeItem(k); return Promise.resolve(); }
+  return SecureStore.deleteItemAsync(k);
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ accessToken: null, tenant: null, isLoading: true });
@@ -817,7 +847,7 @@ export function StepDone({ draft, tenant }: { draft: BookingCreatePayload; tenan
     mutationFn: () => publicApi.createBooking(tenant, draft),
   });
 
-  useEffect(() => { mutate(); }, []);
+  useEffect(() => { mutate(); }, [mutate]);
 
   if (isPending) return <Spinner size="large" />;
   if (error) return <ErrorMessage error={error} />;

@@ -6,6 +6,12 @@
     "cancel": "Abbrechen",
     "back": "Zurück",
     "confirm": "Bestätigen",
+    "continue": "Weiter",
+    "decrement": "−",
+    "increment": "+",
+    "selected": "Ausgewählt",
+    "selectedIndicator": "✓",
+    "warning": "Warnung",
     "submit": "Senden",
     "close": "Schließen",
     "yes": "Ja",
@@ -64,6 +70,9 @@
       "modify": "Reservierung ändern",
       "cancel": "Reservierung stornieren"
     },
+    "timeSlots": {
+      "busyWarning": "!"
+    },
     "detail": {
       "title": "Reservierungsdetails",
       "date": "Datum",
@@ -93,6 +102,7 @@
   "staff": {
     "login": {
       "title": "Mitarbeiter-Login",
+      "tenant": "Restaurant",
       "email": "E-Mail",
       "password": "Passwort",
       "submit": "Anmelden",
@@ -120,12 +130,14 @@
     "booking": {
       "approve": "Genehmigen",
       "reject": "Ablehnen",
+      "rejectReason": "Ablehnungsgrund",
       "assignTable": "Tisch zuweisen",
       "confirmWithoutDeposit": "Ohne Anzahlung bestätigen",
       "noShow": "Nicht erschienen",
       "modify": "Buchung ändern",
       "refund": "Anzahlung erstatten"
     },
+    "tableId": "Tisch-ID",
     "walkins": {
       "title": "Spontanbesuche",
       "submit": "Spontanbesuch hinzufügen",

@@ -1,3 +1,8 @@
+import React from 'react';
+if (typeof window === 'undefined') {
+  // Suppress useLayoutEffect SSR warning from libraries (Tamagui, Reanimated, etc.)
+  (React as any).useLayoutEffect = React.useEffect;
+}
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { TamaguiProvider } from 'tamagui';

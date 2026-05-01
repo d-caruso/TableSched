@@ -79,7 +79,7 @@ export function BookingInfoCard({ booking }: { booking: Booking }) {
     <YStack gap="$2" padding="$3" borderWidth={1} borderColor="$borderColor" borderRadius="$4">
       <Text fontWeight="700" fontSize="$5">{booking.customer.name}</Text>
       <Text>{booking.date} · {booking.time}</Text>
-      <Text>{booking.party_size} {booking.party_size === 1 ? 'guest' : 'guests'}</Text>
+      <Text>{t('booking.guestCount', { count: booking.party_size })}</Text>
       {booking.table && <Text>{booking.table.name}</Text>}
       {booking.payment && (
         <Text color="$placeholderColor" fontSize="$3">
@@ -264,10 +264,17 @@ export default function PaymentPage() {
 ```tsx
 import { YStack, Text } from 'tamagui';
 import { useState } from 'react';
+import { Platform } from 'react-native';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
 import { AppButton } from '@/components/ui/AppButton';
+import { ENV } from '@/lib/env';
 import { ROUTES } from '@/constants/routes';
+
+const getOrigin = () =>
+  Platform.OS === 'web' && typeof window !== 'undefined'
+    ? window.location.origin
+    : ENV.API_BASE_URL;
 
 export function PaymentForm({ token }: { token: string }) {
   const { t } = useTranslation();
@@ -285,7 +292,7 @@ export function PaymentForm({ token }: { token: string }) {
       elements,
       confirmParams: {
         // Stripe redirects here on success; booking detail will show updated status
-        return_url: `${window.location.origin}${ROUTES.bookingDetail(token)}`,
+        return_url: `${getOrigin()}${ROUTES.bookingDetail(token)}`,
       },
     });
 
@@ -499,12 +506,14 @@ export default function DashboardScreen() {
 import { YStack, XStack, Text } from 'tamagui';
 import { Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import type { Booking } from '@/lib/api/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { ROUTES } from '@/constants/routes';
 
 export function BookingCard({ booking }: { booking: Booking }) {
   const router = useRouter();
+  const { t } = useTranslation();
   return (
     <Pressable onPress={() => router.push(ROUTES.bookingAdmin(booking.id))}>
       <YStack borderWidth={1} borderColor="$borderColor" borderRadius="$4" padding="$3" gap="$2"
@@ -514,7 +523,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
           <StatusBadge status={booking.status} />
         </XStack>
         <Text color="$placeholderColor" fontSize="$3">
-          {booking.date} {booking.time} · {booking.party_size} guests
+          {booking.date} {booking.time} · {t('booking.guestCount', { count: booking.party_size })}
         </Text>
         <Text fontSize="$3">{booking.customer.phone}</Text>
       </YStack>

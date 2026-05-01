@@ -1,14 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { Text, YStack, XStack } from 'tamagui';
 import '@/lib/i18n';
+import { useLocale } from '@/lib/i18n/useLocale';
 import type { Booking } from '@/lib/api/types';
 
 type BookingInfoCardProps = {
   booking: Booking;
 };
 
-function formatMoney(amount: number, currency: string) {
-  return new Intl.NumberFormat('en-US', {
+function formatMoney(amount: number, currency: string, locale: string) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     maximumFractionDigits: 2,
@@ -17,6 +18,7 @@ function formatMoney(amount: number, currency: string) {
 
 export function BookingInfoCard({ booking }: BookingInfoCardProps) {
   const { t } = useTranslation();
+  const { locale } = useLocale();
 
   return (
     <YStack gap="$4">
@@ -53,7 +55,7 @@ export function BookingInfoCard({ booking }: BookingInfoCardProps) {
             </XStack>
             <XStack justifyContent="space-between" gap="$4">
               <Text>{t('booking.detail.amount')}</Text>
-              <Text>{formatMoney(booking.payment.amount, booking.payment.currency)}</Text>
+              <Text>{formatMoney(booking.payment.amount, booking.payment.currency, locale)}</Text>
             </XStack>
           </>
         ) : null}

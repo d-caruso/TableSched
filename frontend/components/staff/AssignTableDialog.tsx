@@ -15,7 +15,12 @@ export function AssignTableDialog({ onSubmit, loading = false }: AssignTableDial
   return (
     <YStack gap="$3">
       <Text>{t('staff.booking.assignTable')}</Text>
-      <Input accessibilityLabel="Table" value={tableId} onChangeText={setTableId} placeholder="Table ID" />
+      <Input
+        accessibilityLabel={t('booking.detail.table')}
+        value={tableId}
+        onChangeText={setTableId}
+        placeholder={t('staff.booking.tableId')}
+      />
       <AppButton onPress={() => onSubmit(tableId)} loading={loading} disabled={!tableId.trim()}>
         {t('common.submit')}
       </AppButton>

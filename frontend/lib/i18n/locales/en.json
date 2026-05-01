@@ -6,6 +6,12 @@
     "cancel": "Cancel",
     "back": "Back",
     "confirm": "Confirm",
+    "continue": "Continue",
+    "decrement": "−",
+    "increment": "+",
+    "selected": "Selected",
+    "selectedIndicator": "✓",
+    "warning": "Warning",
     "submit": "Submit",
     "close": "Close",
     "yes": "Yes",
@@ -64,6 +70,9 @@
       "modify": "Modify booking",
       "cancel": "Cancel booking"
     },
+    "timeSlots": {
+      "busyWarning": "!"
+    },
     "detail": {
       "title": "Booking details",
       "date": "Date",
@@ -93,6 +102,7 @@
   "staff": {
     "login": {
       "title": "Staff login",
+      "tenant": "Restaurant",
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
@@ -120,12 +130,14 @@
     "booking": {
       "approve": "Approve",
       "reject": "Reject",
+      "rejectReason": "Rejection reason",
       "assignTable": "Assign table",
       "confirmWithoutDeposit": "Confirm without deposit",
       "noShow": "No show",
       "modify": "Modify booking",
       "refund": "Refund deposit"
     },
+    "tableId": "Table ID",
     "walkins": {
       "title": "Walk-ins",
       "submit": "Add walk-in",

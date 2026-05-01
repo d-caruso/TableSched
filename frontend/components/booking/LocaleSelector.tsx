@@ -19,7 +19,7 @@ export function LocaleSelector({ value, onChange }: LocaleSelectorProps) {
         {locales.map((locale) => (
           <Pressable key={locale} accessibilityRole="button" onPress={() => onChange(locale)}>
             <Text>{t(`booking.locales.${locale}`)}</Text>
-            {value === locale ? <Text>✓</Text> : null}
+            {value === locale ? <Text>{t('common.selectedIndicator')}</Text> : null}
           </Pressable>
         ))}
       </View>

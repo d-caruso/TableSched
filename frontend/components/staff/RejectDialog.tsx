@@ -15,7 +15,12 @@ export function RejectDialog({ onSubmit, loading = false }: RejectDialogProps) {
   return (
     <YStack gap="$3">
       <Text>{t('staff.booking.reject')}</Text>
-      <Input accessibilityLabel="Rejection reason" value={reason} onChangeText={setReason} placeholder={t('staff.booking.reject')} />
+      <Input
+        accessibilityLabel={t('staff.booking.rejectReason')}
+        value={reason}
+        onChangeText={setReason}
+        placeholder={t('staff.booking.rejectReason')}
+      />
       <AppButton onPress={() => onSubmit(reason)} loading={loading} disabled={!reason.trim()}>
         {t('common.submit')}
       </AppButton>

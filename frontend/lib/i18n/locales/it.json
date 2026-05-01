@@ -6,6 +6,12 @@
     "cancel": "Annulla",
     "back": "Indietro",
     "confirm": "Conferma",
+    "continue": "Continua",
+    "decrement": "−",
+    "increment": "+",
+    "selected": "Selezionato",
+    "selectedIndicator": "✓",
+    "warning": "Avviso",
     "submit": "Invia",
     "close": "Chiudi",
     "yes": "Sì",
@@ -64,6 +70,9 @@
       "modify": "Modifica prenotazione",
       "cancel": "Annulla prenotazione"
     },
+    "timeSlots": {
+      "busyWarning": "!"
+    },
     "detail": {
       "title": "Dettagli prenotazione",
       "date": "Data",
@@ -93,6 +102,7 @@
   "staff": {
     "login": {
       "title": "Accesso staff",
+      "tenant": "Ristorante",
       "email": "Email",
       "password": "Password",
       "submit": "Accedi",
@@ -120,12 +130,14 @@
     "booking": {
       "approve": "Approva",
       "reject": "Rifiuta",
+      "rejectReason": "Motivo del rifiuto",
       "assignTable": "Assegna tavolo",
       "confirmWithoutDeposit": "Conferma senza acconto",
       "noShow": "Non presentato",
       "modify": "Modifica prenotazione",
       "refund": "Rimborsa acconto"
     },
+    "tableId": "ID tavolo",
     "walkins": {
       "title": "Ingressi",
       "submit": "Aggiungi ingresso",

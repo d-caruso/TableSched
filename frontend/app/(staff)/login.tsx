@@ -36,9 +36,9 @@ export default function StaffLoginScreen() {
       <Text fontSize="$6" fontWeight="$7">
         {t('staff.login.title')}
       </Text>
-      <Input accessibilityLabel="Restaurant" placeholder={t('staff.login.title')} value={tenant} onChangeText={setTenant} />
-      <Input accessibilityLabel="Email" value={email} onChangeText={setEmail} />
-      <Input accessibilityLabel="Password" secureTextEntry value={password} onChangeText={setPassword} />
+      <Input accessibilityLabel={t('staff.login.tenant')} placeholder={t('staff.login.tenant')} value={tenant} onChangeText={setTenant} />
+      <Input accessibilityLabel={t('staff.login.email')} value={email} onChangeText={setEmail} />
+      <Input accessibilityLabel={t('staff.login.password')} secureTextEntry value={password} onChangeText={setPassword} />
       {error ? <Text color="$red10">{error}</Text> : null}
       <Button onPress={handleLogin} disabled={isSubmitting}>
         <Text>{t('staff.login.submit')}</Text>

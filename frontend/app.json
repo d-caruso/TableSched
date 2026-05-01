@@ -19,7 +19,8 @@
           "root": "app",
           "origin": "https://tablesched.domenicocaruso.com"
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

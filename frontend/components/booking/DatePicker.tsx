@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, TextInput, View } from 'react-native';
 
 type DatePickerProps = {
@@ -19,7 +20,8 @@ function addDays(date: Date, days: number) {
   return next;
 }
 
-export function DatePicker({ label = 'Date', value, onChange, minDate, maxDays = 90 }: DatePickerProps) {
+export function DatePicker({ label, value, onChange, minDate, maxDays = 90 }: DatePickerProps) {
+  const { t } = useTranslation();
   const bounds = useMemo(() => {
     const today = new Date();
     return {
@@ -27,12 +29,13 @@ export function DatePicker({ label = 'Date', value, onChange, minDate, maxDays =
       max: toIsoDate(addDays(today, maxDays)),
     };
   }, [maxDays, minDate]);
+  const resolvedLabel = label ?? t('booking.form.date');
 
   return (
     <View>
-      <Text>{label}</Text>
+      <Text>{resolvedLabel}</Text>
       <TextInput
-        accessibilityLabel={label}
+        accessibilityLabel={resolvedLabel}
         value={value}
         onChangeText={(next) => {
           if (!next) {

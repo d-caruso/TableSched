@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { publicApi } from '@/lib/api/endpoints';
 import { DatePicker } from '@/components/booking/DatePicker';
@@ -28,6 +29,7 @@ function toQuarterHourTimes() {
 }
 
 export function StepDateTime({ tenant, restaurant, onContinue }: StepDateTimeProps) {
+  const { t } = useTranslation();
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [partySize, setPartySize] = useState(2);
@@ -79,11 +81,11 @@ export function StepDateTime({ tenant, restaurant, onContinue }: StepDateTimePro
   return (
     <View testID="step-datetime">
       <Text>{restaurant.name}</Text>
-      <DatePicker value={date} onChange={setDate} minDate={toIsoDate(new Date())} maxDays={90} />
-      <PartySizeSelector value={partySize} onChange={setPartySize} />
+      <DatePicker label={t('booking.form.date')} value={date} onChange={setDate} minDate={toIsoDate(new Date())} maxDays={90} />
+      <PartySizeSelector label={t('booking.form.partySize')} value={partySize} onChange={setPartySize} />
       <TimeSlotGrid slots={slots} loading={loading} selected={time} onSelect={setTime} />
       <Pressable accessibilityRole="button" disabled={!date || !time} onPress={onContinue}>
-        <Text>Continue</Text>
+        <Text>{t('common.continue')}</Text>
       </Pressable>
     </View>
   );
