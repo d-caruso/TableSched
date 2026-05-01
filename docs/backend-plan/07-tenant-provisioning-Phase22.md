@@ -48,6 +48,73 @@ Branch: `feature/backend-mvp-Phase22-tenant-provisioning`
 
 ---
 
+### Task 22.3 — init_platform command
+
+One-time platform setup command. Must be run once after a fresh database is created (local or production) before any other commands or requests.
+
+```bash
+python manage.py init_platform
+```
+
+What it does:
+1. Runs `migrate_schemas --shared` (creates shared tables in the public schema)
+2. Creates `Restaurant(schema_name="public", name="Public")` if it doesn't exist
+3. Prints confirmation
+
+Idempotent — safe to run multiple times.
+
+**Files:**
+- `apps/tenants/management/commands/init_platform.py` — NEW
+- `tests/tenants/test_init_platform.py` — NEW
+
+**`apps/tenants/management/commands/init_platform.py`:**
+
+```python
+"""One-time platform initialisation command."""
+
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
+
+from apps.tenants.models import Restaurant
+
+
+class Command(BaseCommand):
+    help = "One-time setup: run shared migrations and create the public tenant row."
+
+    def handle(self, *args, **options):
+        call_command("migrate_schemas", "--shared", interactive=False, verbosity=0)
+        _, created = Restaurant.objects.get_or_create(
+            schema_name="public", defaults={"name": "Public"}
+        )
+        if created:
+            self.stdout.write("Created public tenant row.")
+        else:
+            self.stdout.write("Public tenant row already exists.")
+        self.stdout.write("Platform initialised.")
+```
+
+**Tests:**
+
+```python
+# tests/tenants/test_init_platform.py
+
+@pytest.mark.django_db(transaction=True)
+def test_init_platform_creates_public_tenant():
+    from apps.tenants.models import Restaurant
+    Restaurant.objects.filter(schema_name="public").delete()
+    call_command("init_platform")
+    assert Restaurant.objects.filter(schema_name="public").exists()
+
+@pytest.mark.django_db(transaction=True)
+def test_init_platform_is_idempotent():
+    call_command("init_platform")
+    call_command("init_platform")
+    from apps.tenants.models import Restaurant
+    assert Restaurant.objects.filter(schema_name="public").count() == 1
+```
+
+---
+
 ### Task 22.2 — Tenant directory endpoint
 
 Public unauthenticated endpoint returning the list of active tenants. Used by the frontend to render a tenant directory when `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY=true`.
