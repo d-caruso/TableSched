@@ -168,7 +168,8 @@
     "INVALID_CREDENTIALS": "Email o password non validi",
     "SESSION_EXPIRED": "La sessione è scaduta",
     "VALIDATION_ERROR": "Controlla il modulo",
-    "PAYMENT_FAILED": "Il pagamento non è andato a buon fine"
+    "PAYMENT_FAILED": "Il pagamento non è andato a buon fine",
+    "notFound": "Pagina non trovata"
   },
   "tenantDirectory": {
     "title": "TableSched — Ristoranti",

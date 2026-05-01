@@ -168,7 +168,8 @@
     "INVALID_CREDENTIALS": "Ungültige E-Mail oder Passwort",
     "SESSION_EXPIRED": "Ihre Sitzung ist abgelaufen",
     "VALIDATION_ERROR": "Bitte prüfen Sie das Formular",
-    "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden"
+    "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden",
+    "notFound": "Seite nicht gefunden"
   },
   "tenantDirectory": {
     "title": "TableSched — Restaurants",
