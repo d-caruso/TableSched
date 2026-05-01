@@ -10,14 +10,15 @@ import { publicApi } from '@/lib/api/endpoints';
 import { stripePromise } from '@/lib/stripe';
 
 export default function CustomerBookingPayPage() {
-  const { token } = useLocalSearchParams<{ tenant: string; token: string }>();
+  const { tenant, token } = useLocalSearchParams<{ tenant: string; token: string }>();
   const { t } = useTranslation();
+  const tenantValue = Array.isArray(tenant) ? tenant[0] : tenant;
   const tokenValue = Array.isArray(token) ? token[0] : token;
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['payment-intent', tokenValue],
-    queryFn: () => publicApi.getPaymentIntent(tokenValue),
-    enabled: !!tokenValue,
+    queryKey: ['payment-intent', tenantValue, tokenValue],
+    queryFn: () => publicApi.getPaymentIntent(tenantValue, tokenValue),
+    enabled: !!tenantValue && !!tokenValue,
   });
 
   if (isLoading) {

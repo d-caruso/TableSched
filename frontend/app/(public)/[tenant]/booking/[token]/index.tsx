@@ -11,15 +11,16 @@ import { ApiError } from '@/lib/api/client';
 import type { Booking } from '@/lib/api/types';
 
 export default function CustomerBookingDetailPage() {
-  const { token } = useLocalSearchParams<{ tenant: string; token: string }>();
+  const { tenant, token } = useLocalSearchParams<{ tenant: string; token: string }>();
   const { t } = useTranslation();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const tenantValue = Array.isArray(tenant) ? tenant[0] : tenant;
   const tokenValue = Array.isArray(token) ? token[0] : token;
 
   useEffect(() => {
-    if (!tokenValue) {
+    if (!tenantValue || !tokenValue) {
       setError(new ApiError(400, 'INVALID_TOKEN'));
       setIsLoading(false);
       return;
@@ -27,7 +28,7 @@ export default function CustomerBookingDetailPage() {
 
     void (async () => {
       try {
-        const data = await publicApi.getBookingByToken(tokenValue);
+        const data = await publicApi.getBookingByToken(tenantValue, tokenValue);
         setBooking(data);
       } catch (cause) {
         setError(cause instanceof ApiError ? cause : new ApiError(500, 'UNKNOWN_ERROR'));
@@ -61,7 +62,7 @@ export default function CustomerBookingDetailPage() {
     <YStack padding="$4" gap="$6">
       <StatusBadge status={booking.status} />
       <BookingInfoCard booking={booking} />
-      <CustomerBookingActions booking={booking} token={tokenValue} />
+      <CustomerBookingActions booking={booking} tenant={tenantValue} token={tokenValue} />
     </YStack>
   );
 }
