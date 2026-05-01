@@ -6,9 +6,9 @@ import pytest
 
 
 @pytest.mark.django_db(transaction=True)
-def test_tenant_fixture_exposes_domain(tenant):
+def test_tenant_fixture_exposes_prefix(tenant):
     assert tenant.schema_name
-    assert tenant.domain.endswith(".localhost")
+    assert tenant.prefix.startswith("/restaurants/")
 
 
 @pytest.mark.django_db(transaction=True)
