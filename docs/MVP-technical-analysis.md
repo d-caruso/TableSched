@@ -21,6 +21,8 @@
 - PostgreSQL schema-per-tenant
 - One public schema for shared tenant/domain data
 - One schema per restaurant
+- Tenant routing: path-based via `TenantSubfolderMiddleware` (not subdomain-based)
+- Tenant URL prefix: `/restaurants/<slug>/` (`TENANT_SUBFOLDER_PREFIX = "restaurants"`)
 
 ## 4. Database
 
@@ -119,13 +121,21 @@ Important:
 ## 12. Hosting
 
 - Frontend: Vercel
-- Backend: Hugging Face for MVP
-- Database: managed PostgreSQL
+- Backend: Hugging Face Spaces (Docker SDK)
+- Database: Supabase free tier (managed PostgreSQL, EU region)
+  - No compute auto-suspend (unlike Neon)
+  - Project pauses after 7 days of inactivity — mitigated by a GitHub Actions scheduled workflow pinging `/healthz/` every 6 days
+  - django-tenants connects via direct connection URL (not Supabase's pooler)
 
 ## 13. Domain
 
-- Web app hosted under a subdomain of `domenicocaruso.com` (`tablesched.domenicocaruso.com`)
-- API hosted under a separate subdomain (e.g. `api.tablesched.domenicocaruso.com`)
+- Frontend: `tablesched.domenicocaruso.com` — hosted on Vercel; CNAME configured on MisterDomain pointing to Vercel
+- API: `tablesched.hf.space` — Hugging Face Spaces; no custom domain required
+- Tenant routing is path-based (see §3); no wildcard DNS needed
+- Demo tenants:
+  - `tablesched.hf.space/restaurants/new-york/api/v1/`
+  - `tablesched.hf.space/restaurants/rome/api/v1/`
+- Frontend maps the restaurant slug to the correct API path prefix
 
 ## 14. Observability
 
