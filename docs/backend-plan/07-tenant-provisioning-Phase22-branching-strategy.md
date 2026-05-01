@@ -101,7 +101,7 @@ git push origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ---
 
-### ❌ Task 22.2 — Tenant directory endpoint
+### ✅ Task 22.2 — Tenant directory endpoint
 
 Public unauthenticated `GET /api/tenants/` endpoint returning active tenants with their API prefix. Registered on the public schema urlconf.
 
