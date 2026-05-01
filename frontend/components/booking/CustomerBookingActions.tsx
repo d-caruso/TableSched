@@ -7,6 +7,7 @@ import { ModifyBookingForm } from '@/components/booking/ModifyBookingForm';
 
 type CustomerBookingActionsProps = {
   booking: Booking;
+  tenant: string;
   token: string;
   cancelling?: boolean;
   onCancel?: (token: string) => void;
@@ -31,6 +32,7 @@ const PAYABLE_STATUSES: BookingStatus[] = ['pending_payment'];
 
 export function CustomerBookingActions({
   booking,
+  tenant,
   token,
   cancelling = false,
   onCancel,
@@ -41,7 +43,7 @@ export function CustomerBookingActions({
   const [modifying, setModifying] = useState(false);
 
   if (modifying) {
-    return <ModifyBookingForm booking={booking} token={token} onDone={() => setModifying(false)} />;
+    return <ModifyBookingForm booking={booking} tenant={tenant} token={token} onDone={() => setModifying(false)} />;
   }
 
   return (
