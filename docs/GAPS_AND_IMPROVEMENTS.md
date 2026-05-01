@@ -1,11 +1,5 @@
 # Gaps and Improvements
 
-## Backend
-
-Known post-MVP backend gaps:
-
-- **Per-tenant Stripe accounts** — currently all tenants share a single Stripe account (controlled by the platform). Future premium feature: each `RestaurantSettings` stores its own `stripe_api_key` and `stripe_webhook_secret`; the webhook verifies signatures using the correct tenant's secret resolved from `metadata.tenant_schema`.
-
 ## Frontend
 
 Known post-MVP frontend gaps:
