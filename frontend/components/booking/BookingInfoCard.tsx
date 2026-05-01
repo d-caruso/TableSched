@@ -8,8 +8,8 @@ type BookingInfoCardProps = {
   booking: Booking;
 };
 
-function formatMoney(amount: number, currency: string) {
-  return new Intl.NumberFormat(navigator.language, {
+function formatMoney(amount: number, currency: string, locale: string) {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     maximumFractionDigits: 2,
@@ -55,11 +55,7 @@ export function BookingInfoCard({ booking }: BookingInfoCardProps) {
             </XStack>
             <XStack justifyContent="space-between" gap="$4">
               <Text>{t('booking.detail.amount')}</Text>
-              <Text>{new Intl.NumberFormat(locale, {
-                style: 'currency',
-                currency: booking.payment.currency,
-                maximumFractionDigits: 2,
-              }).format(booking.payment.amount)}</Text>
+              <Text>{formatMoney(booking.payment.amount, booking.payment.currency, locale)}</Text>
             </XStack>
           </>
         ) : null}
