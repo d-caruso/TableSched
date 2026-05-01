@@ -169,5 +169,11 @@
     "SESSION_EXPIRED": "La sessione è scaduta",
     "VALIDATION_ERROR": "Controlla il modulo",
     "PAYMENT_FAILED": "Il pagamento non è andato a buon fine"
+  },
+  "tenantDirectory": {
+    "title": "TableSched — Ristoranti",
+    "restaurant": "Ristorante",
+    "bookingUrl": "URL prenotazione",
+    "staffLogin": "Accesso staff"
   }
 }

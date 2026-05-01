@@ -169,5 +169,11 @@
     "SESSION_EXPIRED": "Ihre Sitzung ist abgelaufen",
     "VALIDATION_ERROR": "Bitte prüfen Sie das Formular",
     "PAYMENT_FAILED": "Die Zahlung konnte nicht abgeschlossen werden"
+  },
+  "tenantDirectory": {
+    "title": "TableSched — Restaurants",
+    "restaurant": "Restaurant",
+    "bookingUrl": "Buchungs-URL",
+    "staffLogin": "Mitarbeiter-Login"
   }
 }

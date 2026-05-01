@@ -169,5 +169,11 @@
     "SESSION_EXPIRED": "Your session has expired",
     "VALIDATION_ERROR": "Please check the form",
     "PAYMENT_FAILED": "Payment could not be completed"
+  },
+  "tenantDirectory": {
+    "title": "TableSched — Restaurants",
+    "restaurant": "Restaurant",
+    "bookingUrl": "Booking URL",
+    "staffLogin": "Staff Login"
   }
 }
