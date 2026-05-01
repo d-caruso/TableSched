@@ -38,8 +38,8 @@ test('renders tenant names and URLs', async () => {
   await waitFor(() => {
     expect(screen.getByText('Rome Restaurant')).toBeTruthy();
     expect(screen.getByText('Milan Restaurant')).toBeTruthy();
-    expect(screen.getByText('/restaurants/rome/')).toBeTruthy();
-    expect(screen.getByText('/restaurants/milan/')).toBeTruthy();
+    expect(screen.getByText('http://localhost/restaurants/rome/')).toBeTruthy();
+    expect(screen.getByText('http://localhost/restaurants/milan/')).toBeTruthy();
   });
 });
 

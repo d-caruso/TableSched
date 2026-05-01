@@ -1,3 +1,5 @@
+import { expect, jest, test } from '@jest/globals';
+
 jest.mock('tamagui', () => {
   const React = require('react');
   const { Text, View } = require('react-native');
@@ -21,7 +23,6 @@ jest.mock('react-i18next', () => ({
 }));
 
 import { render, screen } from '@testing-library/react-native';
-import { expect, test } from '@jest/globals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import TenantDirectoryPage from '@/app/index';
 
