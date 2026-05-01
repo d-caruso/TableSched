@@ -48,7 +48,7 @@ develop
 
 ---
 
-## ❌ Phase 21 — Path-Based Tenant Routing
+## ✅ Phase 21 — Path-Based Tenant Routing
 
 Replaces subdomain-based tenant resolution with `TenantSubfolderMiddleware` so tenants are identified by a URL path prefix (`/restaurants/<slug>/`). Enables deployment on Hugging Face Spaces and any other host without wildcard subdomain support. All views, services, models, URL patterns, and the Stripe webhook are unaffected.
 
@@ -65,7 +65,7 @@ git push -u origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.1 — Switch Middleware, Subfolder Prefix, and Settings/Env Split
+### ✅ Task 21.1 — Switch Middleware, Subfolder Prefix, and Settings/Env Split
 
 Replace `TenantMainMiddleware` with `TenantSubfolderMiddleware` and set `TENANT_SUBFOLDER_PREFIX`. Also introduce the standard Django settings/env split so `pytest` works without any prefix (`pytest backend/`).
 
@@ -191,7 +191,7 @@ git push origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.2 — Update Tenant Provisioning Command
+### ✅ Task 21.2 — Update Tenant Provisioning Command
 
 With subfolder routing, tenant resolution uses `schema_name` extracted from the URL path — not the `Domain` model. The `Domain` model is still required by `django-tenants` internally but no longer drives HTTP routing. The `--domain` argument becomes optional.
 
@@ -279,7 +279,7 @@ git push origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.3 — Update Integration Test Fixtures
+### ✅ Task 21.3 — Update Integration Test Fixtures
 
 Integration tests currently pass `HTTP_HOST=tenant.domain` to route requests to a tenant schema. With subfolder routing, tenant resolution uses the URL path. All tenant-scoped test client calls must be updated to use the `/restaurants/<schema_name>/` prefix instead.
 
@@ -359,7 +359,7 @@ git push origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.4 — Update Env Vars and Deployment Config
+### ✅ Task 21.4 — Update Env Vars and Deployment Config
 
 Document the new URL shape in `.env.example` and verify that all env-var-driven URL construction is correct for the subfolder architecture. The Stripe webhook and tokenized booking links are unaffected in logic but the deployment notes must reflect the single-domain setup.
 
@@ -439,7 +439,7 @@ git push origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Task 21.5 — Supabase Keepalive (GitHub Actions)
+### ✅ Task 21.5 — Supabase Keepalive (GitHub Actions)
 
 Supabase free tier pauses the entire project after 7 days of inactivity. A scheduled GitHub Actions workflow pings `/healthz/` every 6 days to prevent this.
 
@@ -490,7 +490,7 @@ git push origin feature/backend-mvp-Phase21-path-based-routing
 
 ---
 
-### ❌ Phase 21 complete — merge into feature branch
+### ✅ Phase 21 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp

@@ -62,7 +62,7 @@ develop
 
 ---
 
-## ❌ Phase 4 — Authentication & Authorization (Staff Only)
+## ✅ Phase 4 — Authentication & Authorization (Staff Only)
 
 Implements staff-only auth using Django Auth + django-allauth. Customers do not authenticate — they use tokenized booking links (Phase 5). Includes the `User` model (public schema), allauth configuration, and the `StaffMembership` tenant-schema model.
 
@@ -289,7 +289,7 @@ git push origin feature/backend-mvp-Phase4-auth
 
 ---
 
-### ❌ Phase 4 complete — merge into feature branch
+### ✅ Phase 4 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -299,7 +299,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 5 — Customers & Booking Access Tokens
+## ✅ Phase 5 — Customers & Booking Access Tokens
 
 Implements the guest-only `Customer` model (phone-deduplicated, locale-aware) and the `BookingAccessToken` (random, hashed, per-booking). Also provides the public token-authenticated endpoints for customers to view/cancel/modify their booking.
 
@@ -646,7 +646,7 @@ git push origin feature/backend-mvp-Phase5-customers-tokens
 
 ---
 
-### ❌ Phase 5 complete — merge into feature branch
+### ✅ Phase 5 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -656,7 +656,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 6 — Restaurant Configuration
+## ✅ Phase 6 — Restaurant Configuration
 
 Implements per-tenant restaurant settings (singleton), opening hours, closed days, rooms, and tables. Also exposes the public restaurant page endpoint.
 
@@ -982,7 +982,7 @@ git push origin feature/backend-mvp-Phase6-restaurant-config
 
 ---
 
-### ❌ Phase 6 complete — merge into feature branch
+### ✅ Phase 6 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -992,7 +992,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 7 — Booking Lifecycle
+## ✅ Phase 7 — Booking Lifecycle
 
 The core domain. Implements canonical booking status rules, the status machine, creation service with all business-rule validators, staff actions, and customer cancel/modify. All API responses use codes only.
 

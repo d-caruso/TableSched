@@ -63,7 +63,7 @@ develop
 
 ---
 
-## ❌ Phase 11 — Opportunistic Maintenance
+## ✅ Phase 11 — Opportunistic Maintenance
 
 No Celery/Redis. Opportunistic maintenance runs lazily on each admin dashboard load. Each opportunistic maintenance is bounded (`[:200]`) and idempotent. Handles: expired pending payments, expired pre-authorizations (→ `authorization_expired`), and payment reconciliation.
 
@@ -80,7 +80,7 @@ git push -u origin feature/backend-mvp-Phase11-opportunistic-maintenance
 
 ---
 
-### ❌ Task 11.1 — Opportunistic Maintenance Service
+### ✅ Task 11.1 — Opportunistic Maintenance Service
 
 Expires `pending_payment` bookings past their `payment_due_at`. Transitions pre-authorized payments older than 6 days to `authorization_expired` (Stripe auth expires ~7 days). Notifies staff on authorization expiry — does NOT auto-cancel the booking.
 
@@ -213,7 +213,7 @@ git push origin feature/backend-mvp-Phase11-opportunistic-maintenance
 
 ---
 
-### ❌ Task 11.2 — Dashboard Endpoint
+### ✅ Task 11.2 — Dashboard Endpoint
 
 Runs opportunistic maintenance then returns counts by status and the 50 most recent bookings. Manager + staff allowed. Response is code-form only — no localized strings.
 
@@ -300,7 +300,7 @@ git push origin feature/backend-mvp-Phase11-opportunistic-maintenance
 
 ---
 
-### ❌ Phase 11 complete — merge into feature branch
+### ✅ Phase 11 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -310,7 +310,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 12 — Audit Log
+## ✅ Phase 12 — Audit Log
 
 Explicit audit trail for booking, payment, and refund actions. Written directly by service layer — no automatic signals.
 
@@ -463,7 +463,7 @@ git push origin feature/backend-mvp-Phase12-audit
 
 ---
 
-### ❌ Phase 12 complete — merge into feature branch
+### ✅ Phase 12 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -473,7 +473,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 13 — Security Hardening
+## ✅ Phase 13 — Security Hardening
 
 Tenant isolation tests, Stripe signature regression, credential handling, token endpoint hardening, and rate limiting.
 
@@ -490,7 +490,7 @@ git push -u origin feature/backend-mvp-Phase13-security
 
 ---
 
-### ❌ Task 13.1 — Tenant Isolation Tests
+### ✅ Task 13.1 — Tenant Isolation Tests
 
 Create two tenants. Assert that no endpoint or webhook handler leaks data across schemas.
 
@@ -558,7 +558,7 @@ git push origin feature/backend-mvp-Phase13-security
 
 ---
 
-### ❌ Task 13.2 — Stripe Webhook Signature Regression Test
+### ✅ Task 13.2 — Stripe Webhook Signature Regression Test
 
 **Branch:** `task/backend-mvp-Task13.2-webhook-regression` — created from `feature/backend-mvp-Phase13-security`
 
@@ -823,7 +823,7 @@ git push origin feature/backend-mvp-Phase13-security
 
 ---
 
-### ❌ Phase 13 complete — merge into feature branch
+### ✅ Phase 13 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -833,7 +833,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 14 — Testing Strategy
+## ✅ Phase 14 — Testing Strategy
 
 Consolidates the full layered test suite: unit, API, webhook, tenant isolation, token flow, and localization coverage. Targets ≥85% coverage on core apps.
 
@@ -966,7 +966,7 @@ git push origin feature/backend-mvp-Phase14-tests
 
 ---
 
-### ❌ Phase 14 complete — merge into feature branch
+### ✅ Phase 14 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -976,7 +976,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 15 — Observability
+## ✅ Phase 15 — Observability
 
 Structured JSON logging per logger, `/healthz` endpoint. No APM dependency in MVP.
 
@@ -1073,7 +1073,7 @@ git push origin feature/backend-mvp-Phase15-observability
 
 ---
 
-### ❌ Phase 15 complete — merge into feature branch
+### ✅ Phase 15 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -1083,7 +1083,7 @@ git push origin feature/backend-mvp
 
 ---
 
-## ❌ Phase 16 — Deployment Prep (Hugging Face + managed Postgres)
+## ✅ Phase 16 — Deployment Prep (Hugging Face + managed Postgres)
 
 **⚠️ Create this branch only after Phase 15 is merged into `feature/backend-mvp`.**
 
@@ -1255,7 +1255,7 @@ git push origin feature/backend-mvp-Phase16-deploy
 
 ---
 
-### ❌ Phase 16 complete — merge into feature branch
+### ✅ Phase 16 complete — merge into feature branch
 
 ```bash
 git checkout feature/backend-mvp
@@ -1265,7 +1265,7 @@ git push origin feature/backend-mvp
 
 ---
 
-### ❌ Feature complete — merge into develop
+### ✅ Feature complete — merge into develop
 
 ```bash
 # Requires explicit confirmation before merging.
