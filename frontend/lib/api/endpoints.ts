@@ -7,12 +7,16 @@ import type {
   RestaurantSettings,
   RestaurantPublicInfo,
   Room,
+  TenantEntry,
   TimeSlot,
 } from '@/lib/api/types';
 
 const tp = (tenant: string, path: string) => `/restaurants/${tenant}/api/v1/${path}`;
 
 export const publicApi = {
+  tenantDirectory() {
+    return apiRequest<TenantEntry[]>('/api/tenants/');
+  },
   getRestaurantInfo(tenant: string) {
     return apiRequest<RestaurantPublicInfo>(tp(tenant, 'public/restaurant/'));
   },

@@ -114,3 +114,9 @@ export type BookingModifyPayload = {
   time: string;
   party_size: number;
 };
+
+export type TenantEntry = {
+  name: string;
+  schema: string;
+  api_prefix: string;
+};
