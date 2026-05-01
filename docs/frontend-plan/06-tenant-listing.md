@@ -54,7 +54,7 @@ export type TenantEntry = {
 - `lib/api/endpoints.ts`
 - `lib/api/types.ts`
 
-**Commit:** `[TASK] 9 add tenantDirectory endpoint to publicApi`
+**Commit:** `[TASK] Task 1 - add tenantDirectory endpoint to publicApi`
 
 ---
 
@@ -137,7 +137,7 @@ export default function TenantDirectoryPage() {
 SHOW_TENANT_DIRECTORY: process.env.EXPO_PUBLIC_SHOW_TENANT_DIRECTORY === 'true',
 ```
 
-**Commit:** `[TASK] 10 add tenant directory root page`
+**Commit:** `[TASK] Task 2 - add tenant directory root page`
 
 ---
 
@@ -166,4 +166,4 @@ test('redirects when SHOW_TENANT_DIRECTORY is false', () => {
 **Files:**
 - `__tests__/TenantDirectory.test.tsx` — NEW
 
-**Commit:** `[TASK] 11 add tests for tenant directory page`
+**Commit:** `[TASK] Task 3 - add tests for tenant directory page`

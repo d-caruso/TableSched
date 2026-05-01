@@ -31,9 +31,9 @@ npm test                                   # full suite only if above passes
 ```
 develop
 └── feature/frontend-tenant-listing
-    ├── task/frontend-tenant-listing-Task9-api-method
-    ├── task/frontend-tenant-listing-Task10-index-page
-    └── task/frontend-tenant-listing-Task11-tests
+    ├── task/frontend-tenant-listing-Task1-api-method
+    ├── task/frontend-tenant-listing-Task2-index-page
+    └── task/frontend-tenant-listing-Task3-tests
 ```
 
 ---
@@ -51,16 +51,16 @@ git push -u origin feature/frontend-tenant-listing
 
 ---
 
-## ❌ Task 9 — Add `tenantDirectory` to `publicApi`
+## ❌ Task 1 — Add `tenantDirectory` to `publicApi`
 
 Add `TenantEntry` type to `lib/api/types.ts` and `tenantDirectory()` method to `lib/api/endpoints.ts`.
 
-**Branch:** `task/frontend-tenant-listing-Task9-api-method` — created from `feature/frontend-tenant-listing`
+**Branch:** `task/frontend-tenant-listing-Task1-api-method` — created from `feature/frontend-tenant-listing`
 
 ```bash
 git checkout feature/frontend-tenant-listing
 git pull origin feature/frontend-tenant-listing
-git checkout -b task/frontend-tenant-listing-Task9-api-method
+git checkout -b task/frontend-tenant-listing-Task1-api-method
 ```
 
 **Files to modify:**
@@ -70,7 +70,7 @@ git checkout -b task/frontend-tenant-listing-Task9-api-method
 **Commit:**
 ```bash
 git add lib/api/types.ts lib/api/endpoints.ts
-git commit -m "[TASK] 9 add tenantDirectory endpoint to publicApi"
+git commit -m "[TASK] Task 1 - add tenantDirectory endpoint to publicApi"
 ```
 
 **Pre-merge checks:**
@@ -84,26 +84,26 @@ npm test
 
 **Push & merge:**
 ```bash
-git push origin task/frontend-tenant-listing-Task9-api-method
+git push origin task/frontend-tenant-listing-Task1-api-method
 git checkout feature/frontend-tenant-listing
-git merge task/frontend-tenant-listing-Task9-api-method
+git merge task/frontend-tenant-listing-Task1-api-method
 git push origin feature/frontend-tenant-listing
 ```
 
 ---
 
-## ❌ Task 10 — Root index page
+## ❌ Task 2 — Root index page
 
 Create `app/index.tsx` with the tenant directory table gated by `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY`. Add `SHOW_TENANT_DIRECTORY` to `lib/env.ts` and i18n keys to all three locale files.
 
-**Branch:** `task/frontend-tenant-listing-Task10-index-page` — created from `feature/frontend-tenant-listing`
+**Branch:** `task/frontend-tenant-listing-Task2-index-page` — created from `feature/frontend-tenant-listing`
 
-**⚠️ Create only after Task 9 is merged into `feature/frontend-tenant-listing`.**
+**⚠️ Create only after Task 2 is merged into `feature/frontend-tenant-listing`.**
 
 ```bash
 git checkout feature/frontend-tenant-listing
 git pull origin feature/frontend-tenant-listing
-git checkout -b task/frontend-tenant-listing-Task10-index-page
+git checkout -b task/frontend-tenant-listing-Task2-index-page
 ```
 
 **Files to modify/create:**
@@ -117,7 +117,7 @@ git checkout -b task/frontend-tenant-listing-Task10-index-page
 ```bash
 git add app/index.tsx lib/env.ts \
   lib/i18n/locales/en.json lib/i18n/locales/it.json lib/i18n/locales/de.json
-git commit -m "[TASK] 10 add tenant directory root page"
+git commit -m "[TASK] Task 2 - add tenant directory root page"
 ```
 
 **Pre-merge checks:**
@@ -131,26 +131,26 @@ npm test
 
 **Push & merge:**
 ```bash
-git push origin task/frontend-tenant-listing-Task10-index-page
+git push origin task/frontend-tenant-listing-Task2-index-page
 git checkout feature/frontend-tenant-listing
-git merge task/frontend-tenant-listing-Task10-index-page
+git merge task/frontend-tenant-listing-Task2-index-page
 git push origin feature/frontend-tenant-listing
 ```
 
 ---
 
-## ❌ Task 11 — Tests
+## ❌ Task 3 — Tests
 
 Write tests for the tenant directory page: renders tenant rows when flag is enabled, redirects when flag is disabled.
 
-**Branch:** `task/frontend-tenant-listing-Task11-tests` — created from `feature/frontend-tenant-listing`
+**Branch:** `task/frontend-tenant-listing-Task3-tests` — created from `feature/frontend-tenant-listing`
 
-**⚠️ Create only after Task 10 is merged into `feature/frontend-tenant-listing`.**
+**⚠️ Create only after Task 3 is merged into `feature/frontend-tenant-listing`.**
 
 ```bash
 git checkout feature/frontend-tenant-listing
 git pull origin feature/frontend-tenant-listing
-git checkout -b task/frontend-tenant-listing-Task11-tests
+git checkout -b task/frontend-tenant-listing-Task3-tests
 ```
 
 **Files to create:**
@@ -159,7 +159,7 @@ git checkout -b task/frontend-tenant-listing-Task11-tests
 **Commit:**
 ```bash
 git add __tests__/TenantDirectory.test.tsx
-git commit -m "[TASK] 11 add tests for tenant directory page"
+git commit -m "[TASK] Task 3 - add tests for tenant directory page"
 ```
 
 **Pre-merge checks:**
@@ -173,9 +173,9 @@ npm test
 
 **Push & merge:**
 ```bash
-git push origin task/frontend-tenant-listing-Task11-tests
+git push origin task/frontend-tenant-listing-Task3-tests
 git checkout feature/frontend-tenant-listing
-git merge task/frontend-tenant-listing-Task11-tests
+git merge task/frontend-tenant-listing-Task3-tests
 git push origin feature/frontend-tenant-listing
 ```
 
@@ -183,7 +183,7 @@ git push origin feature/frontend-tenant-listing
 
 ## ❌ Feature complete — merge into develop
 
-All tasks (9–11) complete. Run the full pre-merge checklist one final time:
+All tasks (1–3) complete. Run the full pre-merge checklist one final time:
 
 ```bash
 npm run build
