@@ -33,7 +33,8 @@ develop
 └── feature/frontend-tenant-listing
     ├── task/frontend-tenant-listing-Task1-api-method
     ├── task/frontend-tenant-listing-Task2-index-page
-    └── task/frontend-tenant-listing-Task3-tests
+    ├── task/frontend-tenant-listing-Task3-tests
+    └── task/frontend-tenant-listing-Task4-landing-page
 ```
 
 ---
@@ -181,9 +182,54 @@ git push origin feature/frontend-tenant-listing
 
 ---
 
+## ❌ Task 4 — Branded landing page
+
+When `SHOW_TENANT_DIRECTORY` is false, render a minimal branded landing page instead of blank.
+
+**Branch:** `task/frontend-tenant-listing-Task4-landing-page` — created from `feature/frontend-tenant-listing`
+
+**⚠️ Create only after Task 3 is merged into `feature/frontend-tenant-listing`.**
+
+```bash
+git checkout feature/frontend-tenant-listing
+git pull origin feature/frontend-tenant-listing
+git checkout -b task/frontend-tenant-listing-Task4-landing-page
+```
+
+**Files to modify:**
+- `app/index.tsx`
+- `lib/i18n/locales/en.json`
+- `lib/i18n/locales/it.json`
+- `lib/i18n/locales/de.json`
+
+**Commit:**
+```bash
+git add app/index.tsx lib/i18n/locales/en.json lib/i18n/locales/it.json lib/i18n/locales/de.json
+git commit -m "[TASK] Task 4 - show branded landing page when directory is disabled"
+```
+
+**Pre-merge checks:**
+```bash
+npm run build
+npm run typecheck
+npm run lint
+npm test -- __tests__/TenantDirectory.test.tsx
+npm test
+```
+
+**Push & merge:**
+```bash
+git push origin task/frontend-tenant-listing-Task4-landing-page
+git checkout feature/frontend-tenant-listing
+git merge task/frontend-tenant-listing-Task4-landing-page
+git push origin feature/frontend-tenant-listing
+```
+
+---
+
 ## ❌ Feature complete — merge into develop
 
-All tasks (1–3) complete. Run the full pre-merge checklist one final time:
+All tasks (1–4) complete. Run the full pre-merge checklist one final time:
 
 ```bash
 npm run build

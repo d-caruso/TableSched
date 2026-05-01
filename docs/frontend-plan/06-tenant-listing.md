@@ -7,8 +7,8 @@ operator use and project showcasing, a tenant directory page lists all active re
 their public booking URL and staff login URL.
 
 The page is gated by `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY=true`. When the flag is absent or false,
-the root redirects to a not-found page. This allows the directory to be enabled in dev/staging
-and disabled in production.
+the root shows a minimal branded landing page ("TableSched") with no tenant information exposed.
+This allows the directory to be enabled in dev/staging and hidden in production.
 
 The tenant list is fetched from the backend public endpoint `GET /api/tenants/` (see
 `docs/backend-plan/07-tenant-provisioning-Phase22.md` Task 22.2).
@@ -158,8 +158,8 @@ test('renders tenant names and URLs', async () => {
   // renders the directory and verifies tenant rows
 });
 
-test('redirects when SHOW_TENANT_DIRECTORY is false', () => {
-  // verifies Redirect to /+not-found
+test('renders nothing (branded landing) when SHOW_TENANT_DIRECTORY is false', () => {
+  // verifies branded landing page is shown
 });
 ```
 
@@ -167,3 +167,37 @@ test('redirects when SHOW_TENANT_DIRECTORY is false', () => {
 - `__tests__/TenantDirectory.test.tsx` — NEW
 
 **Commit:** `[TASK] Task 3 - add tests for tenant directory page`
+
+---
+
+### Task 4 — Branded landing page when directory is disabled
+
+When `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY` is absent or false, `app/index.tsx` renders a minimal
+branded landing page instead of blank. No tenant data is fetched or displayed.
+
+```tsx
+function LandingPage() {
+  return (
+    <YStack flex={1} alignItems="center" justifyContent="center" padding="$4" gap="$4">
+      <Text fontSize="$9" fontWeight="$8">{t('app.name')}</Text>
+      <Text color="$placeholderColor">{t('app.tagline')}</Text>
+    </YStack>
+  );
+}
+```
+
+**i18n keys to add:**
+```json
+"app": {
+  "name": "TableSched",
+  "tagline": "Restaurant booking management"
+}
+```
+
+**Files to modify:**
+- `app/index.tsx`
+- `lib/i18n/locales/en.json`
+- `lib/i18n/locales/it.json`
+- `lib/i18n/locales/de.json`
+
+**Commit:** `[TASK] Task 4 - show branded landing page when directory is disabled`
