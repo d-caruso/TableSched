@@ -1,3 +1,4 @@
+import { Redirect } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { Text, XStack, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +44,7 @@ function TenantTable() {
 
 export default function TenantDirectoryPage() {
   if (!ENV.SHOW_TENANT_DIRECTORY) {
-    return null;
+    return <Redirect href="/+not-found" />;
   }
 
   return <TenantTable />;
