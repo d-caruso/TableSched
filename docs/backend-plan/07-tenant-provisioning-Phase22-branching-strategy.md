@@ -40,7 +40,8 @@ develop
 └── feature/backend-mvp
     └── feature/backend-mvp-Phase22-tenant-provisioning
         ├── task/backend-mvp-Task22.1-provision-tenant-command
-        └── task/backend-mvp-Task22.2-tenant-directory-endpoint
+        ├── task/backend-mvp-Task22.2-tenant-directory-endpoint
+        └── task/backend-mvp-Task22.3-init-platform-command
 ```
 
 ---
@@ -136,6 +137,46 @@ pytest backend/
 git push origin task/backend-mvp-Task22.2-tenant-directory-endpoint
 git checkout feature/backend-mvp-Phase22-tenant-provisioning
 git merge task/backend-mvp-Task22.2-tenant-directory-endpoint
+git push origin feature/backend-mvp-Phase22-tenant-provisioning
+```
+
+---
+
+### ❌ Task 22.3 — init_platform command
+
+One-time idempotent setup command: runs shared migrations and creates the public tenant row required by `TenantSubfolderMiddleware`.
+
+**Branch:** `task/backend-mvp-Task22.3-init-platform-command` — created from `feature/backend-mvp-Phase22-tenant-provisioning`
+
+```bash
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git pull origin feature/backend-mvp-Phase22-tenant-provisioning
+git checkout -b task/backend-mvp-Task22.3-init-platform-command
+```
+
+See [`07-tenant-provisioning-Phase22.md`](./07-tenant-provisioning-Phase22.md) for full code.
+
+**i18n rule:** Command output is operator-facing only — no translation key required.
+
+**Commit:**
+```bash
+git add apps/tenants/management/commands/init_platform.py tests/tenants/test_init_platform.py
+git commit -m "[TASK] 22.3 add init_platform one-time setup command"
+```
+
+**Pre-merge checks:**
+```bash
+ruff check backend/
+mypy backend/
+pytest backend/tests/tenants/test_init_platform.py
+pytest backend/
+```
+
+**Push & merge:**
+```bash
+git push origin task/backend-mvp-Task22.3-init-platform-command
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git merge task/backend-mvp-Task22.3-init-platform-command
 git push origin feature/backend-mvp-Phase22-tenant-provisioning
 ```
 
