@@ -4,12 +4,7 @@ jest.mock('tamagui', () => {
   return { Text, XStack: View, YStack: View };
 });
 
-jest.mock('expo-router', () => ({
-  Redirect: ({ href }: { href: string }) => {
-    const { Text } = require('react-native');
-    return <Text>{`redirect:${href}`}</Text>;
-  },
-}));
+jest.mock('expo-router', () => ({}));
 
 jest.mock('@/lib/api/endpoints', () => ({
   publicApi: {
@@ -48,10 +43,10 @@ test('renders tenant names and URLs', async () => {
   });
 });
 
-test('redirects when SHOW_TENANT_DIRECTORY is false', () => {
+test('renders nothing when SHOW_TENANT_DIRECTORY is false', () => {
   jest.resetModules();
   jest.doMock('@/lib/env', () => ({ ENV: { SHOW_TENANT_DIRECTORY: false } }));
   const { default: Page } = require('@/app/index');
-  render(wrap(<Page />));
-  expect(screen.getByText('redirect:/+not-found')).toBeTruthy();
+  const { toJSON } = render(wrap(<Page />));
+  expect(toJSON()).toBeNull();
 });
