@@ -49,11 +49,12 @@ export const publicApi = {
 };
 
 export const staffApi = {
-  login(tenant: string, email: string, password: string) {
-    return apiRequest<{ access: string; refresh: string }>('/auth/login/', {
-      method: 'POST',
-      body: { email, password },
-    });
+  async login(tenant: string, email: string, password: string) {
+    const res = await apiRequest<{ meta: { access_token: string; refresh_token: string } }>(
+      '/_allauth/app/v1/auth/login',
+      { method: 'POST', body: { email, password } },
+    );
+    return { access_token: res.meta.access_token, refresh_token: res.meta.refresh_token };
   },
   triggerExpirationSweep(tenant: string, token: string) {
     return apiRequest<void>(tp(tenant, 'bookings/sweep/'), {

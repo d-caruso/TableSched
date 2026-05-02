@@ -77,13 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string, nextTenant: string) => {
-    const { access, refresh } = await staffApi.login(nextTenant, email, password);
+    const { access_token, refresh_token } = await staffApi.login(nextTenant, email, password);
     await Promise.all([
-      writeItem(ACCESS_TOKEN_KEY, access),
-      writeItem(REFRESH_TOKEN_KEY, refresh),
+      writeItem(ACCESS_TOKEN_KEY, access_token),
+      writeItem(REFRESH_TOKEN_KEY, refresh_token),
       writeItem(TENANT_KEY, nextTenant),
     ]);
-    setAccessToken(access);
+    setAccessToken(access_token);
     setTenant(nextTenant);
   };
 
