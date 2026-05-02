@@ -40,8 +40,8 @@ def test_staff_can_list_rooms_and_tables():
         room = Room.objects.create(name="Main")
         table = Table.objects.create(room=room, label="T1", seats=4)
         membership = _membership(StaffMembership.ROLE_STAFF)
-        rooms_request = _request("get", "/api/v1/restaurant/rooms/", membership)
-        tables_request = _request("get", "/api/v1/restaurant/tables/", membership)
+        rooms_request = _request("get", "/api/v1/rooms/", membership)
+        tables_request = _request("get", "/api/v1/tables/", membership)
 
         rooms_response = RoomListCreateView.as_view()(rooms_request)
         tables_response = TableListCreateView.as_view()(tables_request)
@@ -58,7 +58,7 @@ def test_manager_can_create_update_and_delete_room():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         create_request = _request(
             "post",
-            "/api/v1/restaurant/rooms/",
+            "/api/v1/rooms/",
             membership,
             {"name": "Main"},
         )
@@ -67,13 +67,13 @@ def test_manager_can_create_update_and_delete_room():
         room = Room.objects.get(name="Main")
         patch_request = _request(
             "patch",
-            f"/api/v1/restaurant/rooms/{room.id}/",
+            f"/api/v1/rooms/{room.id}/",
             membership,
             {"name": "Garden"},
         )
         delete_request = _request(
             "delete",
-            f"/api/v1/restaurant/rooms/{room.id}/",
+            f"/api/v1/rooms/{room.id}/",
             membership,
         )
 
@@ -95,7 +95,7 @@ def test_manager_can_create_update_and_delete_table():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         create_request = _request(
             "post",
-            "/api/v1/restaurant/tables/",
+            "/api/v1/tables/",
             membership,
             {"room": str(room.id), "label": "T1", "seats": 4, "pos_x": 10, "pos_y": 20},
         )
@@ -104,13 +104,13 @@ def test_manager_can_create_update_and_delete_table():
         table = Table.objects.get(label="T1")
         patch_request = _request(
             "patch",
-            f"/api/v1/restaurant/tables/{table.id}/",
+            f"/api/v1/tables/{table.id}/",
             membership,
             {"seats": 6, "pos_x": 30},
         )
         delete_request = _request(
             "delete",
-            f"/api/v1/restaurant/tables/{table.id}/",
+            f"/api/v1/tables/{table.id}/",
             membership,
         )
 
@@ -134,7 +134,7 @@ def test_table_label_remains_unique_per_room():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         request = _request(
             "post",
-            "/api/v1/restaurant/tables/",
+            "/api/v1/tables/",
             membership,
             {"room": str(room.id), "label": "T1", "seats": 2},
         )
@@ -146,10 +146,10 @@ def test_table_label_remains_unique_per_room():
 
 
 def test_room_and_table_routes_resolve():
-    room_collection = resolve("/api/v1/restaurant/rooms/")
-    room_detail = resolve("/api/v1/restaurant/rooms/00000000-0000-0000-0000-000000000000/")
-    table_collection = resolve("/api/v1/restaurant/tables/")
-    table_detail = resolve("/api/v1/restaurant/tables/00000000-0000-0000-0000-000000000000/")
+    room_collection = resolve("/api/v1/rooms/")
+    room_detail = resolve("/api/v1/rooms/00000000-0000-0000-0000-000000000000/")
+    table_collection = resolve("/api/v1/tables/")
+    table_detail = resolve("/api/v1/tables/00000000-0000-0000-0000-000000000000/")
 
     assert room_collection.url_name == "rooms"
     assert room_detail.url_name == "room-detail"

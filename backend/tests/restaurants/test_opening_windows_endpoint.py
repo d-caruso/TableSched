@@ -39,7 +39,7 @@ def test_staff_can_list_opening_windows():
             closes_at=time(22, 0),
         )
         membership = _membership(StaffMembership.ROLE_STAFF)
-        request = _request("get", "/api/v1/restaurant/opening-windows/", membership)
+        request = _request("get", "/api/v1/opening-windows/", membership)
 
         response = OpeningWindowListCreateView.as_view()(request)
 
@@ -54,7 +54,7 @@ def test_manager_can_create_opening_window():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         request = _request(
             "post",
-            "/api/v1/restaurant/opening-windows/",
+            "/api/v1/opening-windows/",
             membership,
             {"weekday": 2, "opens_at": "10:00:00", "closes_at": "18:00:00"},
         )
@@ -76,13 +76,13 @@ def test_manager_can_update_and_delete_opening_window():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         patch_request = _request(
             "patch",
-            f"/api/v1/restaurant/opening-windows/{window.id}/",
+            f"/api/v1/opening-windows/{window.id}/",
             membership,
             {"opens_at": "13:00:00"},
         )
         delete_request = _request(
             "delete",
-            f"/api/v1/restaurant/opening-windows/{window.id}/",
+            f"/api/v1/opening-windows/{window.id}/",
             membership,
         )
 
@@ -102,13 +102,13 @@ def test_opening_window_rejects_invalid_weekday_and_time_range():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         invalid_weekday = _request(
             "post",
-            "/api/v1/restaurant/opening-windows/",
+            "/api/v1/opening-windows/",
             membership,
             {"weekday": 7, "opens_at": "10:00:00", "closes_at": "18:00:00"},
         )
         invalid_range = _request(
             "post",
-            "/api/v1/restaurant/opening-windows/",
+            "/api/v1/opening-windows/",
             membership,
             {"weekday": 1, "opens_at": "18:00:00", "closes_at": "10:00:00"},
         )
@@ -123,8 +123,8 @@ def test_opening_window_rejects_invalid_weekday_and_time_range():
 
 
 def test_opening_window_routes_resolve():
-    collection = resolve("/api/v1/restaurant/opening-windows/")
-    detail = resolve("/api/v1/restaurant/opening-windows/00000000-0000-0000-0000-000000000000/")
+    collection = resolve("/api/v1/opening-windows/")
+    detail = resolve("/api/v1/opening-windows/00000000-0000-0000-0000-000000000000/")
 
     assert collection.url_name == "opening-windows"
     assert detail.url_name == "opening-window-detail"

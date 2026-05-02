@@ -19,7 +19,7 @@ def _membership(role: str) -> StaffMembership:
 def _request(method: str, membership: StaffMembership | None = None, data=None):
     factory = APIRequestFactory()
     request = getattr(factory, method)(
-        "/api/v1/restaurant/settings/",
+        "/api/v1/settings/",
         data or {},
         format="json",
     )
@@ -88,6 +88,6 @@ def test_anonymous_cannot_read_restaurant_settings():
 
 
 def test_restaurant_settings_route_resolves():
-    match = resolve("/api/v1/restaurant/settings/")
+    match = resolve("/api/v1/settings/")
 
     assert match.url_name == "restaurant-settings"

@@ -38,7 +38,7 @@ def test_staff_can_list_closed_days():
             reason_code="holiday",
         )
         membership = _membership(StaffMembership.ROLE_STAFF)
-        request = _request("get", "/api/v1/restaurant/closed-days/", membership)
+        request = _request("get", "/api/v1/closed-days/", membership)
 
         response = ClosedDayListCreateView.as_view()(request)
 
@@ -53,7 +53,7 @@ def test_manager_can_create_closed_day():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         request = _request(
             "post",
-            "/api/v1/restaurant/closed-days/",
+            "/api/v1/closed-days/",
             membership,
             {"date": "2026-01-01", "reason_code": "holiday"},
         )
@@ -71,13 +71,13 @@ def test_manager_can_update_and_delete_closed_day():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         patch_request = _request(
             "patch",
-            f"/api/v1/restaurant/closed-days/{closed_day.id}/",
+            f"/api/v1/closed-days/{closed_day.id}/",
             membership,
             {"reason_code": "private_event"},
         )
         delete_request = _request(
             "delete",
-            f"/api/v1/restaurant/closed-days/{closed_day.id}/",
+            f"/api/v1/closed-days/{closed_day.id}/",
             membership,
         )
 
@@ -98,7 +98,7 @@ def test_closed_day_rejects_duplicate_date():
         membership = _membership(StaffMembership.ROLE_MANAGER)
         request = _request(
             "post",
-            "/api/v1/restaurant/closed-days/",
+            "/api/v1/closed-days/",
             membership,
             {"date": "2026-01-01", "reason_code": "holiday"},
         )
@@ -110,8 +110,8 @@ def test_closed_day_rejects_duplicate_date():
 
 
 def test_closed_day_routes_resolve():
-    collection = resolve("/api/v1/restaurant/closed-days/")
-    detail = resolve("/api/v1/restaurant/closed-days/00000000-0000-0000-0000-000000000000/")
+    collection = resolve("/api/v1/closed-days/")
+    detail = resolve("/api/v1/closed-days/00000000-0000-0000-0000-000000000000/")
 
     assert collection.url_name == "closed-days"
     assert detail.url_name == "closed-day-detail"

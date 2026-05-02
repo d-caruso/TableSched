@@ -12,7 +12,7 @@ from tests.tenant_helpers import tenant_schema
 def test_public_restaurant_endpoint_no_auth():
     with tenant_schema("restaurant_public"):
         RestaurantSettings.objects.create()
-        request = APIRequestFactory().get("/api/v1/public/restaurant/")
+        request = APIRequestFactory().get("/api/v1/public/")
         response = PublicRestaurantView.as_view()(request)
     assert response.status_code == 200
 
@@ -22,7 +22,7 @@ def test_public_restaurant_response_codes_only():
     with tenant_schema("restaurant_public"):
         RestaurantSettings.objects.create(deposit_policy=RestaurantSettings.DEPOSIT_ALWAYS)
         OpeningHours.objects.create(weekday=0, opens_at="12:00:00", closes_at="22:00:00")
-        request = APIRequestFactory().get("/api/v1/public/restaurant/")
+        request = APIRequestFactory().get("/api/v1/public/")
         response = PublicRestaurantView.as_view()(request)
     assert response.status_code == 200
     payload = response.data
