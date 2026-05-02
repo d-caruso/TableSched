@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter  # type: ignore[import-untyped]
 
 from apps.bookings.views import BookingViewSet
 from apps.bookings.views import AdminDashboardView
-from apps.bookings.views_customer import CustomerBookingView, PublicBookingCreateView, PublicSlotsView
+from apps.bookings.views_customer import CustomerBookingView, PublicBookingCreateView, PublicPaymentIntentView, PublicSlotsView
 from apps.bookings.views_walkins import WalkinViewSet
 
 app_name = "bookings"
@@ -23,5 +23,10 @@ urlpatterns: list[URLPattern | URLResolver] = [
         "public/bookings/<str:raw_token>/",
         CustomerBookingView.as_view(),
         name="customer-booking",
+    ),
+    path(
+        "public/bookings/<str:raw_token>/payment-intent/",
+        PublicPaymentIntentView.as_view(),
+        name="public-payment-intent",
     ),
 ]

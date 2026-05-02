@@ -129,3 +129,29 @@ class PublicSlotsView(APIView):
         settings = RestaurantSettings.objects.get()
         slots = available_slots(requested_date, settings)
         return Response({"slots": [s.isoformat() for s in slots]})
+
+
+class PublicPaymentIntentView(APIView):
+    """Return the Stripe client_secret for a booking's payment intent."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+    throttle_classes = [BookingTokenThrottle]
+
+    def get(self, request: Request, raw_token: str) -> Response:
+        import stripe
+        from apps.payments.models import Payment, PaymentStatus
+
+        booking = CustomerBookingView._resolve(self, raw_token)
+
+        try:
+            payment = Payment.objects.get(
+                booking=booking,
+                kind=Payment.KIND_PREAUTH,
+                status=PaymentStatus.PENDING,
+            )
+        except Payment.DoesNotExist:
+            raise DomainError(ErrorCode.VALIDATION_FAILED, {"detail": "no_payment_required"}, status=404)
+
+        intent = stripe.PaymentIntent.retrieve(payment.stripe_payment_intent_id)
+        return Response({"client_secret": intent.client_secret})
