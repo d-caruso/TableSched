@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Text, XStack, YStack } from 'tamagui';
+import { Button, Text, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import '@/lib/i18n';
 import { publicApi } from '@/lib/api/endpoints';
@@ -12,34 +12,14 @@ function tenantBookingUrl(tenant: TenantEntry): string {
   return `${origin}/restaurants/${tenant.schema}/`;
 }
 
-function tenantLoginUrl(tenant: TenantEntry): string {
+function staffLoginUrl(): string {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${origin}/restaurants/${tenant.schema}/login`;
+  return `${origin}/login`;
 }
 
-const linkStyle: React.CSSProperties = { color: 'inherit' };
+const linkStyle: React.CSSProperties = { color: 'inherit', textDecoration: 'none' };
 
-function TenantRow({ tenant }: { tenant: TenantEntry }) {
-  const bookingUrl = tenantBookingUrl(tenant);
-  const loginUrl = tenantLoginUrl(tenant);
-  return (
-    <XStack gap="$4" paddingVertical="$2" borderBottomWidth={1} borderBottomColor="$borderColor">
-      <Text flex={1}>{tenant.name}</Text>
-      <Text flex={2}>
-        <a href={bookingUrl} target="_blank" rel="noopener noreferrer" style={linkStyle}>
-          {bookingUrl}
-        </a>
-      </Text>
-      <Text flex={2}>
-        <a href={loginUrl} target="_blank" rel="noopener noreferrer" style={linkStyle}>
-          {loginUrl}
-        </a>
-      </Text>
-    </XStack>
-  );
-}
-
-function TenantTable() {
+function TenantDirectory() {
   const { t } = useTranslation();
   const { data: tenants = [], isLoading } = useQuery({
     queryKey: ['tenant-directory'],
@@ -55,18 +35,28 @@ function TenantTable() {
   }
 
   return (
-    <YStack padding="$8" gap="$6" maxWidth={960} alignSelf="center" width="100%">
+    <YStack padding="$8" gap="$8" maxWidth={640} alignSelf="center" width="100%">
       <Text fontSize="$8" fontWeight="$8">{t('tenantDirectory.title')}</Text>
-      <YStack>
-        <XStack gap="$4" paddingVertical="$3" borderBottomWidth={2} borderBottomColor="$borderColor">
-          <Text fontWeight="$7" flex={1}>{t('tenantDirectory.restaurant')}</Text>
-          <Text fontWeight="$7" flex={2}>{t('tenantDirectory.bookingUrl')}</Text>
-          <Text fontWeight="$7" flex={2}>{t('tenantDirectory.staffLogin')}</Text>
-        </XStack>
+      <YStack gap="$3">
         {tenants.map((tenant) => (
-          <TenantRow key={tenant.schema} tenant={tenant} />
+          <a
+            key={tenant.schema}
+            href={tenantBookingUrl(tenant)}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={linkStyle}
+          >
+            <Button size="$5" width="100%" justifyContent="flex-start">
+              {tenant.name}
+            </Button>
+          </a>
         ))}
       </YStack>
+      <a href={staffLoginUrl()} style={linkStyle}>
+        <Button size="$4" theme="alt1" width="100%">
+          {t('tenantDirectory.staffLogin')}
+        </Button>
+      </a>
     </YStack>
   );
 }
@@ -86,5 +76,5 @@ export default function TenantDirectoryPage() {
     return <LandingPage />;
   }
 
-  return <TenantTable />;
+  return <TenantDirectory />;
 }

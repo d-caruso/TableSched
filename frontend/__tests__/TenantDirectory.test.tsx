@@ -1,7 +1,7 @@
 jest.mock('tamagui', () => {
   const React = require('react');
   const { Text, View } = require('react-native');
-  return { Text, XStack: View, YStack: View };
+  return { Text, Button: Text, XStack: View, YStack: View };
 });
 
 jest.mock('expo-router', () => ({}));
@@ -33,13 +33,12 @@ function wrap(ui: React.ReactElement) {
   );
 }
 
-test('renders tenant names and URLs', async () => {
+test('renders tenant names and staff login link', async () => {
   render(wrap(<TenantDirectoryPage />));
   await waitFor(() => {
     expect(screen.getByText('Rome Restaurant')).toBeTruthy();
     expect(screen.getByText('Milan Restaurant')).toBeTruthy();
-    expect(screen.getByText('http://localhost/restaurants/rome/')).toBeTruthy();
-    expect(screen.getByText('http://localhost/restaurants/milan/')).toBeTruthy();
+    expect(screen.getByText('Staff Login')).toBeTruthy();
   });
 });
 

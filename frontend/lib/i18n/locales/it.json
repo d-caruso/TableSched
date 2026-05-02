@@ -177,8 +177,6 @@
   },
   "tenantDirectory": {
     "title": "TableSched — Ristoranti",
-    "restaurant": "Ristorante",
-    "bookingUrl": "URL prenotazione",
     "staffLogin": "Accesso staff"
   }
 }
