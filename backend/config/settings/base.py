@@ -27,6 +27,7 @@ DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 SHARED_APPS = (
     "apps.tenants",
     "django_tenants",
+    "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -37,6 +38,7 @@ SHARED_APPS = (
     "apps.accounts",
     "allauth",
     "allauth.account",
+    "allauth.headless",
 )
 TENANT_APPS = (
     "apps.memberships",
@@ -56,6 +58,7 @@ TENANT_SUBFOLDER_PREFIX = "restaurants"
 MIDDLEWARE = [
     "django_tenants.middleware.TenantSubfolderMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -92,6 +95,14 @@ AUTHENTICATION_BACKENDS = (
 )
 SITE_ID = 1
 AUTH_USER_MODEL = "accounts.User"
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.strategies.jwt.JWTTokenStrategy"
+HEADLESS_FRONTEND_URLS = {}
+HEADLESS_JWT_SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
+HEADLESS_JWT_ALGORITHM = "HS256"
+HEADLESS_JWT_ACCESS_TOKEN_EXPIRATION = 60 * 15  # 15 minutes
+HEADLESS_JWT_REFRESH_TOKEN_EXPIRATION = 60 * 60 * 24 * 7  # 7 days
+HEADLESS_JWT_ROTATE_REFRESH_TOKEN = True
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
