@@ -50,7 +50,7 @@ export const publicApi = {
 
 export const staffApi = {
   login(tenant: string, email: string, password: string) {
-    return apiRequest<{ access: string; refresh: string }>(tp(tenant, 'auth/login/'), {
+    return apiRequest<{ access: string; refresh: string }>('/auth/login/', {
       method: 'POST',
       body: { email, password },
     });
