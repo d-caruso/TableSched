@@ -95,7 +95,9 @@ git push origin feature/frontend-tenant-listing
 
 ## ❌ Task 2 — Root index page
 
-Create `app/index.tsx` with the tenant directory table gated by `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY`. Add `SHOW_TENANT_DIRECTORY` to `lib/env.ts` and i18n keys to all three locale files.
+Create `app/index.tsx` with the tenant directory gated by `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY`. Add `SHOW_TENANT_DIRECTORY` to `lib/env.ts` and i18n keys to all three locale files.
+
+Directory layout: restaurant names as clickable booking links; a single "Staff Login" button at the bottom pointing to `/login` (staff login is centralised — not per-tenant).
 
 **Branch:** `task/frontend-tenant-listing-Task2-index-page` — created from `feature/frontend-tenant-listing`
 

@@ -61,59 +61,14 @@ export type TenantEntry = {
 ### Task 2 — Root index page with tenant directory
 
 Create `app/index.tsx`. When `EXPO_PUBLIC_SHOW_TENANT_DIRECTORY=true`, fetch the tenant list
-and render a table. Otherwise redirect to `/+not-found`.
+and render the directory. Otherwise render the branded landing page (see Task 4).
 
-```tsx
-// app/index.tsx
-import { Redirect } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
-import { Text, YStack, XStack } from 'tamagui';
-import { useTranslation } from 'react-i18next';
-import '@/lib/i18n';
-import { publicApi } from '@/lib/api/endpoints';
-import { ENV } from '@/lib/env';
+**Directory page layout:**
+- Title: `tenantDirectory.title`
+- List of restaurants, each rendered as a clickable link showing the **restaurant name** (not the raw URL), linking to `${origin}/restaurants/${schema}/`
+- A single **"Staff Login"** button/link at the bottom of the page pointing to `${origin}/login` — not repeated per row, since the staff login is centralised at `/login` for all tenants
 
-export default function TenantDirectoryPage() {
-  const { t } = useTranslation();
-
-  if (!ENV.SHOW_TENANT_DIRECTORY) {
-    return <Redirect href="/+not-found" />;
-  }
-
-  const { data: tenants = [], isLoading } = useQuery({
-    queryKey: ['tenant-directory'],
-    queryFn: () => publicApi.tenantDirectory(),
-  });
-
-  if (isLoading) {
-    return (
-      <YStack padding="$4">
-        <Text>{t('common.loading')}</Text>
-      </YStack>
-    );
-  }
-
-  return (
-    <YStack padding="$4" gap="$6">
-      <Text fontSize="$7" fontWeight="$8">{t('tenantDirectory.title')}</Text>
-      <YStack gap="$2">
-        <XStack gap="$4">
-          <Text fontWeight="$7" flex={1}>{t('tenantDirectory.restaurant')}</Text>
-          <Text fontWeight="$7" flex={2}>{t('tenantDirectory.bookingUrl')}</Text>
-          <Text fontWeight="$7" flex={2}>{t('tenantDirectory.staffLogin')}</Text>
-        </XStack>
-        {tenants.map((tenant) => (
-          <XStack key={tenant.schema} gap="$4">
-            <Text flex={1}>{tenant.name}</Text>
-            <Text flex={2}>{tenant.api_prefix}</Text>
-            <Text flex={2}>{tenant.api_prefix}login</Text>
-          </XStack>
-        ))}
-      </YStack>
-    </YStack>
-  );
-}
-```
+**Rationale:** The directory is intended for internal demos and operator use. Showing restaurant names as links is cleaner than raw URLs; a single staff login link avoids redundancy.
 
 **Files to create/modify:**
 - `app/index.tsx` — NEW
@@ -126,8 +81,6 @@ export default function TenantDirectoryPage() {
 ```json
 "tenantDirectory": {
   "title": "TableSched — Restaurants",
-  "restaurant": "Restaurant",
-  "bookingUrl": "Booking URL",
   "staffLogin": "Staff Login"
 }
 ```
