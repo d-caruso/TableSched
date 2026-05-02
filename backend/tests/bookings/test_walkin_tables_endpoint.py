@@ -35,7 +35,6 @@ def _request(method: str, walkin: Walkin, membership: StaffMembership, data=None
         data or {},
         format="json",
     )
-    request.membership = membership
     request.user = membership.user
     return request
 

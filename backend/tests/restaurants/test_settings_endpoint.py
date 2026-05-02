@@ -24,7 +24,6 @@ def _request(method: str, membership: StaffMembership | None = None, data=None):
         format="json",
     )
     if membership is not None:
-        request.membership = membership
         request.user = membership.user
     return request
 

@@ -26,7 +26,6 @@ def _membership(role: str) -> StaffMembership:
 def _request(method: str, path: str, membership: StaffMembership, data=None):
     factory = APIRequestFactory()
     request = getattr(factory, method)(path, data or {}, format="json")
-    request.membership = membership
     request.user = membership.user
     return request
 

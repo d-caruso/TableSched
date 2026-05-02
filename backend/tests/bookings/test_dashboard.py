@@ -73,7 +73,6 @@ def test_dashboard_returns_counts_and_recent(monkeypatch):
         recent_booking = _booking(status=BookingStatus.DECLINED, created_at_offset_days=0)
 
         request = APIRequestFactory().get("/api/v1/admin/dashboard/")
-        request.membership = membership
         request.user = membership.user
         response = AdminDashboardView.as_view()(request)
 
@@ -98,7 +97,6 @@ def test_dashboard_triggers_opportunistic_maintenance(monkeypatch):
         )
         membership = _membership()
         request = APIRequestFactory().get("/api/v1/admin/dashboard/")
-        request.membership = membership
         request.user = membership.user
 
         response = AdminDashboardView.as_view()(request)

@@ -37,7 +37,6 @@ def test_twilio_credentials_not_in_api_response(monkeypatch):
     with tenant_schema("credentials"):
         membership = _manager("credential_manager")
         request = APIRequestFactory().get("/api/v1/admin/dashboard/")
-        request.membership = membership
         request.user = membership.user
 
         response = AdminDashboardView.as_view()(request)

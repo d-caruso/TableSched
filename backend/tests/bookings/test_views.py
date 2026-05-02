@@ -50,7 +50,6 @@ def test_response_contains_no_localized_strings():
         booking = _seed_booking()
         user = _seed_staff()
         request = APIRequestFactory().get(f"/api/v1/bookings/{booking.id}/")
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
         request.user = user
         response = BookingViewSet.as_view({"get": "retrieve"})(request, pk=str(booking.id))
     assert response.status_code == 200
@@ -68,7 +67,6 @@ def test_patch_booking_fields_uses_staff_modify_service():
             {"party_size": 4, "notes": "near window"},
             format="json",
         )
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
         request.user = user
         response = BookingViewSet.as_view({"patch": "partial_update"})(
             request,
@@ -94,7 +92,6 @@ def test_patch_booking_status_no_show_uses_state_machine():
             {"status": BookingStatus.NO_SHOW},
             format="json",
         )
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
         request.user = user
         response = BookingViewSet.as_view({"patch": "partial_update"})(
             request,
@@ -117,7 +114,6 @@ def test_patch_booking_rejects_other_direct_status_changes():
             {"status": BookingStatus.CONFIRMED},
             format="json",
         )
-        request.membership = StaffMembership.objects.get(user=user, is_active=True)
         request.user = user
         response = BookingViewSet.as_view({"patch": "partial_update"})(
             request,

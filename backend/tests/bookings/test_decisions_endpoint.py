@@ -41,7 +41,6 @@ def _request(method: str, booking: Booking, membership: StaffMembership, data=No
         data or {},
         format="json",
     )
-    request.membership = membership
     request.user = membership.user
     return request
 

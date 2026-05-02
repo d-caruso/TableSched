@@ -44,7 +44,6 @@ def test_create_walkin_succeeds_for_staff():
             {"starts_at": timezone.now().isoformat(), "party_size": 3},
             format="json",
         )
-        request.membership = membership
         request.user = membership.user
         response = WalkinViewSet.as_view({"post": "create"})(request)
 
