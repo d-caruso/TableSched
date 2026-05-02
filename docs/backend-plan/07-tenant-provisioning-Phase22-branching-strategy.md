@@ -42,7 +42,8 @@ develop
         ├── task/backend-mvp-Task22.1-provision-tenant-command
         ├── task/backend-mvp-Task22.2-tenant-directory-endpoint
         ├── task/backend-mvp-Task22.3-init-platform-command
-        └── task/backend-mvp-Task22.4-allauth-headless-jwt
+        ├── task/backend-mvp-Task22.4-allauth-headless-jwt
+        └── task/backend-mvp-Task22.5-provisioned-user-verified-email
 ```
 
 ---
@@ -62,7 +63,7 @@ git push -u origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ---
 
-### ✅ Task 22.1 — provision_tenant command (amended by Task 22.4)
+### ✅ Task 22.1 — provision_tenant command
 
 Create `provision_tenant` management command and its tests. The existing `create_tenant` command is unchanged.
 
@@ -184,9 +185,7 @@ git push origin feature/backend-mvp-Phase22-tenant-provisioning
 
 ### ❌ Task 22.4 — Allauth headless JWT auth
 
-Switch allauth to headless mode with JWT token strategy so the frontend (different domain) can authenticate without session cookies. Also fixes `provision_tenant` to create a verified `EmailAddress` row — without it, allauth returns 403 and sends a verification email on every login attempt.
-
-**Amendment to Task 22.1:** `provision_tenant` must also create `EmailAddress(verified=True)` for operator-provisioned accounts. The same pattern applies to future manager-invited staff accounts.
+Switch allauth to headless mode with JWT token strategy so the frontend (different domain) can authenticate without session cookies.
 
 **Branch:** `task/backend-mvp-Task22.4-allauth-headless-jwt` — created from `feature/backend-mvp-Phase22-tenant-provisioning`
 
@@ -200,8 +199,8 @@ See [`07-tenant-provisioning-Phase22.md`](./07-tenant-provisioning-Phase22.md) f
 
 **Commit:**
 ```bash
-git add config/settings/base.py apps/tenants/management/commands/provision_tenant.py tests/accounts/test_headless_auth.py
-git commit -m "[TASK] 22.4 enable allauth headless JWT; fix provision_tenant email verification"
+git add config/settings/base.py apps/common/middleware.py tests/accounts/test_headless_auth.py
+git commit -m "[TASK] 22.4 enable allauth headless JWT auth"
 ```
 
 **Pre-merge checks:**
@@ -209,7 +208,6 @@ git commit -m "[TASK] 22.4 enable allauth headless JWT; fix provision_tenant ema
 ruff check backend/
 mypy backend/
 pytest backend/tests/accounts/test_headless_auth.py
-pytest backend/tests/tenants/test_provision_tenant.py
 pytest backend/
 ```
 
@@ -218,6 +216,45 @@ pytest backend/
 git push origin task/backend-mvp-Task22.4-allauth-headless-jwt
 git checkout feature/backend-mvp-Phase22-tenant-provisioning
 git merge task/backend-mvp-Task22.4-allauth-headless-jwt
+git push origin feature/backend-mvp-Phase22-tenant-provisioning
+```
+
+---
+
+### ❌ Task 22.5 — Provisioned user utility
+
+Shared `create_provisioned_user()` utility in `apps/accounts/utils.py`. Updates `provision_tenant` to use it. Future manager-invited staff creation must also call this utility.
+
+**Branch:** `task/backend-mvp-Task22.5-provisioned-user-verified-email` — created from `feature/backend-mvp-Phase22-tenant-provisioning`
+
+```bash
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git pull origin feature/backend-mvp-Phase22-tenant-provisioning
+git checkout -b task/backend-mvp-Task22.5-provisioned-user-verified-email
+```
+
+See [`07-tenant-provisioning-Phase22.md`](./07-tenant-provisioning-Phase22.md) for full code.
+
+**Commit:**
+```bash
+git add apps/accounts/utils.py apps/tenants/management/commands/provision_tenant.py tests/accounts/test_provisioned_user.py docs/backend-plan/
+git commit -m "[TASK] 22.5 add create_provisioned_user utility; skip email verification for operator accounts"
+```
+
+**Pre-merge checks:**
+```bash
+ruff check backend/
+mypy backend/
+pytest backend/tests/accounts/test_provisioned_user.py
+pytest backend/tests/tenants/test_provision_tenant.py
+pytest backend/
+```
+
+**Push & merge:**
+```bash
+git push origin task/backend-mvp-Task22.5-provisioned-user-verified-email
+git checkout feature/backend-mvp-Phase22-tenant-provisioning
+git merge task/backend-mvp-Task22.5-provisioned-user-verified-email
 git push origin feature/backend-mvp-Phase22-tenant-provisioning
 ```
 
