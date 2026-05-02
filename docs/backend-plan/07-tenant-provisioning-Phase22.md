@@ -213,6 +213,64 @@ def test_tenant_directory_requires_no_auth(client, public_tenant):
 
 ---
 
+### Task 22.4 — Allauth headless JWT auth
+
+**Why:** Frontend (`tablesched.domenicocaruso.com`) and backend (`tablesched.hf.space`) are on different domains. Session cookies are not sent cross-domain. Allauth headless with JWT tokens solves this: the backend issues access/refresh tokens in JSON responses; the frontend stores and sends them as `Authorization: Bearer <token>`.
+
+Allauth 65.x ships `allauth.headless.tokens.strategies.jwt` with no extra dependencies.
+
+**Endpoints after change:**
+```
+POST /_allauth/app/v1/auth/login        → { "access": "<token>", "refresh": "<token>", ... }
+POST /_allauth/app/v1/auth/logout
+GET  /_allauth/app/v1/auth/session
+POST /_allauth/app/v1/auth/password/change
+```
+
+**Files:**
+- `config/settings/base.py` — update headless settings
+- `config/urls_public.py` — no change needed (headless URLs already registered by allauth when `HEADLESS_ONLY = True`)
+
+**`config/settings/base.py` changes:**
+
+```python
+# Already present — change token strategy:
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.strategies.jwt.JWTTokenStrategy"
+HEADLESS_FRONTEND_URLS = {}
+
+# Ensure no credential cookies required (JWT is stateless):
+CORS_ALLOW_CREDENTIALS = False
+```
+
+**Tests:**
+
+```python
+# tests/accounts/test_headless_auth.py
+
+import pytest
+
+@pytest.mark.django_db(transaction=True)
+def test_login_returns_jwt_tokens(client, public_tenant):
+    from django.contrib.auth import get_user_model
+    from allauth.account.models import EmailAddress
+
+    User = get_user_model()
+    user = User.objects.create_user(username="a@b.com", email="a@b.com", password="pass1234")
+    EmailAddress.objects.create(user=user, email="a@b.com", verified=True, primary=True)
+
+    response = client.post(
+        "/_allauth/app/v1/auth/login",
+        {"login": "a@b.com", "password": "pass1234"},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "access" in data.get("meta", {}).get("access_token", data)
+```
+
+---
+
 ### Task 22.1 — provision_tenant command
 
 **Files:**
@@ -224,6 +282,7 @@ def test_tenant_directory_requires_no_auth(client, public_tenant):
 ```python
 """Provision a new tenant in one atomic operation."""
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -259,6 +318,9 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             user = User.objects.create_user(username=email, email=email, password=password)
+            # Mark email verified — operator-provisioned accounts skip self-signup flow.
+            # Same applies to future manager-invited staff accounts.
+            EmailAddress.objects.create(user=user, email=email, verified=True, primary=True)
             with schema_context(schema):
                 StaffMembership.objects.create(
                     user=user,
