@@ -43,13 +43,13 @@ test('toggling a closed day adds a default entry', () => {
   fireEvent(screen.getAllByRole('switch')[1], 'valueChange', true);
 
   expect(onChange).toHaveBeenCalledWith([
-    expect.objectContaining({ day: 1, open: '09:00', close: '22:00' }),
+    expect.objectContaining({ weekday: 1, opens_at: '09:00', closes_at: '22:00' }),
   ]);
 });
 
 test('toggling an open day removes its entry', () => {
   const onChange = jest.fn();
-  render(<OpeningHoursEditor hours={[{ day: 1, open: '09:00', close: '22:00' }]} onChange={onChange} />);
+  render(<OpeningHoursEditor hours={[{ weekday: 1, opens_at: '09:00', closes_at: '22:00' }]} onChange={onChange} />);
 
   fireEvent(screen.getAllByRole('switch')[1], 'valueChange', false);
 
@@ -58,10 +58,10 @@ test('toggling an open day removes its entry', () => {
 
 test('updating close time patches the correct day', () => {
   const onChange = jest.fn();
-  render(<OpeningHoursEditor hours={[{ day: 1, open: '09:00', close: '22:00' }]} onChange={onChange} />);
+  render(<OpeningHoursEditor hours={[{ weekday: 1, opens_at: '09:00', closes_at: '22:00' }]} onChange={onChange} />);
 
   const inputs = screen.getAllByDisplayValue('22:00');
   fireEvent.changeText(inputs[0], '23:00');
 
-  expect(onChange).toHaveBeenCalledWith([{ day: 1, open: '09:00', close: '23:00' }]);
+  expect(onChange).toHaveBeenCalledWith([{ weekday: 1, opens_at: '09:00', closes_at: '23:00' }]);
 });

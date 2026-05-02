@@ -30,9 +30,9 @@ export type TimeSlot = {
 };
 
 export type OpeningHour = {
-  day: number;
-  open: string;
-  close: string;
+  weekday: number;
+  opens_at: string;
+  closes_at: string;
 };
 
 export type DepositPolicy = {

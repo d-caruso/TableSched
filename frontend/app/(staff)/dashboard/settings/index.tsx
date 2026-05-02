@@ -17,11 +17,12 @@ export default function SettingsScreen() {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Partial<RestaurantSettings>>({});
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ['restaurant-settings', tenant],
     queryFn: () => staffApi.getRestaurantSettings(tenant!, accessToken!),
     enabled: Boolean(accessToken && tenant),
   });
+
 
   const updateDraft = <K extends keyof RestaurantSettings>(key: K, value: RestaurantSettings[K]) => {
     if (!data) {
@@ -50,11 +51,11 @@ export default function SettingsScreen() {
     },
   });
 
-  if (isLoading) {
+  if (isPending || !data) {
     return <Spinner size="large" />;
   }
 
-  if (error || !data) {
+  if (error) {
     return <ErrorMessage error={error} />;
   }
 
@@ -65,7 +66,7 @@ export default function SettingsScreen() {
           {t('staff.settings.title')}
         </Text>
         <OpeningHoursEditor
-          hours={draft.opening_hours ?? data.opening_hours}
+          hours={draft.opening_hours ?? data.opening_hours ?? []}
           onChange={hours => updateDraft('opening_hours', hours)}
         />
         <DepositPolicyEditor
