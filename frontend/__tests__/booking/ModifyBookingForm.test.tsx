@@ -1,16 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View, TextInput } = require('react-native');
-
-  return {
-    Button: View,
-    Input: TextInput,
-    Text,
-    XStack: View,
-    YStack: View,
-  };
-});
-
 jest.mock('@/lib/api/endpoints', () => ({
   publicApi: { modifyBooking: jest.fn(async () => ({})) },
 }));

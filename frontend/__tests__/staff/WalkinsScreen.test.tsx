@@ -1,13 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-
-  return {
-    Text,
-    YStack: View,
-  };
-});
-
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) =>

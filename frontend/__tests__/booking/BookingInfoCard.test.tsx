@@ -1,14 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-
-  return {
-    Text,
-    XStack: View,
-    YStack: View,
-  };
-});
-
 jest.mock('@/lib/i18n/useLocale', () => ({
   useLocale: () => ({ locale: 'en-US', setLocale: jest.fn() }),
 }));

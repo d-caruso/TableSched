@@ -1,15 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View, TextInput } = require('react-native');
-
-  return {
-    Button: View,
-    Input: TextInput,
-    Text,
-    YStack: View,
-  };
-});
-
 const mockReplace = jest.fn();
 const mockLogin: jest.MockedFunction<(email: string, password: string, tenant: string) => Promise<void>> =
   jest.fn(async () => undefined);

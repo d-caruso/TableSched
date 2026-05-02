@@ -8,12 +8,6 @@
  * - multi-slot serialisation (two records for same weekday)
  */
 
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-  return { Text, XStack: View, YStack: View };
-});
-
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) =>

@@ -1,13 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { View } = require('react-native');
-
-  return {
-    Spinner: View,
-    YStack: View,
-  };
-});
-
 const mockReplace = jest.fn();
 const mockUseAuth = jest.fn();
 

@@ -1,9 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-  return { Text, Button: Text, XStack: View, YStack: View };
-});
-
 jest.mock('expo-router', () => ({}));
 
 jest.mock('@/lib/api/endpoints', () => ({

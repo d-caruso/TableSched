@@ -6,12 +6,6 @@ jest.mock('@/lib/api/endpoints', () => ({
   },
 }));
 
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View, TextInput } = require('react-native');
-  return { Input: TextInput, Text, YStack: View };
-});
-
 jest.mock('@/components/ui/AppButton', () => ({
   AppButton: ({ children, onPress, loading }: any) => {
     const { Text, Pressable } = require('react-native');

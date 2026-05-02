@@ -1,10 +1,3 @@
-jest.mock('tamagui', () => ({
-  ...Object.assign({}, jest.requireActual('tamagui')),
-  XStack: require('react-native').View,
-  YStack: require('react-native').View,
-  useMedia: jest.fn(),
-}));
-
 import { render, screen } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import { useMedia } from 'tamagui';

@@ -16,12 +16,6 @@ jest.mock('@/lib/auth/AuthContext', () => ({
   useAuth: () => ({ accessToken: 'tok', tenant: 'r' }),
 }));
 
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { View, Text, ScrollView } = require('react-native');
-  return { YStack: View, ScrollView, Spinner: () => null, Text };
-});
-
 jest.mock('@/components/booking/BookingInfoCard', () => ({ BookingInfoCard: () => null }));
 jest.mock('@/components/ui/StatusBadge', () => ({ StatusBadge: () => null }));
 jest.mock('@/components/ui/ErrorMessage', () => ({ ErrorMessage: () => null }));

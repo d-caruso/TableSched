@@ -14,11 +14,6 @@ jest.mock('@tamagui/config/v3', () => ({
   },
 }));
 
-jest.mock('tamagui', () => ({
-  createTamagui: (config: unknown) => config,
-  TamaguiProvider: ({ children }: { children: ReactNode }) => children,
-}));
-
 import RootLayout from '@/app/_layout';
 
 test('root layout renders without crash', () => {

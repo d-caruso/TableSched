@@ -8,17 +8,6 @@ jest.mock('@stripe/react-stripe-js', () => {
   };
 });
 
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-
-  return {
-    Button: View,
-    Text,
-    YStack: View,
-  };
-});
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import { PaymentForm } from '@/components/payment/PaymentForm';

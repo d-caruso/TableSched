@@ -1,13 +1,3 @@
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-
-  return {
-    Text,
-    XStack: View,
-  };
-});
-
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { expect, jest, test } from '@jest/globals';
 import { RoomTabs } from '@/components/floor/RoomTabs';
