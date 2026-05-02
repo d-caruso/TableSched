@@ -1,5 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+});
 import '@/lib/i18n';
 
 export type TimeSlotItem = {
@@ -27,7 +31,7 @@ export function TimeSlotGrid({ slots, loading, selected, onSelect }: TimeSlotGri
   }
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+    <View style={styles.grid}>
       {slots.map((slot) =>
         slot.available ? (
           <Pressable key={slot.time} accessibilityRole="button" onPress={() => onSelect(slot.time)}>

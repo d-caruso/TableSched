@@ -1,5 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  canvas: {
+    minHeight: 320,
+    borderRadius: 16,
+    backgroundColor: '#f3f4f6',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+});
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DraggableTable } from '@/components/floor/DraggableTable';
 import { staffApi } from '@/lib/api/endpoints';
@@ -30,16 +41,8 @@ export function FloorCanvas({ room, tenant, token }: Props) {
   });
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View
-        style={{
-          minHeight: 320,
-          borderRadius: 16,
-          backgroundColor: '#f3f4f6',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
+    <GestureHandlerRootView style={styles.root}>
+      <View style={styles.canvas}>
         {(room.tables ?? []).map(table => (
           <DraggableTable
             key={table.id}

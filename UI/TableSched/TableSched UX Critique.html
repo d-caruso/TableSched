@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TableSched — UX Critique & Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F5F4F1;
+  --white: #FDFCFB;
+  --text: #1A1714;
+  --text2: #5C574F;
+  --text3: #9C958C;
+  --border: #E2DDD8;
+  --border2: #CEC8C0;
+  --red: #C13B2A;
+  --red-bg: #FCECEA;
+  --green: #2A7A4B;
+  --green-bg: #E8F5EE;
+  --amber: #B07020;
+  --amber-bg: #FDF3E3;
+  --blue: #2858A0;
+  --blue-bg: #EBF1FB;
+  --purple: #6B3FA0;
+  --purple-bg: #F2ECFB;
+  --primary: #1A1714;
+  --ff: 'Geist', system-ui, sans-serif;
+  --ff-mono: 'Geist Mono', 'DM Mono', monospace;
+}
+html, body { height: 100%; background: var(--bg); font-family: var(--ff); color: var(--text); }
+#root { height: 100%; }
+button { font-family: var(--ff); cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+
+/* ─── shared primitives ─── */
+
+const Tag = ({ children, color = "#5C574F", bg = "#E2DDD8" }) => (
+  <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", borderRadius: 4, background: bg, color, fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "var(--ff-mono)", whiteSpace: "nowrap" }}>
+    {children}
+  </span>
+);
+
+const IssueTag = () => <Tag color="#C13B2A" bg="#FCECEA">Issue</Tag>;
+const FixTag = () => <Tag color="#2A7A4B" bg="#E8F5EE">Fix</Tag>;
+const NoteTag = () => <Tag color="#B07020" bg="#FDF3E3">Note</Tag>;
+const NewTag = () => <Tag color="#2858A0" bg="#EBF1FB">New</Tag>;
+
+const Annotation = ({ type = "issue", children, style = {} }) => {
+  const map = { issue: ["#C13B2A", "#FCECEA"], fix: ["#2A7A4B", "#E8F5EE"], note: ["#B07020", "#FDF3E3"], new: ["#2858A0", "#EBF1FB"] };
+  const [color, bg] = map[type] ?? map.issue;
+  return (
+    <div style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "10px 12px", background: bg, borderRadius: 6, border: `1px solid ${color}22`, ...style }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color, fontFamily: "var(--ff-mono)", letterSpacing: "0.06em", textTransform: "uppercase", marginTop: 1, flexShrink: 0 }}>
+        {type === "issue" ? "⚠ Issue" : type === "fix" ? "✓ Fix" : type === "new" ? "+ New" : "○ Note"}
+      </span>
+      <span style={{ fontSize: 12, lineHeight: 1.55, color: "var(--text2)" }}>{children}</span>
+    </div>
+  );
+};
+
+const SectionLabel = ({ children }) => (
+  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text3)", fontFamily: "var(--ff-mono)", marginBottom: 6 }}>{children}</div>
+);
+
+const Divider = () => <div style={{ height: 1, background: "var(--border)", margin: "16px 0" }} />;
+
+const Phone = ({ children, style = {} }) => (
+  <div style={{
+    width: 320, background: "var(--white)", borderRadius: 36, border: "6px solid #1A1714",
+    boxShadow: "0 0 0 1px #3A3530, 0 20px 60px #1A171430",
+    overflow: "hidden", position: "relative", flexShrink: 0, ...style
+  }}>
+    {/* notch */}
+    <div style={{ background: "#1A1714", height: 36, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 8 }}>
+      <div style={{ width: 90, height: 10, background: "#0D0B09", borderRadius: 8 }} />
+    </div>
+    <div style={{ overflowY: "auto", maxHeight: 620 }}>{children}</div>
+  </div>
+);
+
+const StatusBadge = ({ status }) => {
+  const map = {
+    pending_review:    ["Pending Review",    "#B07020", "#FDF3E3"],
+    confirmed:         ["Confirmed",          "#2A7A4B", "#E8F5EE"],
+    pending_payment:   ["Awaiting Payment",   "#2858A0", "#EBF1FB"],
+    declined:          ["Declined",           "#C13B2A", "#FCECEA"],
+    cancelled_by_customer: ["Cancelled",      "#9C958C", "#F0EDE8"],
+    confirmed_without_deposit: ["Confirmed ✓","#2A7A4B", "#E8F5EE"],
+    authorization_expired: ["Auth Expired",   "#C13B2A", "#FCECEA"],
+    seated:            ["Seated",             "#6B3FA0", "#F2ECFB"],
+  };
+  const [label, color, bg] = map[status] ?? ["Unknown", "#9C958C", "#F0EDE8"];
+  return <Tag color={color} bg={bg}>{label}</Tag>;
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 1 — TimeSlotGrid: 96 slots, no grouping
+   ══════════════════════════════════════════════════════ */
+
+const TimeSlotGridBefore = () => {
+  const allSlots = [];
+  for (let m = 0; m < 24 * 60; m += 15) {
+    const h = String(Math.floor(m / 60)).padStart(2, "0");
+    const min = String(m % 60).padStart(2, "0");
+    allSlots.push(`${h}:${min}`);
+  }
+  const available = new Set(["12:00","12:30","13:00","19:00","19:30","20:00","20:30","21:00","21:30"]);
+  const [sel, setSel] = React.useState("");
+
+  return (
+    <div style={{ fontFamily: "var(--ff)" }}>
+      <div style={{ fontSize: 11, color: "var(--text3)", marginBottom: 8, fontFamily: "var(--ff-mono)" }}>Party size: 2 · Date: Apr 30</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, maxHeight: 260, overflowY: "auto", padding: 2 }}>
+        {allSlots.map(t => {
+          const av = available.has(t);
+          const isSel = sel === t;
+          return (
+            <button key={t} onClick={() => av && setSel(t)} style={{
+              padding: "5px 8px", borderRadius: 5, border: `1px solid ${isSel ? "#1A1714" : "#E2DDD8"}`,
+              background: isSel ? "#1A1714" : av ? "#FDFCFB" : "#F5F4F1",
+              color: isSel ? "#fff" : av ? "#1A1714" : "#CEC8C0",
+              fontSize: 11, fontFamily: "var(--ff-mono)",
+              cursor: av ? "pointer" : "not-allowed",
+            }}>{t}</button>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 8, fontSize: 11, color: "var(--text3)" }}>96 slots shown · 9 available</div>
+    </div>
+  );
+};
+
+const TimeSlotGridAfter = () => {
+  const groups = [
+    { label: "Lunch", slots: [
+      { t: "12:00", av: true }, { t: "12:30", av: true }, { t: "13:00", av: true },
+      { t: "13:30", av: false }, { t: "14:00", av: false },
+    ]},
+    { label: "Dinner", slots: [
+      { t: "19:00", av: true }, { t: "19:30", av: true }, { t: "20:00", av: true },
+      { t: "20:30", av: true }, { t: "21:00", av: true }, { t: "21:30", av: true },
+      { t: "22:00", av: false },
+    ]},
+  ];
+  const [sel, setSel] = React.useState("");
+
+  return (
+    <div style={{ fontFamily: "var(--ff)" }}>
+      <div style={{ fontSize: 11, color: "var(--text3)", marginBottom: 12, fontFamily: "var(--ff-mono)" }}>Party size: 2 · Wed 30 Apr</div>
+      {groups.map(g => (
+        <div key={g.label} style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text3)", marginBottom: 8, fontFamily: "var(--ff-mono)" }}>{g.label}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {g.slots.map(({ t, av }) => {
+              const isSel = sel === t;
+              return (
+                <button key={t} onClick={() => av && setSel(t)} style={{
+                  padding: "8px 14px", borderRadius: 8,
+                  border: `1.5px solid ${isSel ? "#1A1714" : av ? "#E2DDD8" : "#F0EDE8"}`,
+                  background: isSel ? "#1A1714" : av ? "#FDFCFB" : "#F8F7F5",
+                  color: isSel ? "#fff" : av ? "#1A1714" : "#D0CBC3",
+                  fontSize: 13, fontFamily: "var(--ff-mono)", fontWeight: 500,
+                  cursor: av ? "pointer" : "not-allowed",
+                  boxShadow: isSel ? "0 2px 8px #1A171420" : av ? "0 1px 3px #1A171408" : "none",
+                  transition: "all 0.1s",
+                }}>{t}</button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 2 — Missing Review Step
+   ══════════════════════════════════════════════════════ */
+
+const StepDoneBefore = () => (
+  <div style={{ padding: 20, fontFamily: "var(--ff)", background: "#FDFCFB", minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ textAlign: "center", color: "var(--text3)", fontSize: 13 }}>
+      <div style={{ fontSize: 24, marginBottom: 8 }}>⏳</div>
+      <div>Loading…</div>
+      <div style={{ fontSize: 11, marginTop: 4, color: "#D0CBC3" }}>API call fired immediately on mount</div>
+    </div>
+  </div>
+);
+
+const StepReviewNew = () => {
+  const [sent, setSent] = React.useState(false);
+  if (sent) return (
+    <div style={{ padding: 24, fontFamily: "var(--ff)", background: "#FDFCFB", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, minHeight: 320 }}>
+      <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#E8F5EE", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>✓</div>
+      <div style={{ fontSize: 16, fontWeight: 600 }}>Request sent</div>
+      <div style={{ fontSize: 12, color: "var(--text2)", textAlign: "center", lineHeight: 1.6 }}>
+        You'll receive an SMS once staff confirms your table.<br />
+        <span style={{ color: "var(--text3)" }}>Check your email for a management link.</span>
+      </div>
+      <div style={{ marginTop: 8, padding: "10px 20px", background: "#F5F4F1", borderRadius: 8, fontSize: 12, color: "var(--text2)", textAlign: "center", lineHeight: 1.6 }}>
+        <strong>Thu 30 Apr · 20:00</strong><br />
+        2 guests · Osteria del Sole
+      </div>
+    </div>
+  );
+  return (
+    <div style={{ padding: 20, fontFamily: "var(--ff)", background: "#FDFCFB" }}>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 14 }}>Review your request</div>
+      {[
+        ["Date & time", "Thu 30 Apr · 20:00"],
+        ["Guests", "2"],
+        ["Name", "Sarah Chen"],
+        ["Phone", "+44 7700 900123"],
+        ["Notes", "Window table if possible"],
+      ].map(([k, v]) => (
+        <div key={k} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "8px 0", borderBottom: "1px solid #F0EDE8" }}>
+          <span style={{ fontSize: 12, color: "var(--text3)" }}>{k}</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>{v}</span>
+        </div>
+      ))}
+      <div style={{ marginTop: 16, padding: "10px 12px", background: "#FDF3E3", borderRadius: 6, fontSize: 11, color: "#B07020", lineHeight: 1.5 }}>
+        A deposit may be required. Staff will confirm within the hour.
+      </div>
+      <button onClick={() => setSent(true)} style={{ marginTop: 16, width: "100%", padding: "12px", background: "#1A1714", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+        Send request →
+      </button>
+      <button style={{ marginTop: 8, width: "100%", padding: "10px", background: "none", border: "1.5px solid #E2DDD8", borderRadius: 8, fontSize: 13, color: "var(--text2)", cursor: "pointer" }}>
+        ← Edit
+      </button>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 3 — BookingCard: no urgency, no context
+   ══════════════════════════════════════════════════════ */
+
+const BookingCardBefore = ({ booking }) => (
+  <div style={{ border: "1px solid #E2DDD8", borderRadius: 8, padding: 12, background: "#FDFCFB", fontFamily: "var(--ff)", cursor: "pointer" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span style={{ fontWeight: 600, fontSize: 13 }}>{booking.name}</span>
+      <StatusBadge status={booking.status} />
+    </div>
+    <div style={{ marginTop: 6, fontSize: 12, color: "var(--text3)" }}>
+      {booking.date} {booking.time} · {booking.party_size} guests
+    </div>
+  </div>
+);
+
+const BookingCardAfter = ({ booking, urgent }) => (
+  <div style={{
+    border: `1.5px solid ${urgent ? "#C13B2A33" : "#E2DDD8"}`,
+    borderRadius: 10, padding: "12px 14px", background: "#FDFCFB", fontFamily: "var(--ff)",
+    cursor: "pointer", position: "relative",
+    boxShadow: urgent ? "0 0 0 3px #C13B2A10" : "0 1px 3px #1A171408",
+  }}>
+    {urgent && (
+      <div style={{ position: "absolute", top: -1, left: -1, right: -1, height: 3, background: "#C13B2A", borderRadius: "10px 10px 0 0" }} />
+    )}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+      <div>
+        <div style={{ fontWeight: 600, fontSize: 13 }}>{booking.name}</div>
+        <div style={{ fontSize: 12, color: "var(--text3)", marginTop: 2 }}>{booking.time} · {booking.party_size} pax · {booking.table ?? <span style={{ fontStyle: "italic" }}>no table</span>}</div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+        <StatusBadge status={booking.status} />
+        {urgent && <span style={{ fontSize: 10, color: "#C13B2A", fontWeight: 600 }}>Action needed</span>}
+      </div>
+    </div>
+    {booking.notes && (
+      <div style={{ marginTop: 8, fontSize: 11, color: "var(--text2)", background: "#F8F7F5", borderRadius: 5, padding: "5px 8px", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        💬 {booking.notes}
+      </div>
+    )}
+    {booking.payment && (
+      <div style={{ marginTop: 6, fontSize: 11, color: "#2858A0" }}>💳 Deposit: {booking.payment}</div>
+    )}
+  </div>
+);
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 4 — AssignTableDialog: free-text UUID input
+   ══════════════════════════════════════════════════════ */
+
+const AssignTableBefore = () => (
+  <div style={{ fontFamily: "var(--ff)", padding: 16, background: "#FDFCFB", border: "1px solid #E2DDD8", borderRadius: 8 }}>
+    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Assign table</div>
+    <div style={{ fontSize: 11, color: "var(--text3)", marginBottom: 8 }}>Table</div>
+    <input readOnly value="e3f7a1c2-..." style={{
+      width: "100%", padding: "9px 12px", border: "1.5px solid #E2DDD8",
+      borderRadius: 6, fontSize: 13, fontFamily: "var(--ff-mono)", color: "var(--text2)",
+      background: "#F8F7F5",
+    }} />
+    <div style={{ marginTop: 6, fontSize: 11, color: "#C13B2A" }}>Staff must enter a UUID manually.</div>
+    <button style={{ marginTop: 12, width: "100%", padding: "10px", background: "#E2DDD8", color: "var(--text3)", border: "none", borderRadius: 6, fontSize: 13, cursor: "not-allowed" }}>Submit</button>
+  </div>
+);
+
+const TABLE_DATA = [
+  { id: "T1", name: "1", room: "Main",    cap: 2, status: "available" },
+  { id: "T2", name: "2", room: "Main",    cap: 4, status: "available" },
+  { id: "T3", name: "3", room: "Main",    cap: 4, status: "occupied"  },
+  { id: "T4", name: "4", room: "Terrace", cap: 6, status: "available" },
+  { id: "T5", name: "5", room: "Terrace", cap: 6, status: "reserved"  },
+  { id: "T6", name: "Bar 1", room: "Bar", cap: 2, status: "available" },
+];
+
+const AssignTableAfter = ({ partySize = 2 }) => {
+  const [sel, setSel] = React.useState(null);
+  const [activeRoom, setActiveRoom] = React.useState("Main");
+  const rooms = [...new Set(TABLE_DATA.map(t => t.room))];
+  const filtered = TABLE_DATA.filter(t => t.room === activeRoom);
+
+  const statusColor = { available: ["#2A7A4B", "#E8F5EE"], occupied: ["#C13B2A", "#FCECEA"], reserved: ["#B07020", "#FDF3E3"] };
+
+  return (
+    <div style={{ fontFamily: "var(--ff)", padding: 16, background: "#FDFCFB", border: "1.5px solid #E2DDD8", borderRadius: 10 }}>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Assign table</div>
+      <div style={{ fontSize: 11, color: "var(--text3)", marginBottom: 12 }}>Booking for {partySize} guests · choose an available table</div>
+
+      {/* room tabs */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
+        {rooms.map(r => (
+          <button key={r} onClick={() => setActiveRoom(r)} style={{
+            padding: "5px 12px", borderRadius: 6, border: "1.5px solid",
+            borderColor: activeRoom === r ? "#1A1714" : "#E2DDD8",
+            background: activeRoom === r ? "#1A1714" : "#FDFCFB",
+            color: activeRoom === r ? "#fff" : "var(--text2)",
+            fontSize: 11, fontWeight: 600, cursor: "pointer",
+          }}>{r}</button>
+        ))}
+      </div>
+
+      {/* table grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+        {filtered.map(t => {
+          const isSel = sel?.id === t.id;
+          const [sc, sb] = statusColor[t.status];
+          const fits = t.cap >= partySize;
+          return (
+            <button key={t.id} onClick={() => t.status === "available" && setSel(t)} style={{
+              padding: "10px 12px", borderRadius: 8, textAlign: "left",
+              border: `1.5px solid ${isSel ? "#1A1714" : fits && t.status === "available" ? "#E2DDD8" : "#F0EDE8"}`,
+              background: isSel ? "#1A1714" : "#FDFCFB",
+              cursor: t.status === "available" ? "pointer" : "not-allowed",
+              opacity: t.status !== "available" ? 0.5 : 1,
+              boxShadow: isSel ? "0 2px 8px #1A171418" : "none",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: isSel ? "#fff" : "#1A1714", fontFamily: "var(--ff-mono)" }}>T{t.name}</span>
+                <span style={{ fontSize: 10, fontWeight: 600, color: isSel ? "#ffffff99" : sc, background: isSel ? "#ffffff22" : sb, padding: "2px 6px", borderRadius: 4 }}>{t.status}</span>
+              </div>
+              <div style={{ fontSize: 11, marginTop: 4, color: isSel ? "#ffffff88" : "var(--text3)" }}>
+                {t.cap} seats{!fits ? " · too small" : ""}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <button onClick={() => sel && alert(`Assigned ${sel.name}`)} disabled={!sel} style={{
+        width: "100%", padding: "11px", background: sel ? "#1A1714" : "#E2DDD8",
+        color: sel ? "#fff" : "var(--text3)", border: "none", borderRadius: 8,
+        fontSize: 13, fontWeight: 600, cursor: sel ? "pointer" : "not-allowed",
+      }}>
+        {sel ? `Assign table ${sel.name} →` : "Select a table"}
+      </button>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 5 — FilterTabs: no counts, no urgency signal
+   ══════════════════════════════════════════════════════ */
+
+const FilterTabsBefore = () => {
+  const [sel, setSel] = React.useState(0);
+  const tabs = ["All", "Pending", "Confirmed", "Cancelled"];
+  return (
+    <div style={{ borderBottom: "1px solid #E2DDD8", display: "flex", fontFamily: "var(--ff)" }}>
+      {tabs.map((t, i) => (
+        <button key={t} onClick={() => setSel(i)} style={{
+          padding: "10px 14px", border: "none", background: "none", cursor: "pointer",
+          fontWeight: i === sel ? 700 : 400, fontSize: 13, color: i === sel ? "#1A1714" : "#9C958C",
+          borderBottom: `2px solid ${i === sel ? "#1A1714" : "transparent"}`,
+          marginBottom: -1,
+        }}>{t}</button>
+      ))}
+    </div>
+  );
+};
+
+const FilterTabsAfter = () => {
+  const [sel, setSel] = React.useState(0);
+  const tabs = [
+    { label: "All",       count: 14, urgent: false },
+    { label: "Pending",   count: 4,  urgent: true  },
+    { label: "Confirmed", count: 7,  urgent: false },
+    { label: "Cancelled", count: 3,  urgent: false },
+  ];
+  return (
+    <div style={{ fontFamily: "var(--ff)" }}>
+      <div style={{ borderBottom: "1px solid #E2DDD8", display: "flex" }}>
+        {tabs.map((t, i) => (
+          <button key={t.label} onClick={() => setSel(i)} style={{
+            padding: "10px 14px", border: "none", background: "none", cursor: "pointer",
+            fontSize: 13, color: i === sel ? "#1A1714" : "#9C958C",
+            fontWeight: i === sel ? 600 : 400,
+            borderBottom: `2px solid ${i === sel ? "#1A1714" : "transparent"}`,
+            marginBottom: -1, display: "flex", alignItems: "center", gap: 6,
+          }}>
+            {t.label}
+            <span style={{
+              fontSize: 10, fontWeight: 700, padding: "1px 6px", borderRadius: 10,
+              background: t.urgent ? "#C13B2A" : i === sel ? "#1A1714" : "#E2DDD8",
+              color: (t.urgent || i === sel) ? "#fff" : "#9C958C",
+              fontFamily: "var(--ff-mono)",
+            }}>{t.count}</span>
+          </button>
+        ))}
+      </div>
+      <div style={{ padding: "10px 0", fontSize: 11, color: "var(--text3)", display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#C13B2A", display: "inline-block" }} />
+        4 bookings need your action
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 6 — StaffBookingActions: flat button hierarchy
+   ══════════════════════════════════════════════════════ */
+
+const StaffActionsBefore = () => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 10, fontFamily: "var(--ff)" }}>
+    {["Approve", "Confirm without deposit", "Reject", "Assign table"].map(label => (
+      <button key={label} style={{ padding: "11px 16px", border: "1.5px solid #E2DDD8", borderRadius: 8, background: "#FDFCFB", fontSize: 13, fontWeight: 500, cursor: "pointer", color: "#1A1714" }}>{label}</button>
+    ))}
+    <div style={{ fontSize: 11, color: "#C13B2A", marginTop: 2 }}>All four actions look identical — no hierarchy.</div>
+  </div>
+);
+
+const StaffActionsAfter = ({ status = "pending_review", hasDeposit = false }) => {
+  const [rejected, setRejected] = React.useState(false);
+  const [reason, setReason] = React.useState("");
+  const [showReject, setShowReject] = React.useState(false);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, fontFamily: "var(--ff)" }}>
+      {/* Primary action */}
+      <button style={{ padding: "13px 16px", border: "none", borderRadius: 8, background: "#1A1714", fontSize: 14, fontWeight: 600, cursor: "pointer", color: "#fff" }}>
+        ✓ Approve booking
+      </button>
+      {/* Secondary */}
+      {hasDeposit && (
+        <button style={{ padding: "11px 16px", border: "1.5px solid #E2DDD8", borderRadius: 8, background: "#FDFCFB", fontSize: 13, fontWeight: 500, cursor: "pointer", color: "#5C574F" }}>
+          Confirm without deposit
+        </button>
+      )}
+      {/* Table assign — contextual, inline */}
+      <button style={{ padding: "11px 16px", border: "1.5px solid #E2DDD8", borderRadius: 8, background: "#FDFCFB", fontSize: 13, fontWeight: 500, cursor: "pointer", color: "#5C574F" }}>
+        ⊞ Assign table
+      </button>
+      {/* Destructive — visually separated */}
+      <div style={{ height: 1, background: "#F0EDE8", margin: "4px 0" }} />
+      {!showReject ? (
+        <button onClick={() => setShowReject(true)} style={{ padding: "10px 16px", border: "1.5px solid #FCECEA", borderRadius: 8, background: "#FDFCFB", fontSize: 13, fontWeight: 500, cursor: "pointer", color: "#C13B2A" }}>
+          Reject…
+        </button>
+      ) : (
+        <div style={{ border: "1.5px solid #FCECEA", borderRadius: 8, padding: 12, background: "#FDFCFB" }}>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: "#C13B2A" }}>Reason for rejection</div>
+          <textarea value={reason} onChange={e => setReason(e.target.value)} placeholder="e.g. Fully booked at that time" style={{ width: "100%", padding: "8px 10px", border: "1.5px solid #E2DDD8", borderRadius: 6, fontSize: 12, fontFamily: "var(--ff)", resize: "none", height: 64, color: "#1A1714" }} />
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <button onClick={() => setShowReject(false)} style={{ flex: 1, padding: "9px", border: "1.5px solid #E2DDD8", borderRadius: 6, background: "none", fontSize: 12, cursor: "pointer", color: "var(--text2)" }}>Cancel</button>
+            <button disabled={!reason.trim()} style={{ flex: 2, padding: "9px", border: "none", borderRadius: 6, background: reason.trim() ? "#C13B2A" : "#F0EDE8", color: reason.trim() ? "#fff" : "#CEC8C0", fontSize: 12, fontWeight: 600, cursor: reason.trim() ? "pointer" : "not-allowed" }}>
+              Send rejection
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 7 — ResponsiveShell: mobile has no navigation
+   ══════════════════════════════════════════════════════ */
+
+const MobileNavBefore = () => (
+  <div style={{ width: 320, fontFamily: "var(--ff)", background: "#FDFCFB", border: "1.5px solid #E2DDD8", borderRadius: 10, overflow: "hidden" }}>
+    <div style={{ padding: "12px 16px", borderBottom: "1px solid #E2DDD8", fontWeight: 600, fontSize: 13 }}>Staff Dashboard</div>
+    <div style={{ padding: "40px 20px", textAlign: "center", color: "var(--text3)", fontSize: 12 }}>
+      <div style={{ fontSize: 32, marginBottom: 8 }}>🤷</div>
+      On mobile, sidebar is hidden entirely.<br />
+      No bottom nav. No hamburger. No access to Settings or Walk-ins.
+    </div>
+  </div>
+);
+
+const MobileNavAfter = () => {
+  const [active, setActive] = React.useState("bookings");
+  const tabs = [
+    { id: "bookings", icon: "≡", label: "Bookings" },
+    { id: "walkins",  icon: "+", label: "Walk-ins" },
+    { id: "settings", icon: "⚙", label: "Settings" },
+  ];
+  return (
+    <div style={{ width: 320, fontFamily: "var(--ff)", background: "#FDFCFB", border: "1.5px solid #E2DDD8", borderRadius: 10, overflow: "hidden" }}>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid #E2DDD8", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontWeight: 600, fontSize: 13 }}>Osteria del Sole</span>
+        <span style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--ff-mono)" }}>Thu 30 Apr</span>
+      </div>
+      <div style={{ padding: 16 }}>
+        <div style={{ fontSize: 11, color: "var(--text3)", marginBottom: 8 }}>
+          {active === "bookings" && "Today's reservations"}
+          {active === "walkins" && "Add walk-in guest"}
+          {active === "settings" && "Restaurant settings"}
+        </div>
+        <div style={{ height: 120, background: "#F5F4F1", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "var(--text3)" }}>
+          {active} content
+        </div>
+      </div>
+      {/* bottom tab bar */}
+      <div style={{ borderTop: "1px solid #E2DDD8", display: "flex", background: "#FDFCFB" }}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setActive(t.id)} style={{
+            flex: 1, padding: "10px 0", border: "none", background: "none", cursor: "pointer",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+          }}>
+            <span style={{ fontSize: 16, color: active === t.id ? "#1A1714" : "#9C958C" }}>{t.icon}</span>
+            <span style={{ fontSize: 10, fontWeight: active === t.id ? 600 : 400, color: active === t.id ? "#1A1714" : "#9C958C" }}>{t.label}</span>
+            {t.id === "bookings" && active !== "bookings" && (
+              <span style={{ position: "absolute", width: 6, height: 6, borderRadius: "50%", background: "#C13B2A", marginTop: -18, marginLeft: 14 }} />
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   ISSUE 8 — Walk-in screen placeholder
+   ══════════════════════════════════════════════════════ */
+
+const WalkInAfter = () => {
+  const [party, setParty] = React.useState(2);
+  const [name, setName] = React.useState("");
+  const [table, setTable] = React.useState(null);
+
+  return (
+    <div style={{ fontFamily: "var(--ff)", background: "#FDFCFB", borderRadius: 10, border: "1.5px solid #E2DDD8", overflow: "hidden" }}>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid #E2DDD8", fontWeight: 600, fontSize: 13, display: "flex", justifyContent: "space-between" }}>
+        <span>New walk-in</span>
+        <span style={{ fontSize: 11, color: "var(--text3)", fontFamily: "var(--ff-mono)" }}>20:14</span>
+      </div>
+      <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* party size */}
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text3)", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>Party size</div>
+          <div style={{ display: "flex", gap: 6 }}>
+            {[1,2,3,4,5,6,7,8].map(n => (
+              <button key={n} onClick={() => setParty(n)} style={{
+                width: 34, height: 34, borderRadius: 6, border: `1.5px solid ${party === n ? "#1A1714" : "#E2DDD8"}`,
+                background: party === n ? "#1A1714" : "#FDFCFB", color: party === n ? "#fff" : "#1A1714",
+                fontSize: 13, fontWeight: 600, cursor: "pointer",
+              }}>{n}</button>
+            ))}
+          </div>
+        </div>
+        {/* name optional */}
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text3)", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>Name <span style={{ fontWeight: 400, color: "#C0BAB2" }}>optional</span></div>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="Guest name" style={{ width: "100%", padding: "9px 12px", border: "1.5px solid #E2DDD8", borderRadius: 6, fontSize: 13, fontFamily: "var(--ff)", color: "var(--text)", outline: "none" }} />
+        </div>
+        {/* table quick-pick */}
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text3)", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>Table</div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {TABLE_DATA.filter(t => t.status === "available" && t.cap >= party).map(t => (
+              <button key={t.id} onClick={() => setTable(t)} style={{
+                padding: "6px 12px", borderRadius: 6, border: `1.5px solid ${table?.id === t.id ? "#1A1714" : "#E2DDD8"}`,
+                background: table?.id === t.id ? "#1A1714" : "#FDFCFB", color: table?.id === t.id ? "#fff" : "#1A1714",
+                fontSize: 12, fontWeight: 500, cursor: "pointer",
+              }}>T{t.name} <span style={{ opacity: 0.5 }}>({t.cap})</span></button>
+            ))}
+          </div>
+        </div>
+        <button disabled={!table} style={{
+          padding: "12px", background: table ? "#1A1714" : "#E2DDD8", color: table ? "#fff" : "var(--text3)",
+          border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: table ? "pointer" : "not-allowed",
+        }}>
+          Seat {party} {party === 1 ? "guest" : "guests"} {table ? `at T${table.name}` : ""}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   COMPLETE STAFF LIST VIEW (for reference)
+   ══════════════════════════════════════════════════════ */
+
+const staffBookings = [
+  { id: 1, name: "Sarah Chen",     time: "19:30", party_size: 2, status: "pending_review",    notes: "Window table if possible", table: null,    payment: null },
+  { id: 2, name: "Marco Bianchi",  time: "19:00", party_size: 4, status: "pending_review",    notes: "Birthday — surprise cake",  table: null,    payment: null },
+  { id: 3, name: "Luisa Moretti",  time: "20:30", party_size: 3, status: "confirmed",          notes: "",                          table: "T7",    payment: "€30 auth'd" },
+  { id: 4, name: "James Park",     time: "21:00", party_size: 2, status: "confirmed",          notes: "Anniversary dinner",        table: "T2",    payment: null },
+  { id: 5, name: "Familie Müller", time: "20:00", party_size: 6, status: "pending_payment",   notes: "Nut allergy",               table: null,    payment: "pending" },
+];
+
+const StaffListView = () => {
+  const [filter, setFilter] = React.useState(0);
+  const tabs = [
+    { label: "All", count: 14 },
+    { label: "Pending", count: 4, urgent: true },
+    { label: "Confirmed", count: 7 },
+    { label: "Cancelled", count: 3 },
+  ];
+
+  return (
+    <div style={{ fontFamily: "var(--ff)", background: "#F5F4F1", borderRadius: 10, border: "1.5px solid #E2DDD8", overflow: "hidden", minWidth: 340 }}>
+      {/* header */}
+      <div style={{ padding: "12px 16px", background: "#1A1714", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 14, color: "#FDFCFB" }}>Osteria del Sole</div>
+          <div style={{ fontSize: 11, color: "#9C958C", marginTop: 2, fontFamily: "var(--ff-mono)" }}>Thu 30 Apr · 18 reservations</div>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button style={{ padding: "6px 12px", background: "#2A7A4B", border: "none", borderRadius: 6, color: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer" }}>+ Walk-in</button>
+        </div>
+      </div>
+      {/* filter tabs */}
+      <div style={{ background: "#FDFCFB", borderBottom: "1px solid #E2DDD8", display: "flex", padding: "0 8px" }}>
+        {tabs.map((t, i) => (
+          <button key={t.label} onClick={() => setFilter(i)} style={{
+            padding: "10px 10px", border: "none", background: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 5,
+            fontWeight: i === filter ? 600 : 400, fontSize: 12,
+            color: i === filter ? "#1A1714" : "#9C958C",
+            borderBottom: `2px solid ${i === filter ? "#1A1714" : "transparent"}`, marginBottom: -1,
+          }}>
+            {t.label}
+            <span style={{
+              fontSize: 10, fontWeight: 700, padding: "1px 5px", borderRadius: 8,
+              background: t.urgent ? "#C13B2A" : i === filter ? "#1A1714" : "#E2DDD8",
+              color: (t.urgent || i === filter) ? "#fff" : "#9C958C",
+            }}>{t.count}</span>
+          </button>
+        ))}
+      </div>
+      {/* booking list */}
+      <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
+        {staffBookings.map(b => {
+          const urgent = b.status === "pending_review" || b.status === "authorization_expired";
+          return (
+            <div key={b.id} style={{
+              border: `1.5px solid ${urgent ? "#C13B2A33" : "#E2DDD8"}`,
+              borderRadius: 10, padding: "11px 13px", background: "#FDFCFB", cursor: "pointer",
+              boxShadow: urgent ? "0 0 0 3px #C13B2A0D" : "0 1px 3px #1A171406",
+              position: "relative",
+            }}>
+              {urgent && <div style={{ position: "absolute", top: -1, left: -1, right: -1, height: 3, background: "#C13B2A", borderRadius: "10px 10px 0 0" }} />}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{b.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>
+                    {b.time} · {b.party_size} pax{b.table ? ` · ${b.table}` : " · no table"}
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                  <StatusBadge status={b.status} />
+                  {urgent && <span style={{ fontSize: 10, color: "#C13B2A", fontWeight: 600 }}>Needs action</span>}
+                </div>
+              </div>
+              {b.notes ? <div style={{ marginTop: 7, fontSize: 11, color: "var(--text2)", background: "#F8F7F5", borderRadius: 5, padding: "4px 8px" }}>💬 {b.notes}</div> : null}
+              {b.payment ? <div style={{ marginTop: 5, fontSize: 11, color: "#2858A0" }}>💳 {b.payment}</div> : null}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   MAIN APP
+   ══════════════════════════════════════════════════════ */
+
+function App() {
+  return (
+    <DesignCanvas title="TableSched — UX Critique & Redesign" subtitle="8 concrete issues · Before / After · Interactive">
+
+      {/* ── SECTION A: Customer Booking Flow ── */}
+      <DCSection id="s1" title="Customer: Booking Flow">
+
+        <DCArtboard id="a1" label="① TimeSlotGrid — Before" width={360} height={420}>
+          <div style={{ padding: 20, background: "#FDFCFB", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IssueTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>96 slots for 24 hrs at 15-min intervals</span>
+            </div>
+            <TimeSlotGridBefore />
+            <Annotation type="issue">
+              <code style={{ fontFamily: "var(--ff-mono)" }}>toQuarterHourTimes()</code> generates 96 slots regardless of opening hours. Most are unavailable. The list is unscrollable and unsorted by service period. No grouping, no empty-state copy.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a2" label="① TimeSlotGrid — After" width={360} height={420}>
+          <div style={{ padding: 20, background: "#FDFCFB", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <FixTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>API-driven slots, grouped by service period</span>
+            </div>
+            <TimeSlotGridAfter />
+            <Annotation type="fix">
+              Render only slots returned by the API. Group by service period (Lunch / Dinner) derived from <code style={{ fontFamily: "var(--ff-mono)" }}>opening_hours</code>. Larger tap targets (44px). Unavailable slots hidden or clearly muted — not listed at equal weight.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a3" label="② Missing Review Step" width={360} height={460}>
+          <div style={{ padding: 20, background: "#FDFCFB", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <NewTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Add StepReview between contact & done</span>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 11, color: "var(--text3)", fontFamily: "var(--ff-mono)" }}>
+              <span>datetime</span><span>→</span><span>contact</span><span>→</span>
+              <span style={{ background: "#1A1714", color: "#fff", padding: "2px 8px", borderRadius: 4, fontWeight: 600 }}>review</span>
+              <span>→</span><span>done</span>
+            </div>
+            <StepReviewNew />
+            <Annotation type="issue">
+              <code style={{ fontFamily: "var(--ff-mono)" }}>StepDone</code> fires the POST in a <code style={{ fontFamily: "var(--ff-mono)" }}>useEffect</code> immediately on mount. The user never sees a summary before submitting. Add a <strong>StepReview</strong> that shows all draft values + deposit warning, and only POSTs on explicit "Send request" tap.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      {/* ── SECTION B: Staff Dashboard ── */}
+      <DCSection id="s2" title="Staff: Dashboard & List">
+
+        <DCArtboard id="a4" label="③ BookingCard — Before" width={340} height={340}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IssueTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>No urgency, no notes, no table info</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {staffBookings.slice(0,3).map(b => <BookingCardBefore key={b.id} booking={b} />)}
+            </div>
+            <Annotation type="issue">
+              Cards are flat — pending and confirmed look identical at a glance. Notes and table assignment status not shown. Staff must open every card to triage. No count on "Pending" tab.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a5" label="③④ Dashboard — After (interactive)" width={370} height={600}>
+          <div style={{ padding: 16, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <FixTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Urgency signal · counts · notes preview</span>
+            </div>
+            <StaffListView />
+            <Annotation type="fix">
+              Red top-bar on cards needing action. "Needs action" label. Notes preview inline. Table assignment status visible. Filter tabs show live counts; Pending badge is red. "+ Walk-in" always visible in header.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a6" label="④ FilterTabs — counts" width={340} height={280}>
+          <div style={{ padding: 20, background: "#FDFCFB", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <SectionLabel>Before</SectionLabel>
+              <FilterTabsBefore />
+            </div>
+            <Divider />
+            <div>
+              <SectionLabel>After (interactive)</SectionLabel>
+              <FilterTabsAfter />
+            </div>
+            <Annotation type="fix">
+              Count badge on each tab. Pending badge is red — visible without switching tab. Status line below tabs shows the actionable count in plain language.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      {/* ── SECTION C: Staff Actions ── */}
+      <DCSection id="s3" title="Staff: Actions & Dialogs">
+
+        <DCArtboard id="a7" label="⑤ AssignTableDialog — Before" width={320} height={280}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <IssueTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Free-text UUID input</span>
+            </div>
+            <AssignTableBefore />
+            <Annotation type="issue">
+              <code style={{ fontFamily: "var(--ff-mono)" }}>AssignTableDialog</code> has a single <code style={{ fontFamily: "var(--ff-mono)"}}>{'<Input placeholder="Table ID" />'}</code>. Staff must know and type the UUID of a table. There is no list, no availability info, no capacity check.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a8" label="⑤ AssignTableDialog — After (interactive)" width={340} height={400}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <FixTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Room tabs + capacity-aware table picker</span>
+            </div>
+            <AssignTableAfter partySize={2} />
+            <Annotation type="fix">
+              Load tables from <code style={{ fontFamily: "var(--ff-mono)" }}>GET /staff/tables/</code> (already on <code style={{ fontFamily: "var(--ff-mono)" }}>Room</code> type). Group by room. Highlight tables too small for party. Disable occupied/reserved. Button label shows selected table name, not ID.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a9" label="⑥ StaffBookingActions — hierarchy" width={320} height={420}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <IssueTag />
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>All 4 actions look identical</span>
+              </div>
+              <StaffActionsBefore />
+            </div>
+            <Divider />
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <FixTag />
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>Primary / secondary / destructive (interactive)</span>
+              </div>
+              <StaffActionsAfter />
+            </div>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      {/* ── SECTION D: Mobile & Walk-ins ── */}
+      <DCSection id="s4" title="Mobile Navigation & Walk-ins">
+
+        <DCArtboard id="a10" label="⑦ ResponsiveShell — mobile nav gap" width={340} height={360}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <IssueTag />
+                <span style={{ fontSize: 12, fontWeight: 600 }}>Sidebar hidden on mobile — no fallback</span>
+              </div>
+              <MobileNavBefore />
+            </div>
+            <Annotation type="fix">
+              <code style={{ fontFamily: "var(--ff-mono)" }}>ResponsiveShell</code> returns <code style={{ fontFamily: "var(--ff-mono)" }}>{'<YStack flex={1}>{content}</YStack>'}</code> on mobile with no sidebar. Settings, Walk-ins unreachable. Add a bottom tab bar (Bookings / Walk-in / Settings) at <code style={{ fontFamily: "var(--ff-mono)" }}>{'media.ltMd'}</code>.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a11" label="⑦ ResponsiveShell — mobile fixed (interactive)" width={340} height={360}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <FixTag />
+              <span style={{ fontSize: 12, fontWeight: 600 }}>Bottom tab bar on small screens</span>
+            </div>
+            <MobileNavAfter />
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a12" label="⑧ Walk-in screen (interactive)" width={360} height={460}>
+          <div style={{ padding: 20, background: "#F5F4F1", height: "100%", display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <NoteTag />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)" }}>walkins.tsx is mostly empty — spec below</span>
+            </div>
+            <WalkInAfter />
+            <Annotation type="new">
+              Party size stepper (large tap targets) → available table quick-pick filtered by capacity → single "Seat guests" CTA. Name optional. Should POST to <code style={{ fontFamily: "var(--ff-mono)" }}>staffApi.createWalkin</code>. No date picker needed — always today/now.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TableSched — Settings UX Critique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F5F4F1;
+  --white: #FDFCFB;
+  --text: #1A1714;
+  --text2: #5C574F;
+  --text3: #9C958C;
+  --border: #E2DDD8;
+  --border2: #CEC8C0;
+  --red: #C13B2A;    --red-bg: #FCECEA;
+  --green: #2A7A4B;  --green-bg: #E8F5EE;
+  --amber: #B07020;  --amber-bg: #FDF3E3;
+  --blue: #2858A0;   --blue-bg: #EBF1FB;
+  --ff: 'Geist', system-ui, sans-serif;
+  --ffm: 'Geist Mono', monospace;
+}
+
+@page { size: A4 landscape; margin: 1cm; }
+
+html, body {
+  background: var(--bg);
+  font-family: var(--ff);
+  color: var(--text);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── page layout ── */
+.page {
+  width: 100%;
+  min-height: 180mm;
+  background: var(--white);
+  border-radius: 10px;
+  overflow: hidden;
+  break-before: page;
+  break-inside: avoid;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.page:first-child { break-before: auto; }
+
+/* cover page */
+.cover {
+  background: var(--text);
+  color: var(--white);
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160mm;
+}
+.cover-title  { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+.cover-sub    { font-size: 15px; color: #9C958C; margin-top: 8px; font-family: var(--ffm); }
+.cover-meta   { font-size: 12px; color: #9C958C; font-family: var(--ffm); margin-top: 40px; }
+.cover-issues { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.cover-issue  { padding: 6px 14px; border: 1px solid #3A3530; border-radius: 6px; font-size: 12px; color: #CEC8C0; }
+
+/* page header */
+.page-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--white);
+}
+.page-header-num  { font-size: 10px; font-weight: 700; font-family: var(--ffm); color: var(--text3); letter-spacing: 0.08em; }
+.page-header-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.page-header-sub  { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+/* two-column layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0; flex: 1; }
+.col     { padding: 20px 22px; }
+.col + .col { border-left: 1px solid var(--border); }
+
+/* one-column layout */
+.one-col { padding: 20px 24px; flex: 1; }
+
+/* section label */
+.section-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text3); font-family: var(--ffm); margin-bottom: 10px;
+}
+
+/* annotation boxes */
+.ann { display: flex; gap: 8px; padding: 9px 11px; border-radius: 6px; margin-top: 12px; }
+.ann-issue  { background: #FCECEA; border: 1px solid #C13B2A22; }
+.ann-fix    { background: #E8F5EE; border: 1px solid #2A7A4B22; }
+.ann-note   { background: #FDF3E3; border: 1px solid #B0702022; }
+.ann-new    { background: #EBF1FB; border: 1px solid #2858A022; }
+.ann-badge  { font-size: 9px; font-weight: 700; font-family: var(--ffm); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
+.ann-issue  .ann-badge { color: #C13B2A; }
+.ann-fix    .ann-badge { color: #2A7A4B; }
+.ann-note   .ann-badge { color: #B07020; }
+.ann-new    .ann-badge { color: #2858A0; }
+.ann-body   { font-size: 11px; line-height: 1.55; color: var(--text2); }
+
+/* tag chips */
+.tag { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--ffm); white-space: nowrap; }
+
+/* divider */
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* typography */
+h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+h4 { font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+p  { font-size: 12px; line-height: 1.6; color: var(--text2); }
+code { font-family: var(--ffm); font-size: 10px; background: var(--bg); padding: 1px 4px; border-radius: 3px; }
+strong { font-weight: 600; color: var(--text); }
+
+/* ── component mockups ── */
+
+/* toggle */
+.toggle { display: inline-flex; align-items: center; gap: 6px; }
+.toggle-track { width: 32px; height: 18px; border-radius: 9px; position: relative; flex-shrink: 0; }
+.toggle-track.on  { background: var(--text); }
+.toggle-track.off { background: var(--border2); }
+.toggle-knob { position: absolute; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #0003; }
+.toggle-track.on  .toggle-knob { left: 16px; }
+.toggle-track.off .toggle-knob { left: 2px; }
+.toggle-label { font-size: 12px; color: var(--text2); }
+
+/* hours grid */
+.hours-grid { display: grid; grid-template-columns: 60px 38px 1fr; gap: 0 8px; align-items: center; }
+.hours-day  { font-size: 13px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.hours-day.open { font-weight: 500; color: var(--text); }
+.hours-day.closed { color: var(--text3); }
+.hours-toggle-cell { padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+.hours-slots { padding: 5px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+.time-range { display: flex; align-items: center; gap: 5px; }
+.time-chip  { padding: 5px 8px; border: 1.5px solid var(--border); border-radius: 5px; font-size: 11px; font-family: var(--ffm); color: var(--text); background: var(--white); }
+.time-sep   { font-size: 11px; color: var(--text3); }
+.add-slot   { font-size: 10px; color: var(--blue); border: 1px dashed var(--border); border-radius: 4px; padding: 2px 7px; display: inline-block; margin-top: 3px; }
+.closed-label { font-size: 11px; color: var(--text3); font-style: italic; padding: 7px 0; }
+.remove-slot { width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text3); }
+
+/* segmented control */
+.seg-control { display: flex; background: var(--bg); border-radius: 7px; padding: 3px; gap: 2px; border: 1.5px solid var(--border); }
+.seg-option  { flex: 1; padding: 6px 4px; border-radius: 5px; font-size: 11px; text-align: center; color: var(--text3); }
+.seg-option.active { background: var(--white); color: var(--text); font-weight: 600; box-shadow: 0 1px 3px #1A171410; }
+
+/* deposit amount */
+.amount-field { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.amount-input { padding: 7px 10px 7px 22px; border: 1.5px solid var(--border); border-radius: 5px; font-size: 13px; font-family: var(--ffm); position: relative; display: inline-flex; align-items: center; }
+.amount-symbol { font-size: 12px; color: var(--text3); font-family: var(--ffm); }
+.amount-hint  { font-size: 11px; color: var(--text3); }
+.summary-box  { padding: 9px 11px; background: var(--blue-bg); border-radius: 5px; font-size: 11px; color: var(--blue); line-height: 1.6; margin-top: 8px; }
+
+/* stepper */
+.stepper { display: flex; align-items: center; gap: 8px; }
+.step-btn { width: 28px; height: 28px; border-radius: 5px; border: 1.5px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text2); }
+.step-val { font-size: 16px; font-weight: 700; font-family: var(--ffm); min-width: 20px; text-align: center; }
+.step-suffix { font-size: 11px; color: var(--text3); }
+
+/* cancellation chips */
+.preset-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.preset-chip  { padding: 6px 12px; border-radius: 5px; font-size: 11px; font-weight: 400; border: 1.5px solid var(--border); background: var(--white); color: var(--text2); }
+.preset-chip.active { background: var(--text); color: #fff; border-color: var(--text); font-weight: 600; }
+
+/* floor canvas */
+.floor-canvas { height: 160px; background: var(--bg); border-radius: 8px; position: relative; border: 1.5px solid var(--border); overflow: hidden; }
+.floor-table  { position: absolute; width: 80px; height: 54px; border-radius: 7px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid; }
+.floor-table-name { font-size: 12px; font-weight: 700; font-family: var(--ffm); }
+.floor-table-cap  { font-size: 9px; margin-top: 2px; }
+.floor-table.available { background: var(--white); border-color: #2A7A4B; color: var(--text); }
+.floor-table.occupied  { background: var(--white); border-color: #C13B2A; color: var(--text); }
+.floor-table.selected  { background: var(--text); border-color: var(--text); color: #fff; }
+.floor-inspector { margin-top: 8px; padding: 9px 12px; background: var(--white); border: 1.5px solid var(--border); border-radius: 7px; display: flex; align-items: center; justify-content: space-between; }
+.floor-toolbar   { margin-top: 6px; display: flex; gap: 6px; align-items: center; }
+.add-btn { padding: 5px 12px; border-radius: 5px; border: 1.5px solid var(--border); background: var(--white); font-size: 11px; color: var(--text2); font-weight: 500; }
+
+/* sidebar */
+.sidebar-wrap { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; height: 220px; }
+.sidebar { width: 180px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.sidebar-header { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.sidebar-name { font-size: 12px; font-weight: 700; }
+.sidebar-email { font-size: 10px; color: var(--text3); font-family: var(--ffm); margin-top: 1px; }
+.sidebar-nav { padding: 8px 6px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { padding: 8px 8px; border-radius: 6px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+.nav-item.active { background: var(--bg); font-weight: 600; }
+.nav-item-left { display: flex; align-items: center; gap: 6px; }
+.nav-icon { font-size: 12px; }
+.nav-badge { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 6px; font-family: var(--ffm); }
+.nav-badge.urgent { background: var(--red); color: #fff; }
+.nav-badge.normal { background: var(--border); color: var(--text3); }
+.sidebar-footer { padding: 8px 6px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); padding-left: 14px; }
+.sidebar-main { flex: 1; padding: 14px 16px; overflow: hidden; }
+
+/* settings screen mockup */
+.settings-tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 12px; }
+.settings-tab  { padding: 8px 10px; font-size: 11px; color: var(--text3); border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 4px; }
+.settings-tab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--text); }
+.dirty-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
+.save-bar  { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.save-btn  { padding: 8px 16px; border-radius: 6px; background: var(--text); color: #fff; font-size: 12px; font-weight: 600; border: none; }
+.saved-ok  { font-size: 11px; color: var(--green); font-weight: 600; }
+
+/* deposit before */
+.deposit-old-btn { padding: 10px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 6px; }
+.deposit-old-btn.active { background: var(--text); color: #fff; border: 1px solid var(--text); }
+.deposit-old-btn.inactive { background: var(--white); color: var(--text); border: 1px solid var(--border); }
+
+/* room tabs */
+.room-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.room-tab  { padding: 4px 10px; border-radius: 5px; font-size: 10px; font-weight: 600; border: 1.5px solid; }
+.room-tab.active   { background: var(--text); color: #fff; border-color: var(--text); }
+.room-tab.inactive { background: var(--white); color: var(--text2); border-color: var(--border); }
+.room-tab.add      { background: transparent; color: var(--text3); border-style: dashed; border-color: var(--border); }
+
+/* old hours */
+.old-hours-row { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.old-hours-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; }
+.old-hours-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.old-input-wrap { display: flex; flex-direction: column; gap: 3px; }
+.old-input-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); font-family: var(--ffm); }
+.old-input { padding: 6px 8px; border: 1.5px solid var(--border); border-radius: 5px; font-size: 12px; font-family: var(--ffm); color: var(--text); background: var(--white); }
+
+/* unsaved banner */
+.unsaved-banner { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--amber); }
+.unsaved-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); display: inline-block; }
+
+@media print {
+  .page { margin-bottom: 0; border-radius: 0; box-shadow: none; }
+  body  { background: var(--white); }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PAGE 0: COVER ══════════════════════════════════════════════ -->
+<div class="page cover">
+  <div>
+    <div class="cover-title">Settings UX Critique</div>
+    <div class="cover-sub">TableSched · Staff Dashboard · May 2026</div>
+    <div class="cover-issues">
+      <span class="cover-issue">① SettingsScreen architecture</span>
+      <span class="cover-issue">② OpeningHoursEditor</span>
+      <span class="cover-issue">③ DepositPolicyEditor + amount</span>
+      <span class="cover-issue">④ cancellation_cutoff_hours missing</span>
+      <span class="cover-issue">⑤ FloorCanvas</span>
+      <span class="cover-issue">⑥ DashboardSidebar</span>
+    </div>
+  </div>
+  <div class="cover-meta">6 issues · Before / After · Implementation notes · Expo + React Native Web + Tamagui</div>
+</div>
+
+<!-- ══ PAGE 1: SettingsScreen Architecture ══════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">01</span>
+    <span class="page-header-title">SettingsScreen — Architecture</span>
+    <span class="page-header-sub">Single draft + single Save → Split tabs with scoped saves</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">⚠ Before</div>
+      <!-- mockup: old settings screen -->
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;">Settings</div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:10px;background:var(--bg);border-radius:6px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:4px;">Opening hours</div>
+            <div style="font-size:10px;color:var(--text3);">Mon–Fri 09:00–22:00, Sat 09:00–23:00</div>
+          </div>
+          <div style="padding:10px;background:var(--bg);border-radius:6px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:4px;">Deposit policy</div>
+            <div style="font-size:10px;color:var(--text3);">Never</div>
+          </div>
+          <div style="padding:10px;background:var(--bg);border-radius:6px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:4px;">Floor plan</div>
+            <div style="font-size:10px;color:var(--text3);">3 rooms · 14 tables</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:10px;">
+            <div style="padding:10px;border-radius:6px;background:var(--border);text-align:center;font-size:12px;font-weight:600;color:var(--text3);">Save changes</div>
+            <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:4px;">No changes to save</div>
+          </div>
+        </div>
+      </div>
+      <div class="ann ann-issue">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body">One <code>draft</code> object covers both opening hours and deposit policy. A staff member editing hours then saving silently saves or discards deposit changes too. No per-section dirty indicator. No unsaved-changes warning on navigation. <code>cancellation_cutoff_hours</code> not editable at all.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">✓ After</div>
+      <!-- mockup: new settings screen with tabs -->
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;">Settings</span>
+          <span class="unsaved-banner"><span class="unsaved-dot"></span> Unsaved changes</span>
+        </div>
+        <div class="settings-tabs">
+          <div class="settings-tab active">Hours <span class="dirty-dot"></span></div>
+          <div class="settings-tab">Deposit</div>
+          <div class="settings-tab">Cancellation</div>
+          <div class="settings-tab">Floor plan</div>
+        </div>
+        <div style="padding:14px 16px;min-height:80px;">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Opening hours editor (active tab)</div>
+          <div style="height:50px;background:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:11px;color:var(--text3);">Hours editor content…</span>
+          </div>
+        </div>
+        <div class="save-bar">
+          <div class="save-btn">Save opening hours</div>
+          <span class="saved-ok"></span>
+        </div>
+      </div>
+      <div class="ann ann-fix">
+        <span class="ann-badge">✓ Fix</span>
+        <span class="ann-body">Split into 4 sub-routes: <code>/settings/hours</code>, <code>/settings/deposit</code>, <code>/settings/cancellation</code>, <code>/settings/floor</code>. Each has a scoped Save button ("Save opening hours"). Amber dot on tab = unsaved. Global banner when any tab is dirty. Use Expo Router nested tabs — deep-link + back-button for free.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 2: OpeningHoursEditor ══════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">02</span>
+    <span class="page-header-title">OpeningHoursEditor</span>
+    <span class="page-header-sub">Free-text inputs + single slot per day → select dropdowns + multi-slot</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">⚠ Before — free text, one slot per day</div>
+      <!-- old hours editor mockup -->
+      <div>
+        <div class="old-hours-row">
+          <div class="old-hours-head">
+            <span style="font-size:12px;">Monday</span>
+            <div class="toggle"><div class="toggle-track on"><div class="toggle-knob"></div></div></div>
+          </div>
+          <div class="old-hours-inputs">
+            <div class="old-input-wrap"><div class="old-input-label">Open</div><div class="old-input">09:00</div></div>
+            <div class="old-input-wrap"><div class="old-input-label">Close</div><div class="old-input">22:00</div></div>
+          </div>
+        </div>
+        <div class="old-hours-row">
+          <div class="old-hours-head">
+            <span style="font-size:12px;">Tuesday</span>
+            <div class="toggle"><div class="toggle-track on"><div class="toggle-knob"></div></div></div>
+          </div>
+          <div class="old-hours-inputs">
+            <div class="old-input-wrap"><div class="old-input-label">Open</div><div class="old-input">09:00</div></div>
+            <div class="old-input-wrap"><div class="old-input-label">Close</div><div class="old-input">22:00</div></div>
+          </div>
+        </div>
+        <div class="old-hours-row">
+          <div class="old-hours-head">
+            <span style="font-size:12px;color:var(--text3);">Sunday</span>
+            <div class="toggle"><div class="toggle-track off"><div class="toggle-knob"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ann ann-issue">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body">7 × 3 controls stacked vertically. Times are free-text — "9am", "900", "9:00" all accepted, all break <code>HH:MM</code> validation. <strong>One slot per day only</strong> — a restaurant open for lunch AND dinner cannot express both. <code>OpeningHour</code> type supports multiple records per weekday; the editor does not.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">✓ After — select dropdowns, up to 2 slots per day</div>
+      <!-- new hours editor mockup -->
+      <div class="hours-grid">
+        <!-- Mon: 2 slots -->
+        <div class="hours-day open">Mon</div>
+        <div class="hours-toggle-cell"><div class="toggle"><div class="toggle-track on"><div class="toggle-knob"></div></div></div></div>
+        <div class="hours-slots">
+          <div class="time-range"><span class="time-chip">12:00</span><span class="time-sep">–</span><span class="time-chip">14:30</span><span class="remove-slot">×</span></div>
+          <div class="time-range"><span class="time-chip">19:00</span><span class="time-sep">–</span><span class="time-chip">22:00</span><span class="remove-slot">×</span></div>
+        </div>
+        <!-- Tue: 2 slots -->
+        <div class="hours-day open">Tue</div>
+        <div class="hours-toggle-cell"><div class="toggle"><div class="toggle-track on"><div class="toggle-knob"></div></div></div></div>
+        <div class="hours-slots">
+          <div class="time-range"><span class="time-chip">12:00</span><span class="time-sep">–</span><span class="time-chip">14:30</span><span class="remove-slot">×</span></div>
+          <div class="time-range"><span class="time-chip">19:00</span><span class="time-sep">–</span><span class="time-chip">22:00</span><span class="remove-slot">×</span></div>
+        </div>
+        <!-- Wed: 1 slot + add -->
+        <div class="hours-day open">Wed</div>
+        <div class="hours-toggle-cell"><div class="toggle"><div class="toggle-track on"><div class="toggle-knob"></div></div></div></div>
+        <div class="hours-slots">
+          <div class="time-range"><span class="time-chip">19:00</span><span class="time-sep">–</span><span class="time-chip">22:00</span></div>
+          <span class="add-slot">+ Add slot</span>
+        </div>
+        <!-- Sun: closed -->
+        <div class="hours-day closed">Sun</div>
+        <div class="hours-toggle-cell"><div class="toggle"><div class="toggle-track off"><div class="toggle-knob"></div></div></div></div>
+        <div class="hours-slots"><div class="closed-label">Closed</div></div>
+        <!-- Sat: closed -->
+        <div class="hours-day closed">Sat</div>
+        <div class="hours-toggle-cell"><div class="toggle"><div class="toggle-track off"><div class="toggle-knob"></div></div></div></div>
+        <div class="hours-slots"><div class="closed-label">Closed</div></div>
+      </div>
+      <div class="ann ann-fix">
+        <span class="ann-badge">✓ Fix</span>
+        <span class="ann-body">3-column grid (day / toggle / slots). Times are <code>&lt;select&gt;</code> at 30-min intervals — no free text, no validation needed. Each day supports up to 2 slots; "+" adds, "×" removes. Serialises as multiple <code>OpeningHour</code> records per <code>weekday</code> — <strong>no type change required</strong>.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3: DepositPolicyEditor ════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">03</span>
+    <span class="page-header-title">DepositPolicyEditor</span>
+    <span class="page-header-sub">AppButton stack → segmented control + amount field</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">⚠ Before</div>
+      <div>
+        <div class="deposit-old-btn active">Always</div>
+        <div class="deposit-old-btn inactive">Never</div>
+        <div class="deposit-old-btn inactive">By party size</div>
+      </div>
+      <div class="ann ann-issue">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body">Three full-height <code>AppButton</code> primary-styled buttons — looks like 3 actions, not a single-select setting. No amount field anywhere. <code>DepositPolicy</code> type has no <code>amount_cents</code> — staff can enable deposits but cannot set what to charge.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">✓ After — segmented control + amount</div>
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">When is a deposit required from guests?</div>
+        <div class="seg-control">
+          <div class="seg-option">Never</div>
+          <div class="seg-option active">Always</div>
+          <div class="seg-option">By party size</div>
+        </div>
+        <div style="margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:5px;font-size:11px;color:var(--text2);">
+          All bookings require a deposit before confirmation.
+        </div>
+        <div style="margin-top:12px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);font-family:var(--ffm);margin-bottom:6px;">Deposit amount</div>
+          <div class="amount-field">
+            <div style="position:relative;display:inline-flex;align-items:center;">
+              <span style="position:absolute;left:8px;font-size:12px;color:var(--text3);font-family:var(--ffm);">€</span>
+              <div style="padding:7px 10px 7px 22px;border:1.5px solid var(--border);border-radius:5px;font-size:13px;font-family:var(--ffm);min-width:90px;">20.00</div>
+            </div>
+            <span class="amount-hint">= €20.00 per booking</span>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Stored as integer cents. Add <code>amount_cents: number</code> to <code>DepositPolicy</code> type.</div>
+        </div>
+        <div class="summary-box">Every booking requires a <strong>€20.00</strong> deposit before confirmation.</div>
+      </div>
+      <div class="ann ann-fix">
+        <span class="ann-badge">✓ Fix</span>
+        <span class="ann-body">Pill segmented control (one setting, not three buttons). Amount field appears for <code>always</code> and <code>by_party_size</code>. Decimal input → <code>Math.round(value × 100)</code> → integer cents on wire. Currency symbol from <code>RestaurantSettings.currency</code>. Live summary shows exact policy in plain language.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 4: Cancellation + Type changes ════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">04</span>
+    <span class="page-header-title">Cancellation cutoff + Required type changes</span>
+    <span class="page-header-sub">Missing editor + DepositPolicy type update</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">④ cancellation_cutoff_hours — missing from UI</div>
+      <div class="ann ann-issue" style="margin-top:0;">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body"><code>RestaurantSettings.cancellation_cutoff_hours</code> exists in the API type and backend, but <code>SettingsScreen</code> never renders an editor. Staff cannot configure the guest cancellation window from the app.</span>
+      </div>
+      <div style="margin-top:14px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;">Cancellation window</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">How far in advance can guests cancel?</div>
+        <div class="preset-chips">
+          <div class="preset-chip">Any time</div>
+          <div class="preset-chip">2 h</div>
+          <div class="preset-chip">6 h</div>
+          <div class="preset-chip">12 h</div>
+          <div class="preset-chip active">24 h</div>
+          <div class="preset-chip">48 h</div>
+          <div class="preset-chip">72 h</div>
+        </div>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:5px;font-size:11px;color:var(--text2);line-height:1.6;">
+          Guests can cancel up to <strong>24 hours before</strong> their reservation. After that, cancellations require staff action.
+        </div>
+      </div>
+      <div class="ann ann-new" style="margin-top:10px;">
+        <span class="ann-badge">+ New</span>
+        <span class="ann-body">Preset chips — no keyboard needed. Add <code>cancellation_cutoff_hours</code> to the settings <code>draft</code> and <code>updateDraft</code> call. Add i18n keys: <code>staff.settings.cancellationCutoff</code>, <code>staff.settings.cancellationDesc</code> to all 3 locales.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">Required type changes</div>
+      <!-- type diff -->
+      <div style="background:#1A1714;border-radius:8px;padding:14px 16px;font-family:var(--ffm);font-size:11px;line-height:1.8;">
+        <div style="color:#9C958C;margin-bottom:6px;">// lib/api/types.ts</div>
+        <div style="color:#E2DDD8;">export type DepositPolicy = {"{"}</div>
+        <div style="color:#E2DDD8;padding-left:16px;">mode: <span style="color:#2A9D5C;">'never'</span> | <span style="color:#2A9D5C;">'always'</span> | <span style="color:#2A9D5C;">'by_party_size'</span>;</div>
+        <div style="color:#E2DDD8;padding-left:16px;">min_party_size?: number | null;</div>
+        <div style="color:#4CAF7D;padding-left:16px;">amount_cents?: number | null;  <span style="color:#5C7A5C;">// ← add</span></div>
+        <div style="color:#E2DDD8;">{"}"};</div>
+        <div style="height:10px;"></div>
+        <div style="color:#9C958C;">// No change to OpeningHour —</div>
+        <div style="color:#9C958C;">// multiple records per weekday</div>
+        <div style="color:#9C958C;">// already supported by the API.</div>
+        <div style="height:10px;"></div>
+        <div style="color:#9C958C;">// New i18n keys needed (en/it/de):</div>
+        <div style="color:#4CAF7D;">// staff.settings.cancellationCutoff</div>
+        <div style="color:#4CAF7D;">// staff.settings.cancellationDesc</div>
+        <div style="color:#4CAF7D;">// staff.settings.depositAmount</div>
+        <div style="color:#4CAF7D;">// staff.settings.depositSummaryAlways</div>
+        <div style="color:#4CAF7D;">// staff.settings.depositSummaryBySize</div>
+        <div style="color:#4CAF7D;">// staff.settings.addSlot</div>
+        <div style="color:#4CAF7D;">// staff.settings.removeSlot</div>
+      </div>
+      <div class="ann ann-note" style="margin-top:10px;">
+        <span class="ann-badge">○ Note</span>
+        <span class="ann-body"><code>PartySizeSelector</code> has <code>label = 'Party size'</code> as a JS default — hardcoded string, violates i18n constraint. Default should be <code>t('booking.datetime.party_size')</code> and key added to all locales.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 5: FloorCanvas ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">05</span>
+    <span class="page-header-title">FloorCanvas</span>
+    <span class="page-header-sub">No empty state, no table management, hardcoded colour</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">⚠ Before</div>
+      <div style="height:150px;background:#f3f4f6;border-radius:10px;position:relative;overflow:hidden;">
+        <div class="floor-table available" style="left:16px;top:16px;"><div class="floor-table-name">T1</div><div class="floor-table-cap" style="color:#2A7A4B;">2 seats</div></div>
+        <div class="floor-table occupied" style="left:120px;top:16px;background:#111827;border-color:#111827;"><div class="floor-table-name" style="color:#fff;">T2</div><div class="floor-table-cap" style="color:#ffffff88;">4 seats</div></div>
+        <div class="floor-table available" style="left:16px;top:90px;"><div class="floor-table-name">T3</div><div class="floor-table-cap" style="color:#2A7A4B;">4 seats</div></div>
+      </div>
+      <div class="ann ann-issue">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body">No empty state when a room has no tables. No add/delete controls — drag-position only. <code>DraggableTable</code> has hardcoded <code>backgroundColor: '#111827'</code> — not a theme token. Tables can be dragged outside canvas bounds. No grid snap reference.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">✓ After</div>
+      <div class="room-tabs">
+        <div class="room-tab active">Main</div>
+        <div class="room-tab inactive">Terrace</div>
+        <div class="room-tab inactive">Bar</div>
+        <div class="room-tab add">+ Room</div>
+      </div>
+      <div class="floor-canvas">
+        <!-- dot grid via SVG -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.4;" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="dotp" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#CEC8C0"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#dotp)"/>
+        </svg>
+        <div class="floor-table available" style="left:14px;top:14px;"><div class="floor-table-name">T1</div><div class="floor-table-cap" style="color:#2A7A4B;">2 seats</div></div>
+        <div class="floor-table selected" style="left:118px;top:14px;"><div class="floor-table-name" style="color:#fff;">T2</div><div class="floor-table-cap" style="color:#ffffff88;">4 seats</div></div>
+        <div class="floor-table available" style="left:14px;top:90px;"><div class="floor-table-name">T3</div><div class="floor-table-cap" style="color:#2A7A4B;">4 seats</div></div>
+      </div>
+      <div class="floor-inspector">
+        <div>
+          <div style="font-size:11px;font-weight:600;margin-bottom:4px;">T2 — selected</div>
+          <div class="stepper"><div class="step-btn">−</div><span class="step-val">4</span><div class="step-btn">+</div><span class="step-suffix">seats</span></div>
+        </div>
+        <div style="padding:5px 10px;border-radius:5px;background:var(--red-bg);color:var(--red);font-size:10px;font-weight:600;">Delete</div>
+      </div>
+      <div class="floor-toolbar">
+        <div class="add-btn">+ Add table</div>
+        <span style="font-size:10px;color:var(--text3);">Click to select · drag to position</span>
+      </div>
+      <div class="ann ann-fix">
+        <span class="ann-badge">✓ Fix</span>
+        <span class="ann-body">Dot-grid background (snap reference). Click-to-select reveals inline inspector (capacity stepper + delete). Empty state with "Add table" CTA. Room tabs + "+ Room". Table colours from status token map, not hardcoded. Add/delete → <code>staffApi.createTable</code> / <code>deleteTable</code>.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 6: DashboardSidebar ════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-num">06</span>
+    <span class="page-header-title">DashboardSidebar</span>
+    <span class="page-header-sub">Bordered-box nav + fragile active token → ghost nav + context + sign-out</span>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="section-label">⚠ Before</div>
+      <div class="sidebar-wrap">
+        <div class="sidebar">
+          <div class="sidebar-nav" style="padding-top:16px;">
+            <div class="nav-item" style="border:1px solid var(--border);margin-bottom:4px;border-radius:6px;">Bookings</div>
+            <div class="nav-item active" style="border:1px solid var(--border2);margin-bottom:4px;border-radius:6px;background:#F0EDE8;">Settings</div>
+            <div class="nav-item" style="border:1px solid var(--border);border-radius:6px;">Walk-ins</div>
+          </div>
+          <div style="padding:10px 14px;font-size:10px;color:var(--red);line-height:1.5;">All items bordered. Active = $color5 — theme fragile. No restaurant name. No sign-out.</div>
+        </div>
+        <div class="sidebar-main" style="font-size:11px;color:var(--text3);">Content area</div>
+      </div>
+      <div class="ann ann-issue">
+        <span class="ann-badge">⚠ Issue</span>
+        <span class="ann-body">Nav items are bordered boxes — looks like a button list, not a nav rail. Active state uses <code>backgroundColor="$color5"</code> / <code>borderColor="$color10"</code> — resolves differently per Tamagui theme, breaks in dark mode. No restaurant name, no user, no sign-out.</span>
+      </div>
+    </div>
+    <div class="col">
+      <div class="section-label">✓ After</div>
+      <div class="sidebar-wrap">
+        <div class="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-name">Osteria del Sole</div>
+            <div class="sidebar-email">staff@osteria.com</div>
+          </div>
+          <div class="sidebar-nav">
+            <div class="nav-item" style="color:var(--text2);">
+              <div class="nav-item-left"><span class="nav-icon" style="opacity:0.5;">≡</span> Bookings</div>
+              <span class="nav-badge urgent">4</span>
+            </div>
+            <div class="nav-item active">
+              <div class="nav-item-left"><span class="nav-icon">⚙</span> Settings</div>
+            </div>
+            <div class="nav-item" style="color:var(--text2);">
+              <div class="nav-item-left"><span class="nav-icon" style="opacity:0.5;">+</span> Walk-ins</div>
+            </div>
+          </div>
+          <div class="sidebar-footer">← Sign out</div>
+        </div>
+        <div class="sidebar-main" style="font-size:11px;color:var(--text3);">Content area</div>
+      </div>
+      <div class="ann ann-fix">
+        <span class="ann-badge">✓ Fix</span>
+        <span class="ann-body">Ghost items with <code>background: $color3</code> fill on active — no border on any item. Restaurant name + staff email in header. Sign-out pinned to bottom. Pending count badge on Bookings (red = urgent). On mobile (<code>media.ltMd</code>) becomes a bottom tab bar.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-print after fonts + layout settle
+  document.fonts.ready.then(() => {
+    setTimeout(() => window.print(), 500);
+  });
+</script>
+</body>
+</html>

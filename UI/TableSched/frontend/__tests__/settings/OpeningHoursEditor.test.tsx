@@ -8,12 +8,6 @@
  * - multi-slot serialisation (two records for same weekday)
  */
 
-jest.mock('tamagui', () => {
-  const React = require('react');
-  const { Text, View } = require('react-native');
-  return { Text, XStack: View, YStack: View };
-});
-
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) =>
@@ -83,7 +77,7 @@ test('pressing Add slot appends a second slot for the same day', () => {
     />,
   );
 
-  fireEvent.press(screen.getByRole('button', { name: 'Add slot' }));
+  fireEvent.press(screen.getByAccessibilityLabel('Add slot'));
 
   expect(onChange).toHaveBeenCalledWith([
     expect.objectContaining({ weekday: 1, opens_at: '12:00', closes_at: '14:30' }),
@@ -104,7 +98,7 @@ test('pressing Remove slot removes the correct slot, keeps the other', () => {
   );
 
   // two Remove slot buttons rendered for Monday; press the first (lunch)
-  const removeBtns = screen.getAllByRole('button', { name: 'Remove slot' });
+  const removeBtns = screen.getAllByAccessibilityLabel('Remove slot');
   fireEvent.press(removeBtns[0]);
 
   expect(onChange).toHaveBeenCalledWith([
@@ -123,7 +117,7 @@ test('Add slot button is hidden when day already has 2 slots', () => {
     />,
   );
 
-  expect(screen.queryByRole('button', { name: 'Add slot' })).toBeNull();
+  expect(screen.queryByAccessibilityLabel('Add slot')).toBeNull();
 });
 
 // ─── patch tests ──────────────────────────────────────────────────────────────

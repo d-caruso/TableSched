@@ -1,4 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  row: { flexDirection: 'row', gap: 8 },
+});
 import { useTranslation } from 'react-i18next';
 import '@/lib/i18n';
 
@@ -15,7 +19,7 @@ export function LocaleSelector({ value, onChange }: LocaleSelectorProps) {
   return (
     <View>
       <Text>{t('booking.contact.locale')}</Text>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={styles.row}>
         {locales.map((locale) => (
           <Pressable key={locale} accessibilityRole="button" onPress={() => onChange(locale)}>
             <Text>{t(`booking.locales.${locale}`)}</Text>

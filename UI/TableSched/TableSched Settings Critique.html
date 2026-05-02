@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TableSched — Settings UX Critique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F5F4F1;
+  --white: #FDFCFB;
+  --text: #1A1714;
+  --text2: #5C574F;
+  --text3: #9C958C;
+  --border: #E2DDD8;
+  --border2: #CEC8C0;
+  --red: #C13B2A;    --red-bg: #FCECEA;
+  --green: #2A7A4B;  --green-bg: #E8F5EE;
+  --amber: #B07020;  --amber-bg: #FDF3E3;
+  --blue: #2858A0;   --blue-bg: #EBF1FB;
+  --ff: 'Geist', system-ui, sans-serif;
+  --ffm: 'Geist Mono', monospace;
+}
+html, body { height: 100%; background: var(--bg); font-family: var(--ff); color: var(--text); }
+#root { height: 100%; }
+button { font-family: var(--ff); cursor: pointer; }
+input, select, textarea { font-family: var(--ff); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+/* ─── tiny primitives ─── */
+const ff = "var(--ff)", ffm = "var(--ffm)";
+
+const Label = ({ children, required }) => (
+  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--text3)", fontFamily: ffm, marginBottom: 5 }}>
+    {children}{required && <span style={{ color: "var(--red)", marginLeft: 2 }}>*</span>}
+  </div>
+);
+
+const Annotation = ({ type = "issue", children }) => {
+  const map = { issue: ["#C13B2A","#FCECEA"], fix: ["#2A7A4B","#E8F5EE"], note: ["#B07020","#FDF3E3"], new: ["#2858A0","#EBF1FB"] };
+  const [color, bg] = map[type];
+  const icons = { issue: "⚠", fix: "✓", note: "○", new: "+" };
+  return (
+    <div style={{ display:"flex", gap:8, padding:"10px 12px", background:bg, borderRadius:6, border:`1px solid ${color}22`, marginTop:10 }}>
+      <span style={{ fontSize:10, fontWeight:700, color, fontFamily:ffm, letterSpacing:"0.06em", textTransform:"uppercase", marginTop:1, flexShrink:0 }}>
+        {icons[type]} {type === "new" ? "new" : type}
+      </span>
+      <span style={{ fontSize:12, lineHeight:1.55, color:"var(--text2)" }}>{children}</span>
+    </div>
+  );
+};
+
+const SectionHead = ({ children, sub }) => (
+  <div style={{ marginBottom: 14 }}>
+    <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{children}</div>
+    {sub && <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+
+const Divider = ({ label }) => (
+  <div style={{ display:"flex", alignItems:"center", gap:10, margin:"16px 0" }}>
+    {label && <span style={{ fontSize:10, fontWeight:700, letterSpacing:"0.07em", textTransform:"uppercase", color:"var(--text3)", fontFamily:ffm, whiteSpace:"nowrap" }}>{label}</span>}
+    <div style={{ flex:1, height:1, background:"var(--border)" }} />
+  </div>
+);
+
+/* ─── small reusable UI ─── */
+const TextInput = ({ value, onChange, placeholder, mono, small, style={} }) => (
+  <input value={value} onChange={e => onChange?.(e.target.value)} placeholder={placeholder}
+    style={{ padding: small ? "6px 9px" : "9px 11px", border:"1.5px solid var(--border)", borderRadius:6,
+      fontSize: small ? 12 : 13, fontFamily: mono ? ffm : ff, color:"var(--text)",
+      background:"var(--white)", outline:"none", width:"100%", ...style }}
+    onFocus={e=>e.target.style.borderColor="#1A1714"}
+    onBlur={e=>e.target.style.borderColor="var(--border)"} />
+);
+
+const Toggle = ({ on, onChange, label }) => (
+  <button onClick={() => onChange(!on)} style={{
+    display:"flex", alignItems:"center", gap:0, background:"none", border:"none", cursor:"pointer", padding:0
+  }}>
+    <div style={{
+      width:36, height:20, borderRadius:10, background: on ? "#1A1714" : "#D0CBC3",
+      position:"relative", transition:"background 0.15s", flexShrink:0
+    }}>
+      <div style={{
+        position:"absolute", top:2, left: on ? 18 : 2, width:16, height:16, borderRadius:"50%",
+        background:"#fff", transition:"left 0.15s", boxShadow:"0 1px 3px #0003"
+      }} />
+    </div>
+    {label && <span style={{ marginLeft:8, fontSize:12, color:"var(--text2)" }}>{label}</span>}
+  </button>
+);
+
+/* ══════════════════════════════════════════════════
+   ISSUE A — OpeningHoursEditor: free-text time, vertical stack
+   ══════════════════════════════════════════════════ */
+
+const DAYS_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAYS_FULL  = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+const OpeningHoursBefore = () => {
+  const [hours, setHours] = useState([
+    { weekday:1, opens_at:"09:00", closes_at:"22:00" },
+    { weekday:2, opens_at:"09:00", closes_at:"22:00" },
+    { weekday:3, opens_at:"09:00", closes_at:"22:00" },
+    { weekday:4, opens_at:"09:00", closes_at:"22:00" },
+    { weekday:5, opens_at:"09:00", closes_at:"23:00" },
+  ]);
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      <div style={{ fontSize:13, fontWeight:600, marginBottom:10 }}>Opening hours</div>
+      {[0,1,2,3,4,5,6].map(day => {
+        const entry = hours.find(h => h.weekday === day);
+        const isOpen = Boolean(entry);
+        return (
+          <div key={day} style={{ marginBottom:10, paddingBottom:10, borderBottom:"1px solid var(--border)" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:6 }}>
+              <span style={{ fontSize:13 }}>{DAYS_FULL[day]}</span>
+              <Toggle on={isOpen} onChange={on => {
+                if (!on) setHours(h => h.filter(x => x.weekday !== day));
+                else setHours(h => [...h, { weekday:day, opens_at:"09:00", closes_at:"22:00" }]);
+              }} />
+            </div>
+            {isOpen && (
+              <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                <div>
+                  <Label>Open</Label>
+                  <TextInput value={entry.opens_at} onChange={v => setHours(h => h.map(x => x.weekday===day ? {...x, opens_at:v} : x))} mono />
+                </div>
+                <div>
+                  <Label>Close</Label>
+                  <TextInput value={entry.closes_at} onChange={v => setHours(h => h.map(x => x.weekday===day ? {...x, closes_at:v} : x))} mono />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <div style={{ marginTop:6, fontSize:11, color:"var(--red)" }}>
+        Time is free-text — "9am", "9", "900" all accepted without validation.
+      </div>
+    </div>
+  );
+};
+
+/* time options: every 30 min */
+const TIME_OPTS = [];
+for (let m = 0; m < 24*60; m += 30) {
+  const h = String(Math.floor(m/60)).padStart(2,"0");
+  const min = String(m%60).padStart(2,"0");
+  TIME_OPTS.push(`${h}:${min}`);
+}
+
+const TimeSelect = ({ value, onChange }) => (
+  <select value={value} onChange={e => onChange(e.target.value)} style={{
+    padding:"7px 8px", border:"1.5px solid var(--border)", borderRadius:6,
+    fontSize:12, fontFamily:ffm, color:"var(--text)", background:"var(--white)",
+    appearance:"none", outline:"none", cursor:"pointer", minWidth:72,
+  }}>
+    {TIME_OPTS.map(t => <option key={t} value={t}>{t}</option>)}
+  </select>
+);
+
+/*
+  OpeningHour = { weekday, opens_at, closes_at }
+  Multiple slots per day = multiple records with same weekday.
+  Internal state: Record<weekday, { opens_at, closes_at }[]>
+*/
+const DEFAULT_SLOTS = { opens_at:"09:00", closes_at:"22:00" };
+const LUNCH_SLOT    = { opens_at:"12:00", closes_at:"14:30" };
+const DINNER_SLOT   = { opens_at:"19:00", closes_at:"22:00" };
+
+const OpeningHoursAfter = () => {
+  // state: Map of weekday → slot[]
+  const [slotMap, setSlotMap] = useState({
+    1: [{ opens_at:"12:00", closes_at:"14:30" }, { opens_at:"19:00", closes_at:"22:00" }],
+    2: [{ opens_at:"12:00", closes_at:"14:30" }, { opens_at:"19:00", closes_at:"22:00" }],
+    3: [{ opens_at:"12:00", closes_at:"14:30" }, { opens_at:"19:00", closes_at:"22:00" }],
+    4: [{ opens_at:"12:00", closes_at:"14:30" }, { opens_at:"19:00", closes_at:"22:00" }],
+    5: [{ opens_at:"12:00", closes_at:"14:30" }, { opens_at:"19:00", closes_at:"23:00" }],
+    6: [{ opens_at:"19:00", closes_at:"23:00" }],
+  });
+
+  const isOpen = (day) => Boolean(slotMap[day]?.length);
+
+  const toggleDay = (day, on) => {
+    setSlotMap(m => {
+      const next = {...m};
+      if (!on) { delete next[day]; }
+      else { next[day] = [{ ...DEFAULT_SLOTS }]; }
+      return next;
+    });
+  };
+
+  const addSlot = (day) => {
+    setSlotMap(m => ({
+      ...m,
+      [day]: [...(m[day] ?? []), { opens_at:"19:00", closes_at:"22:00" }],
+    }));
+  };
+
+  const removeSlot = (day, idx) => {
+    setSlotMap(m => {
+      const slots = m[day].filter((_,i) => i !== idx);
+      const next = {...m};
+      if (slots.length === 0) delete next[day];
+      else next[day] = slots;
+      return next;
+    });
+  };
+
+  const patchSlot = (day, idx, field, val) => {
+    setSlotMap(m => ({
+      ...m,
+      [day]: m[day].map((s,i) => i===idx ? {...s, [field]:val} : s),
+    }));
+  };
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      <div style={{ fontSize:13, fontWeight:700, marginBottom:12 }}>Opening hours</div>
+
+      <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
+        {[0,1,2,3,4,5,6].map(day => {
+          const open = isOpen(day);
+          const slots = slotMap[day] ?? [];
+          return (
+            <div key={day} style={{
+              display:"grid",
+              /* mobile-first: day+toggle full width, slots below */
+              gridTemplateColumns:"64px 40px 1fr",
+              gridTemplateRows:"auto",
+              alignItems:"start",
+              gap:"0 8px",
+              padding:"8px 0",
+              borderBottom:"1px solid var(--border)",
+            }}>
+              {/* Day label */}
+              <div style={{
+                fontSize:13, fontWeight: open ? 500 : 400,
+                color: open ? "var(--text)" : "var(--text3)",
+                paddingTop:8, gridColumn:1,
+              }}>
+                {DAYS_SHORT[day]}
+              </div>
+
+              {/* Toggle */}
+              <div style={{ paddingTop:7, gridColumn:2 }}>
+                <Toggle on={open} onChange={on => toggleDay(day, on)} />
+              </div>
+
+              {/* Slots column */}
+              <div style={{ gridColumn:3, display:"flex", flexDirection:"column", gap:4 }}>
+                {!open && (
+                  <div style={{ fontSize:12, color:"var(--text3)", fontStyle:"italic", padding:"7px 0" }}>Closed</div>
+                )}
+                {slots.map((slot, idx) => (
+                  <div key={idx} style={{ display:"flex", alignItems:"center", gap:5, flexWrap:"wrap" }}>
+                    <TimeSelect value={slot.opens_at}  onChange={v => patchSlot(day, idx, "opens_at",  v)} />
+                    <span style={{ fontSize:11, color:"var(--text3)" }}>–</span>
+                    <TimeSelect value={slot.closes_at} onChange={v => patchSlot(day, idx, "closes_at", v)} />
+                    {slots.length > 1 && (
+                      <button onClick={() => removeSlot(day, idx)} title="Remove slot" style={{
+                        width:22, height:22, borderRadius:4, border:"1.5px solid var(--border)",
+                        background:"var(--white)", color:"var(--text3)", fontSize:14, lineHeight:1,
+                        cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0,
+                      }}>×</button>
+                    )}
+                  </div>
+                ))}
+                {/* Add second slot — only if open and < 2 slots */}
+                {open && slots.length < 2 && (
+                  <button onClick={() => addSlot(day)} style={{
+                    alignSelf:"flex-start", marginTop:2,
+                    fontSize:11, color:"var(--blue)", background:"none",
+                    border:"1px dashed var(--border)", borderRadius:5,
+                    padding:"3px 8px", cursor:"pointer",
+                  }}>+ Add slot</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* serialisation note */}
+      <div style={{ marginTop:10, fontSize:11, color:"var(--text3)", lineHeight:1.6, padding:"8px 10px", background:"var(--bg)", borderRadius:6 }}>
+        Serialises as multiple <code style={{fontFamily:ffm}}>OpeningHour</code> records per day — no type change needed.<br/>
+        e.g. Mon lunch + dinner → <code style={{fontFamily:ffm}}>[{"{"}weekday:1,opens_at:"12:00",closes_at:"14:30"{"}"}, {"{"}weekday:1,opens_at:"19:00",closes_at:"22:00"{"}"}]</code>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   ISSUE B — DepositPolicyEditor: AppButton as segmented control
+   ══════════════════════════════════════════════════ */
+
+const DepositBefore = () => {
+  const [mode, setMode] = useState("never");
+  const [minParty, setMinParty] = useState("4");
+  const MODES = ["never","always","by_party_size"];
+  const labels = { never:"Never", always:"Always", by_party_size:"By party size" };
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      <div style={{ fontSize:13, fontWeight:600, marginBottom:10 }}>Deposit policy</div>
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        {MODES.map(m => (
+          <button key={m} onClick={() => setMode(m)} style={{
+            padding:"11px 16px", borderRadius:8, fontSize:14, fontWeight:600, cursor:"pointer",
+            border: `1px solid ${mode===m ? "#1A1714" : "var(--border)"}`,
+            background: mode===m ? "#1A1714" : "var(--white)",
+            color: mode===m ? "#fff" : "var(--text)",
+          }}>{labels[m]}</button>
+        ))}
+      </div>
+      {mode === "by_party_size" && (
+        <div style={{ marginTop:10 }}>
+          <Label>Min party size</Label>
+          <TextInput value={minParty} onChange={setMinParty} mono style={{ width:80 }} />
+        </div>
+      )}
+      <div style={{ marginTop:8, fontSize:11, color:"var(--red)" }}>
+        Full-height AppButton used as a segmented control. Looks like 3 primary actions.
+      </div>
+    </div>
+  );
+};
+
+/* format cents → display string, e.g. 2000 + "eur" → "€20.00" */
+function formatCents(cents, currency = "EUR") {
+  if (!cents || isNaN(cents)) return "";
+  try {
+    return new Intl.NumberFormat("en-US", { style:"currency", currency, minimumFractionDigits:2 }).format(cents / 100);
+  } catch { return `${(cents/100).toFixed(2)} ${currency}`; }
+}
+
+const AmountInput = ({ cents, onChange, currency = "EUR" }) => {
+  /* display as decimal euros; store as integer cents */
+  const [raw, setRaw] = useState(cents ? String(cents / 100) : "");
+
+  const commit = (val) => {
+    const parsed = parseFloat(val);
+    if (!isNaN(parsed) && parsed >= 0) onChange(Math.round(parsed * 100));
+    else onChange(null);
+  };
+
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+      <div style={{ position:"relative", display:"inline-flex", alignItems:"center" }}>
+        <span style={{ position:"absolute", left:10, fontSize:13, color:"var(--text3)", fontFamily:ffm, pointerEvents:"none" }}>
+          {currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : currency}
+        </span>
+        <input
+          type="number" min="0" step="0.50"
+          value={raw}
+          onChange={e => setRaw(e.target.value)}
+          onBlur={e => commit(e.target.value)}
+          placeholder="0.00"
+          style={{
+            padding:"8px 10px 8px 26px", border:"1.5px solid var(--border)", borderRadius:6,
+            fontSize:13, fontFamily:ffm, color:"var(--text)", background:"var(--white)",
+            outline:"none", width:110,
+          }}
+          onFocus={e => e.target.style.borderColor="var(--text)"}
+        />
+      </div>
+      {cents > 0 && (
+        <span style={{ fontSize:11, color:"var(--text3)" }}>
+          = {formatCents(cents, currency)} per booking
+        </span>
+      )}
+    </div>
+  );
+};
+
+const DepositAfter = () => {
+  const [mode, setMode] = useState("never");
+  const [minParty, setMinParty] = useState(4);
+  const [amount, setAmount] = useState(2000); // cents
+  const currency = "EUR";
+
+  const MODES = [
+    { id:"never",         label:"Never",         desc:"No deposit required for any booking." },
+    { id:"always",        label:"Always",        desc:"All bookings require a deposit before confirmation." },
+    { id:"by_party_size", label:"By party size", desc:"Deposit required when group size meets the threshold." },
+  ];
+
+  const needsAmount = mode === "always" || mode === "by_party_size";
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      <div style={{ fontSize:13, fontWeight:700, marginBottom:4 }}>Deposit policy</div>
+      <div style={{ fontSize:12, color:"var(--text3)", marginBottom:12 }}>
+        When is a deposit required from guests?
+      </div>
+
+      {/* segmented control */}
+      <div style={{ display:"flex", background:"var(--bg)", borderRadius:8, padding:3, gap:2, border:"1.5px solid var(--border)" }}>
+        {MODES.map(m => (
+          <button key={m.id} onClick={() => setMode(m.id)} style={{
+            flex:1, padding:"7px 4px", borderRadius:6, border:"none", cursor:"pointer",
+            fontSize:12, fontWeight: mode===m.id ? 600 : 400,
+            background: mode===m.id ? "var(--white)" : "transparent",
+            color: mode===m.id ? "var(--text)" : "var(--text3)",
+            boxShadow: mode===m.id ? "0 1px 4px #1A171412" : "none",
+            transition:"all 0.15s",
+          }}>{m.label}</button>
+        ))}
+      </div>
+
+      {/* contextual description */}
+      <div style={{ marginTop:10, padding:"10px 12px", background:"var(--bg)", borderRadius:6, fontSize:12, color:"var(--text2)", lineHeight:1.55 }}>
+        {MODES.find(m => m.id === mode)?.desc}
+      </div>
+
+      {/* amount — shown for always + by_party_size */}
+      {needsAmount && (
+        <div style={{ marginTop:14, display:"flex", flexDirection:"column", gap:10 }}>
+          <div>
+            <Label>Deposit amount</Label>
+            <AmountInput cents={amount} onChange={setAmount} currency={currency} />
+            <div style={{ marginTop:5, fontSize:11, color:"var(--text3)" }}>
+              Stored as integer cents. Pass <code style={{fontFamily:ffm}}>amount_cents</code> on <code style={{fontFamily:ffm}}>DepositPolicy</code> type.
+            </div>
+          </div>
+
+          {/* party size threshold — only for by_party_size */}
+          {mode === "by_party_size" && (
+            <div>
+              <Label>Minimum party size</Label>
+              <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                <button onClick={() => setMinParty(p => Math.max(2,p-1))} style={{ width:32, height:32, borderRadius:6, border:"1.5px solid var(--border)", background:"var(--white)", fontSize:16, cursor:"pointer" }}>−</button>
+                <span style={{ fontSize:18, fontWeight:700, fontFamily:ffm, minWidth:24, textAlign:"center" }}>{minParty}</span>
+                <button onClick={() => setMinParty(p => p+1)} style={{ width:32, height:32, borderRadius:6, border:"1.5px solid var(--border)", background:"var(--white)", fontSize:16, cursor:"pointer" }}>+</button>
+                <span style={{ fontSize:12, color:"var(--text3)" }}>guests or more</span>
+              </div>
+            </div>
+          )}
+
+          {/* live summary */}
+          {amount > 0 && (
+            <div style={{ padding:"10px 12px", background:"var(--blue-bg)", borderRadius:6, fontSize:12, color:"var(--blue)", lineHeight:1.6 }}>
+              {mode === "always"
+                ? <>Every booking requires a <strong>{formatCents(amount, currency)}</strong> deposit before confirmation.</>
+                : <>Bookings of <strong>{minParty}+ guests</strong> require a <strong>{formatCents(amount, currency)}</strong> deposit.</>
+              }
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   ISSUE C — SettingsScreen: single save, no dirty indicator
+   ══════════════════════════════════════════════════ */
+
+const SettingsScreenBefore = () => {
+  const [dirty, setDirty] = useState(false);
+  return (
+    <div style={{ fontFamily:ff, background:"var(--white)", borderRadius:10, border:"1.5px solid var(--border)", overflow:"hidden" }}>
+      <div style={{ padding:"14px 16px", borderBottom:"1px solid var(--border)" }}>
+        <div style={{ fontSize:15, fontWeight:700 }}>Settings</div>
+      </div>
+      <div style={{ padding:"16px", display:"flex", flexDirection:"column", gap:16 }}>
+        {/* opening hours stub */}
+        <div style={{ padding:"12px", background:"var(--bg)", borderRadius:8 }}>
+          <div style={{ fontSize:12, fontWeight:600, marginBottom:8 }}>Opening hours</div>
+          <div style={{ fontSize:11, color:"var(--text3)" }}>Mon–Fri 09:00–22:00, Sat 09:00–23:00</div>
+          <button onClick={() => setDirty(true)} style={{ marginTop:8, fontSize:11, color:"var(--blue)", background:"none", border:"none", cursor:"pointer", padding:0 }}>Edit →</button>
+        </div>
+        {/* deposit stub */}
+        <div style={{ padding:"12px", background:"var(--bg)", borderRadius:8 }}>
+          <div style={{ fontSize:12, fontWeight:600, marginBottom:8 }}>Deposit policy</div>
+          <div style={{ fontSize:11, color:"var(--text3)" }}>Never</div>
+          <button onClick={() => setDirty(true)} style={{ marginTop:8, fontSize:11, color:"var(--blue)", background:"none", border:"none", cursor:"pointer", padding:0 }}>Edit →</button>
+        </div>
+        {/* floor plan link */}
+        <div style={{ padding:"12px", background:"var(--bg)", borderRadius:8 }}>
+          <div style={{ fontSize:12, fontWeight:600, marginBottom:8 }}>Floor plan</div>
+          <div style={{ fontSize:11, color:"var(--text3)" }}>3 rooms · 14 tables</div>
+          <button style={{ marginTop:8, fontSize:11, color:"var(--blue)", background:"none", border:"none", cursor:"pointer", padding:0 }}>Edit →</button>
+        </div>
+        {/* single save at bottom */}
+        <div style={{ borderTop:"1px solid var(--border)", paddingTop:14 }}>
+          <button disabled={!dirty} style={{
+            width:"100%", padding:"12px", borderRadius:8, border:"none",
+            background: dirty ? "#1A1714" : "#E2DDD8",
+            color: dirty ? "#fff" : "var(--text3)",
+            fontSize:14, fontWeight:600, cursor: dirty ? "pointer" : "not-allowed",
+          }}>Save changes</button>
+          {!dirty && <div style={{ marginTop:6, fontSize:11, color:"var(--text3)", textAlign:"center" }}>No changes to save</div>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SettingsScreenAfter = () => {
+  const [activeSection, setActiveSection] = useState("hours");
+  const [hoursDirty, setHoursDirty] = useState(false);
+  const [depositDirty, setDepositDirty] = useState(false);
+  const [saved, setSaved] = useState(null);
+
+  const sections = [
+    { id:"hours",   label:"Opening hours",  dirty: hoursDirty,   badge: hoursDirty ? "Unsaved" : null },
+    { id:"deposit", label:"Deposit policy", dirty: depositDirty, badge: depositDirty ? "Unsaved" : null },
+    { id:"floor",   label:"Floor plan",     dirty: false,        badge: null },
+  ];
+
+  const handleSave = () => {
+    if (activeSection === "hours") setHoursDirty(false);
+    if (activeSection === "deposit") setDepositDirty(false);
+    setSaved(activeSection);
+    setTimeout(() => setSaved(null), 2000);
+  };
+
+  return (
+    <div style={{ fontFamily:ff, background:"var(--white)", borderRadius:10, border:"1.5px solid var(--border)", overflow:"hidden" }}>
+      <div style={{ padding:"12px 16px", borderBottom:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ fontSize:14, fontWeight:700 }}>Settings</div>
+        {(hoursDirty || depositDirty) && (
+          <div style={{ fontSize:11, color:"var(--amber)", fontWeight:600, display:"flex", alignItems:"center", gap:4 }}>
+            <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--amber)", display:"inline-block" }} />
+            Unsaved changes
+          </div>
+        )}
+      </div>
+      {/* section tabs */}
+      <div style={{ display:"flex", borderBottom:"1px solid var(--border)", padding:"0 12px" }}>
+        {sections.map(s => (
+          <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
+            padding:"9px 10px", border:"none", background:"none", cursor:"pointer",
+            fontSize:12, fontWeight: activeSection===s.id ? 600 : 400,
+            color: activeSection===s.id ? "var(--text)" : "var(--text3)",
+            borderBottom:`2px solid ${activeSection===s.id ? "var(--text)" : "transparent"}`,
+            marginBottom:-1, display:"flex", alignItems:"center", gap:5,
+          }}>
+            {s.label}
+            {s.dirty && <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--amber)", display:"inline-block" }} />}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding:"16px", minHeight:200 }}>
+        {activeSection === "hours" && (
+          <div>
+            <OpeningHoursAfter />
+            <div style={{ marginTop:16, display:"flex", gap:8, alignItems:"center" }}>
+              <button onClick={handleSave} style={{ padding:"10px 20px", borderRadius:8, border:"none", background:"#1A1714", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                Save opening hours
+              </button>
+              {saved === "hours" && <span style={{ fontSize:12, color:"var(--green)", fontWeight:600 }}>✓ Saved</span>}
+              {!hoursDirty && saved !== "hours" && <span style={{ fontSize:12, color:"var(--text3)" }}>No changes</span>}
+            </div>
+            <button onClick={() => setHoursDirty(true)} style={{ marginTop:8, fontSize:11, color:"var(--text3)", background:"none", border:"none", cursor:"pointer" }}>[simulate edit to enable save]</button>
+          </div>
+        )}
+        {activeSection === "deposit" && (
+          <div>
+            <DepositAfter />
+            <div style={{ marginTop:16, display:"flex", gap:8, alignItems:"center" }}>
+              <button onClick={handleSave} style={{ padding:"10px 20px", borderRadius:8, border:"none", background:"#1A1714", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>
+                Save deposit policy
+              </button>
+              {saved === "deposit" && <span style={{ fontSize:12, color:"var(--green)", fontWeight:600 }}>✓ Saved</span>}
+            </div>
+            <button onClick={() => setDepositDirty(true)} style={{ marginTop:8, fontSize:11, color:"var(--text3)", background:"none", border:"none", cursor:"pointer" }}>[simulate edit to enable save]</button>
+          </div>
+        )}
+        {activeSection === "floor" && (
+          <div style={{ padding:"20px 0", textAlign:"center", color:"var(--text3)", fontSize:13 }}>
+            Floor plan editor → navigate to /dashboard/settings/floor
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   ISSUE D — DashboardSidebar: nav items as bordered boxes
+   ══════════════════════════════════════════════════ */
+
+const SidebarBefore = () => {
+  const [active, setActive] = useState("/dashboard");
+  const items = [
+    { href:"/dashboard",          label:"Bookings" },
+    { href:"/dashboard/walkins",  label:"Walk-ins" },
+    { href:"/dashboard/settings", label:"Settings" },
+  ];
+  return (
+    <div style={{ width:220, fontFamily:ff, background:"var(--white)", borderRight:"1px solid var(--border)", padding:"16px 12px", display:"flex", flexDirection:"column", gap:6 }}>
+      {items.map(item => {
+        const isActive = active === item.href;
+        return (
+          <button key={item.href} onClick={() => setActive(item.href)} style={{
+            padding:"10px 12px", borderRadius:8, border:`1px solid ${isActive ? "#9C958C" : "var(--border)"}`,
+            background: isActive ? "#F0EDE8" : "var(--white)",
+            fontSize:13, fontWeight: isActive ? 600 : 400, textAlign:"left",
+            color: isActive ? "var(--text)" : "var(--text2)", cursor:"pointer",
+          }}>{item.label}</button>
+        );
+      })}
+      <div style={{ marginTop:8, fontSize:11, color:"var(--red)", lineHeight:1.5 }}>
+        All items bordered. Active = $color5/$color10 — theme-dependent, fragile.
+        No restaurant name. No account/logout.
+      </div>
+    </div>
+  );
+};
+
+const SidebarAfter = () => {
+  const [active, setActive] = useState("/dashboard");
+  const items = [
+    { href:"/dashboard",          label:"Bookings",  icon:"≡", count:4, urgent:true },
+    { href:"/dashboard/walkins",  label:"Walk-ins",  icon:"+", count:null },
+    { href:"/dashboard/settings", label:"Settings",  icon:"⚙", count:null },
+  ];
+  return (
+    <div style={{ width:220, fontFamily:ff, background:"var(--white)", borderRight:"1px solid var(--border)", display:"flex", flexDirection:"column", height:"100%", minHeight:300 }}>
+      {/* restaurant header */}
+      <div style={{ padding:"14px 16px", borderBottom:"1px solid var(--border)" }}>
+        <div style={{ fontSize:13, fontWeight:700, color:"var(--text)" }}>Osteria del Sole</div>
+        <div style={{ fontSize:11, color:"var(--text3)", marginTop:1, fontFamily:ffm }}>staff@osteria.com</div>
+      </div>
+
+      {/* nav */}
+      <div style={{ padding:"10px 8px", flex:1, display:"flex", flexDirection:"column", gap:2 }}>
+        {items.map(item => {
+          const isActive = active === item.href;
+          return (
+            <button key={item.href} onClick={() => setActive(item.href)} style={{
+              padding:"9px 10px", borderRadius:7, border:"none",
+              background: isActive ? "#F5F4F1" : "transparent",
+              fontSize:13, fontWeight: isActive ? 600 : 400, textAlign:"left",
+              color: isActive ? "var(--text)" : "var(--text2)", cursor:"pointer",
+              display:"flex", alignItems:"center", justifyContent:"space-between",
+            }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <span style={{ fontSize:14, opacity: isActive ? 1 : 0.5 }}>{item.icon}</span>
+                {item.label}
+              </div>
+              {item.count != null && (
+                <span style={{
+                  fontSize:10, fontWeight:700, padding:"1px 6px", borderRadius:8, fontFamily:ffm,
+                  background: item.urgent ? "var(--red)" : "#E2DDD8",
+                  color: item.urgent ? "#fff" : "var(--text3)",
+                }}>{item.count}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* logout */}
+      <div style={{ padding:"10px 8px", borderTop:"1px solid var(--border)" }}>
+        <button style={{ padding:"8px 10px", borderRadius:7, border:"none", background:"transparent", fontSize:12, color:"var(--text3)", cursor:"pointer", width:"100%", textAlign:"left" }}>
+          ← Sign out
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   ISSUE E — FloorCanvas: no empty state, no table management
+   ══════════════════════════════════════════════════ */
+
+const FloorCanvasBefore = () => (
+  <div style={{ fontFamily:ff }}>
+    <div style={{ fontSize:13, fontWeight:600, marginBottom:8 }}>Floor plan</div>
+    <div style={{ height:200, background:"#f3f4f6", borderRadius:12, position:"relative", overflow:"hidden" }}>
+      {/* simulated tables */}
+      {[
+        {name:"T1",cap:2,x:20,y:20},{name:"T2",cap:4,x:140,y:20},{name:"T3",cap:4,x:20,y:110},
+      ].map(t => (
+        <div key={t.name} style={{ position:"absolute", left:t.x, top:t.y, width:96, height:64, background:"#111827", borderRadius:12, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+          <span style={{ color:"#fff", fontWeight:600, fontSize:13 }}>{t.name}</span>
+          <span style={{ color:"#fff", fontSize:11, opacity:0.7 }}>{t.cap} seats</span>
+        </div>
+      ))}
+    </div>
+    <div style={{ marginTop:8, fontSize:11, color:"var(--red)", lineHeight:1.5 }}>
+      No empty state. No add/delete table. Hardcoded bg #111827.
+      Tables can be dragged off-canvas. No snap grid. No room management.
+    </div>
+  </div>
+);
+
+const FloorCanvasAfter = () => {
+  const [tables, setTables] = useState([
+    {id:"1",name:"T1",cap:2,x:20, y:20,status:"available"},
+    {id:"2",name:"T2",cap:4,x:140,y:20,status:"occupied"},
+    {id:"3",name:"T3",cap:4,x:20, y:110,status:"available"},
+  ]);
+  const [activeRoom, setActiveRoom] = useState("Main");
+  const [selected, setSelected] = useState(null);
+  const rooms = ["Main","Terrace","Bar"];
+
+  const addTable = () => {
+    const id = String(Date.now());
+    const n = tables.length + 1;
+    setTables(t => [...t, {id, name:`T${n}`, cap:4, x:60*(n%3)+10, y:60*Math.floor(n/3)+10, status:"available"}]);
+  };
+
+  const deleteTable = (id) => {
+    setTables(t => t.filter(x => x.id !== id));
+    setSelected(null);
+  };
+
+  const statusColor = { available:"#2A7A4B", occupied:"#C13B2A", reserved:"#B07020" };
+  const statusBg    = { available:"#E8F5EE", occupied:"#FCECEA", reserved:"#FDF3E3" };
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      {/* room tabs + add-room */}
+      <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:10 }}>
+        {rooms.map(r => (
+          <button key={r} onClick={() => setActiveRoom(r)} style={{
+            padding:"5px 12px", borderRadius:6, border:"1.5px solid",
+            borderColor: activeRoom===r ? "var(--text)" : "var(--border)",
+            background: activeRoom===r ? "var(--text)" : "var(--white)",
+            color: activeRoom===r ? "#fff" : "var(--text2)",
+            fontSize:11, fontWeight:600, cursor:"pointer",
+          }}>{r}</button>
+        ))}
+        <button style={{ padding:"5px 12px", borderRadius:6, border:"1.5px dashed var(--border)", background:"transparent", fontSize:11, color:"var(--text3)", cursor:"pointer" }}>+ Room</button>
+      </div>
+
+      {/* canvas */}
+      <div style={{ height:200, background:"var(--bg)", borderRadius:10, position:"relative", overflow:"hidden", border:"1.5px solid var(--border)" }}>
+        {/* grid dots */}
+        <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", opacity:0.4 }} xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="dot" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="var(--border2)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dot)" />
+        </svg>
+
+        {tables.length === 0 && (
+          <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:8 }}>
+            <div style={{ fontSize:12, color:"var(--text3)" }}>No tables in this room</div>
+            <button onClick={addTable} style={{ padding:"7px 14px", borderRadius:6, border:"1.5px solid var(--border)", background:"var(--white)", fontSize:12, cursor:"pointer", color:"var(--text2)" }}>+ Add table</button>
+          </div>
+        )}
+
+        {tables.map(t => {
+          const isSel = selected === t.id;
+          return (
+            <div key={t.id} onClick={() => setSelected(isSel ? null : t.id)} style={{
+              position:"absolute", left:t.x, top:t.y, width:88, height:60,
+              background: isSel ? "var(--text)" : "var(--white)",
+              borderRadius:8, border:`2px solid ${isSel ? "var(--text)" : statusColor[t.status]}`,
+              display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+              cursor:"pointer", boxShadow: isSel ? "0 4px 12px #1A171430" : "0 1px 4px #1A171410",
+              userSelect:"none",
+            }}>
+              <span style={{ fontWeight:700, fontSize:13, color: isSel ? "#fff" : "var(--text)", fontFamily:ffm }}>{t.name}</span>
+              <span style={{ fontSize:10, color: isSel ? "#ffffff88" : statusColor[t.status], marginTop:1 }}>
+                {t.cap} seats · {t.status}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* table inspector */}
+      {selected && (() => {
+        const t = tables.find(x => x.id === selected);
+        if (!t) return null;
+        return (
+          <div style={{ marginTop:8, padding:"10px 12px", background:"var(--white)", border:"1.5px solid var(--border)", borderRadius:8, display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:12, fontWeight:600, marginBottom:4 }}>{t.name}</div>
+              <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                <span style={{ fontSize:11, color:"var(--text3)" }}>Capacity:</span>
+                <button onClick={() => setTables(ts => ts.map(x => x.id===t.id ? {...x, cap:Math.max(1,x.cap-1)} : x))} style={{ width:24, height:24, borderRadius:4, border:"1px solid var(--border)", background:"var(--white)", cursor:"pointer", fontSize:14 }}>−</button>
+                <span style={{ fontSize:13, fontWeight:600, fontFamily:ffm, minWidth:16, textAlign:"center" }}>{t.cap}</span>
+                <button onClick={() => setTables(ts => ts.map(x => x.id===t.id ? {...x, cap:x.cap+1} : x))} style={{ width:24, height:24, borderRadius:4, border:"1px solid var(--border)", background:"var(--white)", cursor:"pointer", fontSize:14 }}>+</button>
+              </div>
+            </div>
+            <button onClick={() => deleteTable(t.id)} style={{ padding:"6px 12px", borderRadius:6, border:"1.5px solid var(--red-bg)", background:"var(--red-bg)", color:"var(--red)", fontSize:11, fontWeight:600, cursor:"pointer" }}>Delete</button>
+          </div>
+        );
+      })()}
+
+      {/* toolbar */}
+      <div style={{ marginTop:8, display:"flex", gap:6 }}>
+        <button onClick={addTable} style={{ padding:"7px 14px", borderRadius:6, border:"1.5px solid var(--border)", background:"var(--white)", fontSize:12, cursor:"pointer", color:"var(--text2)", fontWeight:500 }}>+ Add table</button>
+        <span style={{ fontSize:11, color:"var(--text3)", alignSelf:"center" }}>Drag tables to position. Click to select.</span>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   ISSUE F — cancellation_cutoff_hours missing from UI
+   ══════════════════════════════════════════════════ */
+
+const CancellationEditor = () => {
+  const [hours, setHours] = useState(24);
+  const labels = { 0:"Any time", 2:"2 h", 6:"6 h", 12:"12 h", 24:"24 h", 48:"48 h", 72:"72 h" };
+  const presets = [0, 2, 6, 12, 24, 48, 72];
+
+  return (
+    <div style={{ fontFamily:ff }}>
+      <div style={{ fontSize:13, fontWeight:700, marginBottom:4 }}>Cancellation window</div>
+      <div style={{ fontSize:12, color:"var(--text3)", marginBottom:12 }}>
+        How far in advance can guests cancel their own booking?
+      </div>
+      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+        {presets.map(p => (
+          <button key={p} onClick={() => setHours(p)} style={{
+            padding:"7px 14px", borderRadius:6, border:`1.5px solid ${hours===p ? "var(--text)" : "var(--border)"}`,
+            background: hours===p ? "var(--text)" : "var(--white)",
+            color: hours===p ? "#fff" : "var(--text2)",
+            fontSize:12, fontWeight: hours===p ? 600 : 400, cursor:"pointer",
+          }}>{labels[p]}</button>
+        ))}
+      </div>
+      {hours > 0 && (
+        <div style={{ marginTop:10, fontSize:12, color:"var(--text2)", lineHeight:1.6, padding:"8px 12px", background:"var(--bg)", borderRadius:6 }}>
+          Guests can cancel up to <strong>{hours} hours before</strong> their reservation. After that, cancellations require staff action.
+        </div>
+      )}
+      {hours === 0 && (
+        <div style={{ marginTop:10, fontSize:12, color:"var(--amber)", lineHeight:1.6, padding:"8px 12px", background:"var(--amber-bg)", borderRadius:6 }}>
+          Guests can cancel at any time, including after the booking time has passed.
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   FULL SETTINGS PAGE (composed)
+   ══════════════════════════════════════════════════ */
+
+const FullSettingsPage = () => {
+  const [tab, setTab] = useState("hours");
+  const [dirtyMap, setDirtyMap] = useState({});
+  const [savedTab, setSavedTab] = useState(null);
+
+  const tabs = [
+    { id:"hours",        label:"Hours" },
+    { id:"deposit",      label:"Deposit" },
+    { id:"cancellation", label:"Cancellation" },
+    { id:"floor",        label:"Floor plan" },
+  ];
+
+  const save = () => {
+    setDirtyMap(d => ({ ...d, [tab]: false }));
+    setSavedTab(tab);
+    setTimeout(() => setSavedTab(null), 2000);
+  };
+
+  const hasDirty = Object.values(dirtyMap).some(Boolean);
+
+  return (
+    <div style={{ display:"flex", height:540, fontFamily:ff, background:"var(--bg)", borderRadius:12, border:"1.5px solid var(--border)", overflow:"hidden", boxShadow:"0 4px 20px #1A171410" }}>
+      {/* sidebar */}
+      <SidebarAfter />
+
+      {/* main */}
+      <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
+        {/* top bar */}
+        <div style={{ padding:"12px 18px", borderBottom:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center", background:"var(--white)" }}>
+          <div style={{ fontSize:14, fontWeight:700 }}>Settings</div>
+          {hasDirty && (
+            <div style={{ fontSize:11, color:"var(--amber)", fontWeight:600, display:"flex", alignItems:"center", gap:4 }}>
+              <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--amber)", display:"inline-block" }} />
+              Unsaved changes
+            </div>
+          )}
+        </div>
+
+        {/* section tabs */}
+        <div style={{ display:"flex", borderBottom:"1px solid var(--border)", background:"var(--white)", padding:"0 16px" }}>
+          {tabs.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              padding:"9px 10px", border:"none", background:"none", cursor:"pointer",
+              fontSize:12, fontWeight: tab===t.id ? 600 : 400,
+              color: tab===t.id ? "var(--text)" : "var(--text3)",
+              borderBottom:`2px solid ${tab===t.id ? "var(--text)" : "transparent"}`,
+              marginBottom:-1, display:"flex", alignItems:"center", gap:5,
+            }}>
+              {t.label}
+              {dirtyMap[t.id] && <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--amber)", display:"inline-block" }} />}
+            </button>
+          ))}
+        </div>
+
+        {/* content */}
+        <div style={{ flex:1, overflowY:"auto", padding:"18px" }}>
+          {tab === "hours"        && <OpeningHoursAfter />}
+          {tab === "deposit"      && <DepositAfter />}
+          {tab === "cancellation" && <CancellationEditor />}
+          {tab === "floor"        && <FloorCanvasAfter />}
+        </div>
+
+        {/* save bar */}
+        {tab !== "floor" && (
+          <div style={{ padding:"12px 18px", borderTop:"1px solid var(--border)", background:"var(--white)", display:"flex", alignItems:"center", gap:10 }}>
+            <button onClick={save} style={{ padding:"9px 20px", borderRadius:7, border:"none", background:"#1A1714", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>
+              Save {tab === "hours" ? "hours" : tab === "deposit" ? "deposit policy" : "cancellation policy"}
+            </button>
+            {savedTab === tab && <span style={{ fontSize:12, color:"var(--green)", fontWeight:600 }}>✓ Saved</span>}
+            <button onClick={() => setDirtyMap(d => ({...d,[tab]:true}))} style={{ fontSize:11, color:"var(--text3)", background:"none", border:"none", cursor:"pointer", marginLeft:"auto" }}>
+              [simulate change]
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════
+   MAIN
+   ══════════════════════════════════════════════════ */
+
+function App() {
+  return (
+    <DesignCanvas title="TableSched — Settings UX Critique" subtitle="6 issues · Before / After · Interactive">
+
+      <DCSection id="s1" title="Settings Screen Architecture">
+
+        <DCArtboard id="a1" label="① SettingsScreen — single save, no dirty state" width={340} height={500}>
+          <div style={{ padding:20, background:"var(--bg)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <SettingsScreenBefore />
+            <Annotation type="issue">
+              <code style={{fontFamily:ffm}}>SettingsScreen</code> has one <code style={{fontFamily:ffm}}>draft</code> object and one Save button at the bottom of a long scroll. No per-section dirty indicator. No unsaved-changes warning if user navigates away. Opening hours and deposit policy are unrelated concerns — saving one saves (or discards) the other silently.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a2" label="① SettingsScreen — After (interactive)" width={340} height={560}>
+          <div style={{ padding:20, background:"var(--bg)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <SettingsScreenAfter />
+            <Annotation type="fix">
+              Split into tabs: Hours / Deposit / Cancellation / Floor. Each tab has its own save action with a scoped label ("Save opening hours"). Amber dot on tab = unsaved. Global "Unsaved changes" banner when any tab is dirty.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a3" label="Complete settings page (interactive)" width={700} height={620}>
+          <div style={{ padding:20, background:"var(--bg)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <FullSettingsPage />
+            <Annotation type="note">
+              Sidebar + section tabs + scoped save bar. On mobile the sidebar becomes a bottom tab bar (Issue ⑦ from the prior critique). Use <code style={{fontFamily:ffm}}>Expo Router</code> sub-routes for each tab to get deep-link and back-button support for free.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      <DCSection id="s2" title="OpeningHoursEditor">
+
+        <DCArtboard id="a4" label="② OpeningHoursEditor — Before" width={320} height={560}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <OpeningHoursBefore />
+            <Annotation type="issue">
+              7 days × (toggle + 2 <code style={{fontFamily:ffm}}>AppInput</code> text fields) = 21 controls in a vertical stack. Time is free text — "9am", "9:00", "900" all pass silently. Closed days still take full row height. <strong>One slot per day only</strong> — a restaurant with lunch + dinner service cannot express both periods. The <code style={{fontFamily:ffm}}>OpeningHour</code> type already supports multiple records per weekday; the editor just doesn't.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a5" label="② OpeningHoursEditor — After (interactive)" width={360} height={520}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <OpeningHoursAfter />
+            <Annotation type="fix">
+              3-column grid: day / toggle / slots column. Each day supports up to 2 slots (lunch + dinner). "+ Add slot" appears when only one slot exists; "×" removes the second. Times are <code style={{fontFamily:ffm}}>{'<select>'}</code> at 30-min steps — no free text, no validation needed. Serialises as multiple <code style={{fontFamily:ffm}}>OpeningHour</code> records per weekday — no API type change required.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      <DCSection id="s3" title="DepositPolicyEditor + Cancellation">
+
+        <DCArtboard id="a6" label="③ DepositPolicyEditor — Before" width={280} height={340}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <DepositBefore />
+            <Annotation type="issue">
+              Three full-height <code style={{fontFamily:ffm}}>AppButton</code> primary-styled buttons as a segmented control — look like actions, not a setting. No amount field anywhere. <code style={{fontFamily:ffm}}>DepositPolicy</code> type has no <code style={{fontFamily:ffm}}>amount_cents</code> — staff can enable deposits but never set the amount.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a7" label="③ DepositPolicyEditor — After (interactive)" width={320} height={520}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <DepositAfter />
+            <Annotation type="fix">
+              Segmented control + contextual description. Amount field (decimal input → stored as integer cents) appears for <code style={{fontFamily:ffm}}>always</code> and <code style={{fontFamily:ffm}}>by_party_size</code>. Live summary shows exact policy in plain language. Requires adding <code style={{fontFamily:ffm}}>amount_cents: number</code> to <code style={{fontFamily:ffm}}>DepositPolicy</code> type and backend.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a8" label="④ Cancellation cutoff — missing from UI" width={340} height={340}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <Annotation type="issue" style={{marginTop:0}}>
+              <code style={{fontFamily:ffm}}>RestaurantSettings.cancellation_cutoff_hours</code> exists in the API type and the backend, but <code style={{fontFamily:ffm}}>SettingsScreen</code> never renders an editor for it. Staff cannot configure it from the UI.
+            </Annotation>
+            <CancellationEditor />
+            <Annotation type="new">
+              Preset chips (Any time / 2 h / 6 h / 12 h / 24 h / 48 h / 72 h) — no text input needed. Plain-language consequence shown below selection. Add <code style={{fontFamily:ffm}}>cancellation_cutoff_hours</code> to the settings <code style={{fontFamily:ffm}}>draft</code> and <code style={{fontFamily:ffm}}>updateDraft</code> call.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+      <DCSection id="s4" title="FloorCanvas + DashboardSidebar">
+
+        <DCArtboard id="a9" label="⑤ FloorCanvas — Before" width={320} height={380}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <FloorCanvasBefore />
+            <Annotation type="issue">
+              No empty state for a room with no tables. No add/delete table controls — floor plan is drag-only. Hardcoded <code style={{fontFamily:ffm}}>#111827</code> background on <code style={{fontFamily:ffm}}>DraggableTable</code>. Tables can be dragged outside the canvas bounds. No grid/snap.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a10" label="⑤ FloorCanvas — After (interactive)" width={360} height={440}>
+          <div style={{ padding:20, background:"var(--white)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <FloorCanvasAfter />
+            <Annotation type="fix">
+              Dot-grid background (visual snap reference). Click-to-select reveals inline inspector (rename, capacity stepper, delete). Empty-state with "Add table" CTA. Room tabs + "+ Room" button. Table color from status token, not hardcoded. Add/delete POSTs to <code style={{fontFamily:ffm}}>staffApi.createTable / deleteTable</code>.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="a11" label="⑥ DashboardSidebar — Before / After" width={480} height={340}>
+          <div style={{ padding:20, background:"var(--bg)", height:"100%", display:"flex", flexDirection:"column", gap:14 }}>
+            <div style={{ display:"flex", gap:16, alignItems:"flex-start" }}>
+              <div>
+                <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"var(--text3)", fontFamily:ffm, marginBottom:6 }}>Before</div>
+                <SidebarBefore />
+              </div>
+              <div>
+                <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", color:"var(--text3)", fontFamily:ffm, marginBottom:6 }}>After</div>
+                <SidebarAfter />
+              </div>
+            </div>
+            <Annotation type="fix">
+              Before: nav items are bordered boxes, active uses fragile <code style={{fontFamily:ffm}}>$color5</code> token, no restaurant context, no sign-out. After: ghost items with filled background on active (no border), restaurant name + user email in header, sign-out at bottom, pending count badge on Bookings.
+            </Annotation>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

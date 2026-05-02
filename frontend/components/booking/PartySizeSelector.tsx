@@ -1,5 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  row: { flexDirection: 'row', gap: 12 },
+});
 
 type PartySizeSelectorProps = {
   label?: string;
@@ -14,7 +18,7 @@ export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorP
   return (
     <View accessibilityLabel={resolvedLabel}>
       <Text>{resolvedLabel}</Text>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
+      <View style={styles.row}>
         <Pressable
           accessibilityRole="button"
           onPress={() => {

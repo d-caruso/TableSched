@@ -1,6 +1,5 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, Switch, View } from 'react-native';
 import { Text, XStack, YStack } from 'tamagui';
 import '@/lib/i18n';
 import type { OpeningHour } from '@/lib/api/types';
@@ -67,31 +66,25 @@ type TimeSelectProps = {
  * Native <select> wrapped for React Native Web.
  * On native it falls back to a text display — a Picker could be added later.
  */
-const styles = StyleSheet.create({
-  togglePadding: { paddingTop: 8 },
-});
-
-const selectStyle: React.CSSProperties = {
-  padding: '6px 8px',
-  borderRadius: 6,
-  border: '1.5px solid var(--border, #E2DDD8)',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  background: 'var(--background, #FDFCFB)',
-  color: 'var(--color, #1A1714)',
-  minWidth: 80,
-};
-
 function TimeSelect({ value, label, onChange }: TimeSelectProps) {
   return (
     <View accessibilityLabel={label}>
       {/* React Native Web renders this as a native <select> */}
-      {/* @ts-ignore: 'select' is valid on web only */}
+      {/* @ts-expect-error: 'select' is valid on web only */}
       <select
         value={value}
         aria-label={label}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange(e.target.value)}
-        style={selectStyle}
+        style={{
+          padding: '6px 8px',
+          borderRadius: 6,
+          border: '1.5px solid var(--border, #E2DDD8)',
+          fontSize: 13,
+          fontFamily: 'inherit',
+          background: 'var(--background, #FDFCFB)',
+          color: 'var(--color, #1A1714)',
+          minWidth: 80,
+        }}
       >
         {TIME_OPTIONS.map(t => (
           <option key={t} value={t}>
@@ -181,7 +174,7 @@ export function OpeningHoursEditor({ hours = [], onChange }: Props) {
             </Text>
 
             {/* Toggle */}
-            <View style={styles.togglePadding}>
+            <View style={{ paddingTop: 8 }}>
               <Switch
                 accessibilityRole="switch"
                 value={isOpen}

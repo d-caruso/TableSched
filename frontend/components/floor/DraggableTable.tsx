@@ -1,6 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+const styles = StyleSheet.create({
+  tableInner: {
+    flex: 1,
+    borderRadius: 12,
+    backgroundColor: '#111827',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tableName: { color: 'white', fontWeight: '600' },
+  tableCapacity: { color: 'white' },
+});
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
@@ -61,9 +73,9 @@ export function DraggableTable({ table, onDrop }: Props) {
           style,
         ]}
       >
-        <View style={{ flex: 1, borderRadius: 12, backgroundColor: '#111827', justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: 'white', fontWeight: '600' }}>{table.name}</Text>
-          <Text style={{ color: 'white' }}>{t('floor.tableCapacity', { count: table.capacity })}</Text>
+        <View style={styles.tableInner}>
+          <Text style={styles.tableName}>{table.name}</Text>
+          <Text style={styles.tableCapacity}>{t('floor.tableCapacity', { count: table.capacity })}</Text>
         </View>
       </Animated.View>
     </GestureDetector>
