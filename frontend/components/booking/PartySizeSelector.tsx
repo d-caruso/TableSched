@@ -1,9 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 12 },
-});
+import { Stack, Text, XStack } from 'tamagui';
 
 type PartySizeSelectorProps = {
   label?: string;
@@ -16,24 +12,29 @@ export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorP
   const resolvedLabel = label ?? t('booking.form.partySize');
 
   return (
-    <View accessibilityLabel={resolvedLabel}>
+    <Stack accessibilityLabel={resolvedLabel}>
       <Text>{resolvedLabel}</Text>
-      <View style={styles.row}>
-        <Pressable
+      <XStack gap="$3">
+        <Stack
           accessibilityRole="button"
           onPress={() => {
             if (value > 1) {
               onChange(value - 1);
             }
           }}
+          pressStyle={{ opacity: 0.7 }}
         >
           <Text>{t('common.decrement')}</Text>
-        </Pressable>
+        </Stack>
         <Text>{value}</Text>
-        <Pressable accessibilityRole="button" onPress={() => onChange(value + 1)}>
+        <Stack
+          accessibilityRole="button"
+          onPress={() => onChange(value + 1)}
+          pressStyle={{ opacity: 0.7 }}
+        >
           <Text>{t('common.increment')}</Text>
-        </Pressable>
-      </View>
-    </View>
+        </Stack>
+      </XStack>
+    </Stack>
   );
 }

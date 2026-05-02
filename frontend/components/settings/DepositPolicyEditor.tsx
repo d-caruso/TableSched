@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, XStack, YStack } from 'tamagui';
 import '@/lib/i18n';
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
@@ -27,9 +27,9 @@ export function DepositPolicyEditor({ policy, onChange }: Props) {
   const { t } = useTranslation();
 
   return (
-    <View>
+    <YStack>
       <Text>{t('staff.settings.depositPolicy')}</Text>
-      <View>
+      <XStack>
         {MODES.map(mode => (
           <AppButton
             key={mode}
@@ -39,7 +39,7 @@ export function DepositPolicyEditor({ policy, onChange }: Props) {
             {t(`staff.settings.depositModes.${mode}`)}
           </AppButton>
         ))}
-      </View>
+      </XStack>
       {policy.mode === 'by_party_size' ? (
         <AppInput
           label={t('staff.settings.minPartySize')}
@@ -54,6 +54,6 @@ export function DepositPolicyEditor({ policy, onChange }: Props) {
           }}
         />
       ) : null}
-    </View>
+    </YStack>
   );
 }

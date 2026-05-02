@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Text, YStack } from 'tamagui';
 import '@/lib/i18n';
 import { publicApi } from '@/lib/api/endpoints';
 import type { Draft } from '@/components/booking/BookingFormFlow';
@@ -44,10 +44,10 @@ export function StepDone({ tenant, draft, onDone }: StepDoneProps) {
   }, [draft, onDone, t, tenant]);
 
   return (
-    <View testID="step-done">
+    <YStack testID="step-done">
       {isLoading ? <Text>{t('common.loading')}</Text> : null}
       {isSuccess ? <Text>{t('booking.page.booking_confirmed')}</Text> : null}
       {error ? <Text>{error}</Text> : null}
-    </View>
+    </YStack>
   );
 }

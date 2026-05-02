@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TextInput, View } from 'react-native';
+import { Input, Text, YStack } from 'tamagui';
 
 type DatePickerProps = {
   label?: string;
@@ -32,9 +32,9 @@ export function DatePicker({ label, value, onChange, minDate, maxDays = 90 }: Da
   const resolvedLabel = label ?? t('booking.form.date');
 
   return (
-    <View>
+    <YStack>
       <Text>{resolvedLabel}</Text>
-      <TextInput
+      <Input
         accessibilityLabel={resolvedLabel}
         value={value}
         onChangeText={(next) => {
@@ -42,13 +42,12 @@ export function DatePicker({ label, value, onChange, minDate, maxDays = 90 }: Da
             onChange(next);
             return;
           }
-
           if (next >= bounds.min && next <= bounds.max) {
             onChange(next);
           }
         }}
         placeholder={`${bounds.min} - ${bounds.max}`}
       />
-    </View>
+    </YStack>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Stack, Text, YStack } from 'tamagui';
 import { publicApi } from '@/lib/api/endpoints';
 import { DatePicker } from '@/components/booking/DatePicker';
 import { PartySizeSelector } from '@/components/booking/PartySizeSelector';
@@ -78,15 +78,22 @@ export function StepDateTime({ tenant, restaurant, onContinue }: StepDateTimePro
     };
   }, [allSlots, date, tenant]);
 
+  const canContinue = !!date && !!time;
+
   return (
-    <View testID="step-datetime">
+    <YStack testID="step-datetime">
       <Text>{restaurant.name}</Text>
       <DatePicker label={t('booking.form.date')} value={date} onChange={setDate} minDate={toIsoDate(new Date())} maxDays={90} />
       <PartySizeSelector label={t('booking.form.partySize')} value={partySize} onChange={setPartySize} />
       <TimeSlotGrid slots={slots} loading={loading} selected={time} onSelect={setTime} />
-      <Pressable accessibilityRole="button" disabled={!date || !time} onPress={onContinue}>
+      <Stack
+        accessibilityRole="button"
+        onPress={canContinue ? onContinue : undefined}
+        opacity={canContinue ? 1 : 0.4}
+        pressStyle={{ opacity: 0.7 }}
+      >
         <Text>{t('common.continue')}</Text>
-      </Pressable>
-    </View>
+      </Stack>
+    </YStack>
   );
 }

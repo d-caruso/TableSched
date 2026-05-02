@@ -1,9 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 8 },
-});
 import { useTranslation } from 'react-i18next';
+import { Stack, Text, XStack } from 'tamagui';
 import '@/lib/i18n';
 
 type LocaleSelectorProps = {
@@ -17,16 +13,21 @@ export function LocaleSelector({ value, onChange }: LocaleSelectorProps) {
   const { t } = useTranslation();
 
   return (
-    <View>
+    <Stack>
       <Text>{t('booking.contact.locale')}</Text>
-      <View style={styles.row}>
+      <XStack gap="$2">
         {locales.map((locale) => (
-          <Pressable key={locale} accessibilityRole="button" onPress={() => onChange(locale)}>
+          <Stack
+            key={locale}
+            accessibilityRole="button"
+            onPress={() => onChange(locale)}
+            pressStyle={{ opacity: 0.7 }}
+          >
             <Text>{t(`booking.locales.${locale}`)}</Text>
             {value === locale ? <Text>{t('common.selectedIndicator')}</Text> : null}
-          </Pressable>
+          </Stack>
         ))}
-      </View>
-    </View>
+      </XStack>
+    </Stack>
   );
 }

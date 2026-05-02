@@ -1,9 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-});
+import { Stack, Text, XStack } from 'tamagui';
 import '@/lib/i18n';
 
 export type TimeSlotItem = {
@@ -24,28 +20,33 @@ export function TimeSlotGrid({ slots, loading, selected, onSelect }: TimeSlotGri
 
   if (loading) {
     return (
-      <View>
+      <Stack>
         <Text>{t('common.loading')}</Text>
-      </View>
+      </Stack>
     );
   }
 
   return (
-    <View style={styles.grid}>
+    <XStack flexWrap="wrap" gap="$2">
       {slots.map((slot) =>
         slot.available ? (
-          <Pressable key={slot.time} accessibilityRole="button" onPress={() => onSelect(slot.time)}>
+          <Stack
+            key={slot.time}
+            accessibilityRole="button"
+            onPress={() => onSelect(slot.time)}
+            pressStyle={{ opacity: 0.7 }}
+          >
             <Text>{slot.time}</Text>
             {slot.busy_warning ? <Text>{t('booking.timeSlots.busyWarning')}</Text> : null}
             {selected === slot.time ? <Text>{t('common.selected')}</Text> : null}
-          </Pressable>
+          </Stack>
         ) : (
-          <View key={slot.time}>
+          <Stack key={slot.time}>
             <Text>{slot.time}</Text>
             {slot.busy_warning ? <Text>{t('booking.timeSlots.busyWarning')}</Text> : null}
-          </View>
+          </Stack>
         ),
       )}
-    </View>
+    </XStack>
   );
 }
