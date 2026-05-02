@@ -5,6 +5,8 @@
 Known post-MVP backend gaps:
 
 - **Per-tenant Stripe accounts** — currently all tenants share a single Stripe account (controlled by the platform). Future premium feature: each `RestaurantSettings` stores its own `stripe_api_key` and `stripe_webhook_secret`; the webhook verifies signatures using the correct tenant's secret resolved from `metadata.tenant_schema`.
+- **JWT refresh endpoint not wired in frontend** — `/_allauth/app/v1/auth/token` can issue a new access token from a refresh token, but the frontend `AuthContext` does not yet call it when the access token expires. Staff will be silently logged out after 15 minutes until this is implemented.
+- **`cryptography` not pinned in `pyproject.toml`** — required by allauth's JWT strategy but installed manually. Should be added as an explicit dependency.
 
 ## Frontend
 

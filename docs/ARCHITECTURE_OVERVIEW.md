@@ -18,6 +18,10 @@ The frontend is an Expo Router application with route groups for public and staf
 3. The API client talks to the Django backend through the configured base URL.
 4. Auth state is stored in the frontend auth context and reused across staff screens.
 
+### Staff authentication
+
+Staff authenticate via `POST /_allauth/app/v1/auth/login` (allauth headless, `app` client). On success the response includes `meta.access_token` (JWT, 15 min) and `meta.refresh_token` (JWT, 7 days). Both are stored in `sessionStorage` on web and `SecureStore` on native. Subsequent staff API requests send `Authorization: Bearer <access_token>`. The backend validates the JWT via allauth's `JWTTokenStrategy` — no `djangorestframework-simplejwt` is used. The `cryptography` package is required for JWT signing.
+
 ### Rendering model
 
 - Public booking pages are single-column and centered.
