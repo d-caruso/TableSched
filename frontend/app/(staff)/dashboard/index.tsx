@@ -22,15 +22,15 @@ export default function DashboardScreen() {
   const { accessToken, tenant } = useAuth();
   const [filterIdx, setFilterIdx] = useState(0);
 
-  const { mutate: sweep } = useMutation({
-    mutationFn: () => staffApi.triggerExpirationSweep(tenant!, accessToken!),
+  const { mutate: runMaintenance } = useMutation({
+    mutationFn: () => staffApi.triggerOpportunisticMaintenance(tenant!, accessToken!),
   });
 
   useEffect(() => {
     if (accessToken && tenant) {
-      sweep();
+      runMaintenance();
     }
-  }, [accessToken, tenant, sweep]);
+  }, [accessToken, tenant, runMaintenance]);
 
   const activeFilter = FILTERS[filterIdx];
   const params = activeFilter.statuses ? { status: activeFilter.statuses.join(',') } : undefined;

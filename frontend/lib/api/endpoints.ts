@@ -18,7 +18,7 @@ export const publicApi = {
     return apiRequest<TenantEntry[]>('/api/tenants/');
   },
   getRestaurantInfo(tenant: string) {
-    return apiRequest<RestaurantPublicInfo>(tp(tenant, 'public/restaurant/'));
+    return apiRequest<RestaurantPublicInfo>(tp(tenant, 'public/'));
   },
   getAvailableSlots(tenant: string, date: string) {
     return apiRequest<TimeSlot[]>(tp(tenant, `public/slots/?date=${encodeURIComponent(date)}`));
@@ -56,9 +56,8 @@ export const staffApi = {
     );
     return { access_token: res.meta.access_token, refresh_token: res.meta.refresh_token };
   },
-  triggerExpirationSweep(tenant: string, token: string) {
-    return apiRequest<void>(tp(tenant, 'bookings/sweep/'), {
-      method: 'POST',
+  triggerOpportunisticMaintenance(tenant: string, token: string) {
+    return apiRequest<void>(tp(tenant, 'admin/dashboard/'), {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
@@ -127,7 +126,7 @@ export const staffApi = {
     });
   },
   updateTablePosition(tenant: string, token: string, tableId: string, x: number, y: number) {
-    return apiRequest<void>(tp(tenant, `tables/${tableId}/position/`), {
+    return apiRequest<void>(tp(tenant, `tables/${tableId}/`), {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` },
       body: { x, y },
