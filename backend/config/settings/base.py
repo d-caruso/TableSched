@@ -103,7 +103,8 @@ HEADLESS_FRONTEND_URLS = {
     "account_reset_password": "/auth/reset-password",
     "account_reset_password_from_key": "/auth/reset-password/{key}",
     "account_signup": "/auth/signup",
-}HEADLESS_JWT_SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
+}
+HEADLESS_JWT_SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
 HEADLESS_JWT_ALGORITHM = "HS256"
 HEADLESS_JWT_ACCESS_TOKEN_EXPIRATION = 60 * 15  # 15 minutes
 HEADLESS_JWT_REFRESH_TOKEN_EXPIRATION = 60 * 60 * 24 * 7  # 7 days
