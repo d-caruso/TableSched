@@ -41,6 +41,7 @@
     "@types/react": "^18.x",
     "@typescript-eslint/parser": "^8.x",
     "eslint": "^9.x",
+    "eslint-plugin-react-native": "^5.0.0",
     "jest": "^29.x",
     "jest-expo": "~52.x",
     "react-test-renderer": "18.3.1",

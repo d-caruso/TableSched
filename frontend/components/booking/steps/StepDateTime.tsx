@@ -1,3 +1,4 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, Text, YStack } from 'tamagui';
@@ -90,7 +91,7 @@ export function StepDateTime({ tenant, restaurant, onContinue }: StepDateTimePro
         accessibilityRole="button"
         onPress={canContinue ? onContinue : undefined}
         opacity={canContinue ? 1 : 0.4}
-        pressStyle={{ opacity: 0.7 }}
+        pressStyle={PRESS_STYLE}
       >
         <Text>{t('common.continue')}</Text>
       </Stack>

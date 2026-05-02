@@ -1,5 +1,5 @@
-import { Pressable } from 'react-native';
-import { Text, XStack } from 'tamagui';
+import { PRESS_STYLE } from '@/constants/styles';
+import { Stack, Text, XStack } from 'tamagui';
 
 type FilterTabsProps = {
   labels: string[];
@@ -14,11 +14,17 @@ export function FilterTabs({ labels, selected, onSelect }: FilterTabsProps) {
         const isSelected = index === selected;
 
         return (
-          <Pressable key={label} onPress={() => onSelect(index)} accessibilityRole="tab" accessibilityState={{ selected: isSelected }}>
+          <Stack
+            key={label}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isSelected }}
+            onPress={() => onSelect(index)}
+            pressStyle={PRESS_STYLE}
+          >
             <XStack paddingVertical="$3" paddingHorizontal="$3" borderBottomWidth={2} borderColor={isSelected ? '$color' : 'transparent'}>
               <Text fontWeight={isSelected ? '700' : '400'}>{label}</Text>
             </XStack>
-          </Pressable>
+          </Stack>
         );
       })}
     </XStack>

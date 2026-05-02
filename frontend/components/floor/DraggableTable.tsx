@@ -1,24 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  tableInner: {
-    flex: 1,
-    borderRadius: 12,
-    backgroundColor: '#111827',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tableName: { color: 'white', fontWeight: '600' },
-  tableCapacity: { color: 'white' },
-});
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
+import Animated, { type StyleProps,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import { Text, YStack } from 'tamagui';
 import type { Table } from '@/lib/api/types';
 
 type Props = {
@@ -28,6 +16,12 @@ type Props = {
 
 const TABLE_WIDTH = 96;
 const TABLE_HEIGHT = 64;
+
+const animatedStyle: StyleProps = {
+  position: 'absolute',
+  width: TABLE_WIDTH,
+  height: TABLE_HEIGHT,
+};
 
 export function DraggableTable({ table, onDrop }: Props) {
   const { t } = useTranslation();
@@ -55,8 +49,7 @@ export function DraggableTable({ table, onDrop }: Props) {
     [onDrop, startX, startY, x, y],
   );
 
-  const style = useAnimatedStyle(() => ({
-    position: 'absolute' as const,
+  const reanimatedStyle = useAnimatedStyle(() => ({
     left: x.value,
     top: y.value,
   }));
@@ -65,18 +58,18 @@ export function DraggableTable({ table, onDrop }: Props) {
     <GestureDetector gesture={gesture}>
       <Animated.View
         accessibilityRole="button"
-        style={[
-          {
-            width: TABLE_WIDTH,
-            height: TABLE_HEIGHT,
-          },
-          style,
-        ]}
+        style={[animatedStyle, reanimatedStyle]}
       >
-        <View style={styles.tableInner}>
-          <Text style={styles.tableName}>{table.name}</Text>
-          <Text style={styles.tableCapacity}>{t('floor.tableCapacity', { count: table.capacity })}</Text>
-        </View>
+        <YStack
+          flex={1}
+          borderRadius="$4"
+          backgroundColor="$color12"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text color="$background" fontWeight="600">{table.name}</Text>
+          <Text color="$background">{t('floor.tableCapacity', { count: table.capacity })}</Text>
+        </YStack>
       </Animated.View>
     </GestureDetector>
   );

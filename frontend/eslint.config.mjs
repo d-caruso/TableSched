@@ -1,4 +1,5 @@
 import tsParser from '@typescript-eslint/parser';
+import reactNative from 'eslint-plugin-react-native';
 
 export default [
   {
@@ -16,9 +17,13 @@ export default [
         },
       },
     },
+    plugins: {
+      'react-native': reactNative,
+    },
     rules: {
       'no-undef': 'off',
       'no-unused-vars': 'off',
+      'react-native/no-inline-styles': 'error',
     },
   },
 ];

@@ -1,3 +1,4 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { useTranslation } from 'react-i18next';
 import { Stack, Text, XStack } from 'tamagui';
 import '@/lib/i18n';
@@ -34,7 +35,7 @@ export function TimeSlotGrid({ slots, loading, selected, onSelect }: TimeSlotGri
             key={slot.time}
             accessibilityRole="button"
             onPress={() => onSelect(slot.time)}
-            pressStyle={{ opacity: 0.7 }}
+            pressStyle={PRESS_STYLE}
           >
             <Text>{slot.time}</Text>
             {slot.busy_warning ? <Text>{t('booking.timeSlots.busyWarning')}</Text> : null}

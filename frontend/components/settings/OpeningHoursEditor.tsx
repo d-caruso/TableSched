@@ -1,7 +1,7 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
-import { Text, XStack, YStack } from 'tamagui';
+import { Stack, Switch, Text, XStack, YStack } from 'tamagui';
 import '@/lib/i18n';
 import type { OpeningHour } from '@/lib/api/types';
 
@@ -15,7 +15,7 @@ import type { OpeningHour } from '@/lib/api/types';
  * Internal state is a plain OpeningHour[] (same as the prop type).
  * Helpers below convert between the flat array and a per-day slot structure.
  *
- * Time values are chosen from a <Select> at 30-min intervals —
+ * Time values are chosen from a <select> at 30-min intervals —
  * no free-text input, no HH:MM validation needed.
  */
 
@@ -63,14 +63,6 @@ type TimeSelectProps = {
   onChange: (value: string) => void;
 };
 
-/**
- * Native <select> wrapped for React Native Web.
- * On native it falls back to a text display — a Picker could be added later.
- */
-const styles = StyleSheet.create({
-  togglePadding: { paddingTop: 8 },
-});
-
 const selectStyle: React.CSSProperties = {
   padding: '6px 8px',
   borderRadius: 6,
@@ -84,7 +76,7 @@ const selectStyle: React.CSSProperties = {
 
 function TimeSelect({ value, label, onChange }: TimeSelectProps) {
   return (
-    <View accessibilityLabel={label}>
+    <Stack accessibilityLabel={label}>
       {/* React Native Web renders this as a native <select> */}
       {/* @ts-ignore: 'select' is valid on web only */}
       <select
@@ -99,7 +91,7 @@ function TimeSelect({ value, label, onChange }: TimeSelectProps) {
           </option>
         ))}
       </select>
-    </View>
+    </Stack>
   );
 }
 
@@ -181,13 +173,13 @@ export function OpeningHoursEditor({ hours = [], onChange }: Props) {
             </Text>
 
             {/* Toggle */}
-            <View style={styles.togglePadding}>
+            <Stack paddingTop="$2">
               <Switch
                 accessibilityRole="switch"
-                value={isOpen}
-                onValueChange={handleToggle}
+                checked={isOpen}
+                onCheckedChange={handleToggle}
               />
-            </View>
+            </Stack>
 
             {/* Slots column */}
             <YStack flex={1} gap="$1">
@@ -211,27 +203,29 @@ export function OpeningHoursEditor({ hours = [], onChange }: Props) {
                     onChange={v => handlePatchSlot(idx, 'closes_at', v)}
                   />
                   {slots.length > 1 && (
-                    <Pressable
+                    <Stack
                       accessibilityRole="button"
                       accessibilityLabel={t('staff.settings.removeSlot')}
                       onPress={() => handleRemoveSlot(idx)}
+                      pressStyle={PRESS_STYLE}
                     >
                       <Text fontSize="$3" color="$placeholderColor" paddingHorizontal="$1">×</Text>
-                    </Pressable>
+                    </Stack>
                   )}
                 </XStack>
               ))}
 
               {isOpen && slots.length < MAX_SLOTS_PER_DAY && (
-                <Pressable
+                <Stack
                   accessibilityRole="button"
                   accessibilityLabel={t('staff.settings.addSlot')}
                   onPress={handleAddSlot}
+                  pressStyle={PRESS_STYLE}
                 >
                   <Text fontSize="$2" color="$blue10" paddingTop="$1">
                     + {t('staff.settings.addSlot')}
                   </Text>
-                </Pressable>
+                </Stack>
               )}
             </YStack>
           </XStack>

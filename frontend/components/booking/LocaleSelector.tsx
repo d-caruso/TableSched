@@ -1,3 +1,4 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { useTranslation } from 'react-i18next';
 import { Stack, Text, XStack } from 'tamagui';
 import '@/lib/i18n';
@@ -21,7 +22,7 @@ export function LocaleSelector({ value, onChange }: LocaleSelectorProps) {
             key={locale}
             accessibilityRole="button"
             onPress={() => onChange(locale)}
-            pressStyle={{ opacity: 0.7 }}
+            pressStyle={PRESS_STYLE}
           >
             <Text>{t(`booking.locales.${locale}`)}</Text>
             {value === locale ? <Text>{t('common.selectedIndicator')}</Text> : null}

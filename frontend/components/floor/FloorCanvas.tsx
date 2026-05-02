@@ -1,17 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { StyleSheet, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  canvas: {
-    minHeight: 320,
-    borderRadius: 16,
-    backgroundColor: '#f3f4f6',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-});
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { FLEX_ONE } from '@/constants/styles';
+import { Stack, YStack } from 'tamagui';
 import { DraggableTable } from '@/components/floor/DraggableTable';
 import { staffApi } from '@/lib/api/endpoints';
 import type { Room } from '@/lib/api/types';
@@ -41,8 +31,15 @@ export function FloorCanvas({ room, tenant, token }: Props) {
   });
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <View style={styles.canvas}>
+    // GestureHandlerRootView has no Tamagui equivalent — kept as-is
+    <GestureHandlerRootView style={FLEX_ONE}>
+      <YStack
+        minHeight={320}
+        borderRadius="$4"
+        backgroundColor="$backgroundHover"
+        position="relative"
+        overflow="hidden"
+      >
         {(room.tables ?? []).map(table => (
           <DraggableTable
             key={table.id}
@@ -50,7 +47,7 @@ export function FloorCanvas({ room, tenant, token }: Props) {
             onDrop={(x, y) => updatePosition.mutate({ tableId: table.id, x, y })}
           />
         ))}
-      </View>
+      </YStack>
     </GestureHandlerRootView>
   );
 }

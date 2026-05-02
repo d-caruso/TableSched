@@ -1,3 +1,4 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { useTranslation } from 'react-i18next';
 import { Stack, Text, XStack } from 'tamagui';
 
@@ -22,7 +23,7 @@ export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorP
               onChange(value - 1);
             }
           }}
-          pressStyle={{ opacity: 0.7 }}
+          pressStyle={PRESS_STYLE}
         >
           <Text>{t('common.decrement')}</Text>
         </Stack>
@@ -30,7 +31,7 @@ export function PartySizeSelector({ label, value, onChange }: PartySizeSelectorP
         <Stack
           accessibilityRole="button"
           onPress={() => onChange(value + 1)}
-          pressStyle={{ opacity: 0.7 }}
+          pressStyle={PRESS_STYLE}
         >
           <Text>{t('common.increment')}</Text>
         </Stack>

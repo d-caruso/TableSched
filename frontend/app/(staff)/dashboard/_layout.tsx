@@ -1,7 +1,7 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable } from 'react-native';
-import { Text, YStack } from 'tamagui';
+import { Stack, Text, YStack } from 'tamagui';
 import '@/lib/i18n';
 import { ResponsiveShell } from '@/components/ui/ResponsiveShell';
 
@@ -23,10 +23,11 @@ function DashboardSidebar() {
         const isActive = path === item.href;
 
         return (
-          <Pressable
+          <Stack
             key={item.href}
-            onPress={() => router.push(item.href)}
             accessibilityRole="button"
+            onPress={() => router.push(item.href)}
+            pressStyle={PRESS_STYLE}
           >
             <YStack
               padding="$3"
@@ -37,7 +38,7 @@ function DashboardSidebar() {
             >
               <Text>{t(item.labelKey)}</Text>
             </YStack>
-          </Pressable>
+          </Stack>
         );
       })}
     </YStack>

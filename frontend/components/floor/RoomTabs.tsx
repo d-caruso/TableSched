@@ -1,5 +1,5 @@
-import { Pressable } from 'react-native';
-import { Text, XStack } from 'tamagui';
+import { PRESS_STYLE } from '@/constants/styles';
+import { Stack, Text, XStack } from 'tamagui';
 import type { Room } from '@/lib/api/types';
 
 type Props = {
@@ -15,11 +15,12 @@ export function RoomTabs({ rooms, activeId, onSelect }: Props) {
         const selected = room.id === activeId;
 
         return (
-          <Pressable
+          <Stack
             key={room.id}
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             onPress={() => onSelect(room.id)}
+            pressStyle={PRESS_STYLE}
           >
             <XStack
               paddingVertical="$3"
@@ -29,7 +30,7 @@ export function RoomTabs({ rooms, activeId, onSelect }: Props) {
             >
               <Text fontWeight={selected ? '700' : '400'}>{room.name}</Text>
             </XStack>
-          </Pressable>
+          </Stack>
         );
       })}
     </XStack>

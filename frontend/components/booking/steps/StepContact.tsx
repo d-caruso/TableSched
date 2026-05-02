@@ -1,3 +1,4 @@
+import { PRESS_STYLE } from '@/constants/styles';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input, Stack, Text, YStack } from 'tamagui';
@@ -33,7 +34,7 @@ export function StepContact({ tenant, draft, onBack, onNext }: StepContactProps)
       <Stack
         accessibilityRole="button"
         onPress={onBack}
-        pressStyle={{ opacity: 0.7 }}
+        pressStyle={PRESS_STYLE}
       >
         <Text>{t('booking.page.back')}</Text>
       </Stack>
@@ -50,7 +51,7 @@ export function StepContact({ tenant, draft, onBack, onNext }: StepContactProps)
           });
         }}
         opacity={canSubmit ? 1 : 0.4}
-        pressStyle={{ opacity: 0.7 }}
+        pressStyle={PRESS_STYLE}
       >
         <Text>{t('booking.page.request_booking')}</Text>
       </Stack>
