@@ -62,3 +62,15 @@ class CustomerBookingPatchSerializer(serializers.Serializer):
     starts_at = serializers.DateTimeField(required=False)
     party_size = serializers.IntegerField(required=False, min_value=1)
     notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class PublicBookingCreateSerializer(serializers.Serializer):
+    """Validate customer booking creation request."""
+
+    phone = serializers.CharField()
+    email = serializers.EmailField()
+    name = serializers.CharField()
+    locale = serializers.CharField(default="en")
+    starts_at = serializers.DateTimeField()
+    party_size = serializers.IntegerField(min_value=1)
+    notes = serializers.CharField(required=False, allow_blank=True, default="")

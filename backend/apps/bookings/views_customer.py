@@ -9,8 +9,14 @@ from rest_framework.request import Request  # type: ignore[import-untyped]
 from rest_framework.response import Response  # type: ignore[import-untyped]
 from rest_framework.views import APIView  # type: ignore[import-untyped]
 
-from apps.bookings.serializers import BookingPublicSerializer, CustomerBookingPatchSerializer
+from apps.bookings.serializers import (
+    BookingPublicSerializer,
+    CustomerBookingPatchSerializer,
+    PublicBookingCreateSerializer,
+)
 from apps.bookings.services import cancel_by_customer, modify_by_customer
+from apps.bookings.services.creation import create_booking_request
+from apps.customers.services import upsert_customer
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
 from apps.customers.models import BookingAccessToken, hash_token, verify_token
@@ -72,3 +78,32 @@ class CustomerBookingView(APIView):
                 ErrorCode.VALIDATION_FAILED,
                 {"field": sorted(unsupported)[0]},
             )
+
+
+class PublicBookingCreateView(APIView):
+    """Public endpoint for customers to submit a booking request."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+    throttle_classes = [BookingTokenThrottle]
+
+    def post(self, request: Request) -> Response:
+        serializer = PublicBookingCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        customer = upsert_customer(
+            phone=data["phone"],
+            email=data["email"],
+            name=data["name"],
+            locale=data["locale"],
+        )
+        settings = RestaurantSettings.objects.get()
+        booking, _payment_intent = create_booking_request(
+            settings=settings,
+            customer=customer,
+            starts_at=data["starts_at"],
+            party_size=data["party_size"],
+            notes=data["notes"],
+        )
+        return Response(BookingPublicSerializer(booking).data, status=201)
