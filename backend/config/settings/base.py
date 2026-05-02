@@ -57,6 +57,7 @@ TENANT_SUBFOLDER_PREFIX = "restaurants"
 
 MIDDLEWARE = [
     "django_tenants.middleware.TenantSubfolderMiddleware",
+    "apps.common.middleware.CsrfExemptAllauthAppMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -97,8 +98,12 @@ SITE_ID = 1
 AUTH_USER_MODEL = "accounts.User"
 HEADLESS_ONLY = True
 HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.strategies.jwt.JWTTokenStrategy"
-HEADLESS_FRONTEND_URLS = {}
-HEADLESS_JWT_SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "/auth/verify-email/{key}",
+    "account_reset_password": "/auth/reset-password",
+    "account_reset_password_from_key": "/auth/reset-password/{key}",
+    "account_signup": "/auth/signup",
+}HEADLESS_JWT_SECRET_KEY = env("SECRET_KEY", default="dev-secret-key")
 HEADLESS_JWT_ALGORITHM = "HS256"
 HEADLESS_JWT_ACCESS_TOKEN_EXPIRATION = 60 * 15  # 15 minutes
 HEADLESS_JWT_REFRESH_TOKEN_EXPIRATION = 60 * 60 * 24 * 7  # 7 days

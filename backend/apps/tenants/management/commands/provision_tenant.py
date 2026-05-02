@@ -1,15 +1,13 @@
 """Provision a new tenant in one atomic operation."""
 
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django_tenants.utils import schema_context
 
+from apps.accounts.utils import create_provisioned_user
 from apps.memberships.models import StaffMembership
 from apps.tenants.models import Domain, Restaurant
-
-User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -34,7 +32,7 @@ class Command(BaseCommand):
         call_command("migrate_schemas", schema_name=schema, interactive=False, verbosity=0)
 
         with transaction.atomic():
-            user = User.objects.create_user(username=email, email=email, password=password)
+            user = create_provisioned_user(email, password)
             with schema_context(schema):
                 StaffMembership.objects.create(
                     user=user,

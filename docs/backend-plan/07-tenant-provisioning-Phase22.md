@@ -213,6 +213,64 @@ def test_tenant_directory_requires_no_auth(client, public_tenant):
 
 ---
 
+### Task 22.4 — Allauth headless JWT auth
+
+**Why:** Frontend (`tablesched.domenicocaruso.com`) and backend (`tablesched.hf.space`) are on different domains. Session cookies are not sent cross-domain. Allauth headless with JWT tokens solves this: the backend issues access/refresh tokens in JSON responses; the frontend stores and sends them as `Authorization: Bearer <token>`.
+
+Allauth 65.x ships `allauth.headless.tokens.strategies.jwt` with no extra dependencies.
+
+**Endpoints after change:**
+```
+POST /_allauth/app/v1/auth/login        → { "access": "<token>", "refresh": "<token>", ... }
+POST /_allauth/app/v1/auth/logout
+GET  /_allauth/app/v1/auth/session
+POST /_allauth/app/v1/auth/password/change
+```
+
+**Files:**
+- `config/settings/base.py` — update headless settings
+- `config/urls_public.py` — no change needed (headless URLs already registered by allauth when `HEADLESS_ONLY = True`)
+
+**`config/settings/base.py` changes:**
+
+```python
+# Already present — change token strategy:
+HEADLESS_ONLY = True
+HEADLESS_TOKEN_STRATEGY = "allauth.headless.tokens.strategies.jwt.JWTTokenStrategy"
+HEADLESS_FRONTEND_URLS = {}
+
+# Ensure no credential cookies required (JWT is stateless):
+CORS_ALLOW_CREDENTIALS = False
+```
+
+**Tests:**
+
+```python
+# tests/accounts/test_headless_auth.py
+
+import pytest
+
+@pytest.mark.django_db(transaction=True)
+def test_login_returns_jwt_tokens(client, public_tenant):
+    from django.contrib.auth import get_user_model
+    from allauth.account.models import EmailAddress
+
+    User = get_user_model()
+    user = User.objects.create_user(username="a@b.com", email="a@b.com", password="pass1234")
+    EmailAddress.objects.create(user=user, email="a@b.com", verified=True, primary=True)
+
+    response = client.post(
+        "/_allauth/app/v1/auth/login",
+        {"login": "a@b.com", "password": "pass1234"},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "access" in data.get("meta", {}).get("access_token", data)
+```
+
+---
+
 ### Task 22.1 — provision_tenant command
 
 **Files:**
@@ -224,6 +282,7 @@ def test_tenant_directory_requires_no_auth(client, public_tenant):
 ```python
 """Provision a new tenant in one atomic operation."""
 
+from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -259,6 +318,9 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             user = User.objects.create_user(username=email, email=email, password=password)
+            # Mark email verified — operator-provisioned accounts skip self-signup flow.
+            # Same applies to future manager-invited staff accounts.
+            EmailAddress.objects.create(user=user, email=email, verified=True, primary=True)
             with schema_context(schema):
                 StaffMembership.objects.create(
                     user=user,
@@ -337,4 +399,59 @@ def test_provision_tenant_fails_if_schema_exists():
             admin_email="b@rome.com",
             admin_password="testpass123",
         )
+```
+
+---
+
+### Task 22.5 — Provisioned user utility (verified email for all operator-created users)
+
+Operator-provisioned accounts (tenant admins, manager-invited staff) must skip the self-signup email verification flow. A shared `create_provisioned_user()` utility centralises this: any future staff invitation feature must call it instead of `create_user()` directly.
+
+**Why:** allauth requires an `EmailAddress(verified=True)` row to issue JWT tokens. `create_user()` alone does not create this row. Without it, login returns 403 and sends a verification email.
+
+**Files:**
+- `apps/accounts/utils.py` — NEW
+- `apps/tenants/management/commands/provision_tenant.py` — updated to use utility
+- `tests/accounts/test_provisioned_user.py` — NEW
+
+**`apps/accounts/utils.py`:**
+
+```python
+from django.contrib.auth import get_user_model
+from allauth.account.models import EmailAddress
+
+User = get_user_model()
+
+def create_provisioned_user(email: str, password: str) -> User:
+    """Create a user with a pre-verified email address.
+
+    Used for operator-provisioned accounts (tenant admins, manager-invited staff)
+    that bypass the self-signup email verification flow.
+    """
+    user = User.objects.create_user(username=email, email=email, password=password)
+    EmailAddress.objects.create(user=user, email=email, verified=True, primary=True)
+    return user
+```
+
+**Tests:**
+
+```python
+# tests/accounts/test_provisioned_user.py
+
+@pytest.mark.django_db
+def test_creates_user_with_verified_email(public_tenant):
+    user = create_provisioned_user("staff@example.com", "pass1234")
+    email_addr = EmailAddress.objects.get(user=user)
+    assert email_addr.verified is True
+    assert email_addr.primary is True
+
+@pytest.mark.django_db
+def test_user_can_login_without_verification(client, public_tenant):
+    create_provisioned_user("staff2@example.com", "pass1234")
+    response = client.post(
+        "/_allauth/app/v1/auth/login",
+        {"login": "staff2@example.com", "password": "pass1234"},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
 ```
