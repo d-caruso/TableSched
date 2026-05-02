@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { Button, Text, YStack } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import '@/lib/i18n';
@@ -7,9 +8,12 @@ import { publicApi } from '@/lib/api/endpoints';
 import { ENV } from '@/lib/env';
 import type { TenantEntry } from '@/lib/api/types';
 
-function tenantBookingUrl(tenant: TenantEntry): string {
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${origin}/restaurants/${tenant.schema}/`;
+// SHOWCASE MODE: tenant key must match AuthContext's TENANT_KEY constant.
+// Remove this function and the handleTenantPress block when login is working.
+function setShowcaseTenant(schema: string) {
+  if (typeof window !== 'undefined') {
+    window.sessionStorage.setItem('tablesched.tenant', schema);
+  }
 }
 
 function staffLoginUrl(): string {
@@ -21,6 +25,8 @@ const linkStyle: React.CSSProperties = { color: 'inherit', textDecoration: 'none
 
 function TenantDirectory() {
   const { t } = useTranslation();
+  const router = useRouter();
+
   const { data: tenants = [], isLoading } = useQuery({
     queryKey: ['tenant-directory'],
     queryFn: () => publicApi.tenantDirectory(),
@@ -34,22 +40,27 @@ function TenantDirectory() {
     );
   }
 
+  // SHOWCASE MODE: sets tenant in sessionStorage and navigates to dashboard.
+  // Replace with booking URL link when login is working.
+  const handleTenantPress = (tenant: TenantEntry) => {
+    setShowcaseTenant(tenant.schema);
+    router.replace('/dashboard');
+  };
+
   return (
     <YStack padding="$8" gap="$8" maxWidth={640} alignSelf="center" width="100%">
       <Text fontSize="$8" fontWeight="$8">{t('tenantDirectory.title')}</Text>
       <YStack gap="$3">
         {tenants.map((tenant) => (
-          <a
+          <Button
             key={tenant.schema}
-            href={tenantBookingUrl(tenant)}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={linkStyle}
+            size="$5"
+            width="100%"
+            justifyContent="flex-start"
+            onPress={() => handleTenantPress(tenant)}
           >
-            <Button size="$5" width="100%" justifyContent="flex-start">
-              {tenant.name}
-            </Button>
-          </a>
+            {tenant.name}
+          </Button>
         ))}
       </YStack>
       <a href={staffLoginUrl()} style={linkStyle}>
