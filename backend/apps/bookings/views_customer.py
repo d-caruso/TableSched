@@ -17,6 +17,7 @@ from apps.bookings.serializers import (
 from apps.bookings.services import cancel_by_customer, modify_by_customer
 from apps.bookings.services.creation import create_booking_request
 from apps.customers.services import upsert_customer
+from apps.restaurants.services.slots import available_slots
 from apps.common.codes import ErrorCode
 from apps.common.errors import DomainError
 from apps.customers.models import BookingAccessToken, hash_token, verify_token
@@ -107,3 +108,24 @@ class PublicBookingCreateView(APIView):
             notes=data["notes"],
         )
         return Response(BookingPublicSerializer(booking).data, status=201)
+
+
+class PublicSlotsView(APIView):
+    """Public endpoint returning available booking slots for a given date."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+
+    def get(self, request: Request) -> Response:
+        raw_date = request.query_params.get("date")
+        if not raw_date:
+            raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "date"})
+        try:
+            from datetime import date
+            requested_date = date.fromisoformat(raw_date)
+        except ValueError:
+            raise DomainError(ErrorCode.VALIDATION_FAILED, {"field": "date"})
+
+        settings = RestaurantSettings.objects.get()
+        slots = available_slots(requested_date, settings)
+        return Response({"slots": [s.isoformat() for s in slots]})
